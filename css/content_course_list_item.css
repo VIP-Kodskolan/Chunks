@@ -1,0 +1,21 @@
+.course_list_item {
+  padding: 5px;
+  box-shadow: 0 0 3px var(--color_accent_1);
+  border-radius: 5px;
+
+  cursor: pointer;
+
+  font-size: var(--fsz_course_list);
+
+  transition: color .5s, background-color .5s;
+}
+
+.course_list_item:hover {
+  background-color: var(--color_accent_1);
+  color: var(--color_back_1);
+}
+
+.course_list_item.selected {
+  background-color: var(--color_accent_1);
+  color: var(--color_back_1);
+}

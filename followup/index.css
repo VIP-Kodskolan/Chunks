@@ -1,0 +1,65 @@
+@font-face {
+  font-family: "BLWC_regular";
+  src: url("../media/fonts/Barlow_Condensed/BarlowCondensed-Regular.ttf");
+}
+
+
+body {
+  font: 1.5vw "BLWC_regular";
+  margin: 0;
+}
+
+#wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  height: 100vh;
+  padding: 2vh;
+  box-sizing: border-box;
+}
+
+.row {
+  display: flex;
+  gap: 3px;
+  font-size: 1.1vw;
+}
+
+.row > div:first-child {
+  flex-basis: 6vw;
+}
+
+.row > div:last-child {
+  display: flex;
+  gap: 1px;
+  flex-grow: 1;
+}
+
+.weeks {
+  flex-basis: 3vw;
+}
+.week {
+  flex-basis: 0;
+  flex-grow: 1;
+  text-align: center;
+  background-color: #222;
+  color: #ddd;
+  padding: 2px 0;
+}
+
+.student {
+  flex-grow: 1;
+}
+
+.unit {
+  flex-grow: 1;
+}
+.unit.first_in_chapter {
+  border-left: 1px solid #222;
+}
+
+.unit.complete {
+  background-color: greenyellow;
+}
+.unit.incomplete {
+  background-color: lightgray;
+}

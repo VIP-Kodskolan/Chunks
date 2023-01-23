@@ -1,0 +1,51 @@
+#content_users_control * {
+  font-size: var(--fsz_button_default);
+}
+
+#content_users_control {
+  padding-bottom: var(--general_gap);
+  border-bottom: 1px solid var(--color_overlay_dark);
+
+  display: flex;
+  gap: calc( 2 * var(--general_gap) );
+}
+
+#users_filters {
+  display: flex;
+  gap: calc( 4 * var(--general_gap) );
+}
+
+#users_add {
+  flex-grow: 1;
+  text-align: right;
+}
+
+#users_add > button {
+}
+
+#users_add #users_adder {
+  overflow: hidden;
+  padding: var(--general_gap);
+  border: 3px solid var(--color_accent_1);
+  border-radius: 5px;
+  margin-top: 3px;
+}
+#users_add #users_adder.hidden {
+  padding: 0;
+  height: 0;
+  border-width: 0;
+}
+
+#users_add #users_adder > form {
+  display: flex;
+  gap: 10px;
+}
+
+#users_add #users_adder input {
+  flex-grow: 1;
+  border: 1px solid var(--color_accent_1);
+}
+
+#users_add .user_data.error {
+  background-color: var(--color_accent_incorrect);
+}

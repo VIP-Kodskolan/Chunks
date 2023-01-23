@@ -1,0 +1,12 @@
+#content_chapter_list {
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+#content_chapter_list > ul {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}

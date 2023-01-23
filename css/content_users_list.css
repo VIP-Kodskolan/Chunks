@@ -1,0 +1,47 @@
+
+#content_users_list * {
+  font-size: var(--fsz_users);
+}
+
+#content_users_list > ul > li {
+  display: flex;
+  gap: calc( 2.5 * var(--general_gap) );
+  align-items: baseline;
+  margin: 5px 0;
+  padding: 3px;
+  border-radius: 5px;
+}
+
+#content_users_list > ul > li:nth-child(odd) { background-color: var(--color_back_2B); }
+#content_users_list > ul > li:nth-child(even) { background-color: var(--color_back_2); }
+
+#content_users_list ul > li .program_year {
+
+  display: flex;
+  gap: 5px;
+  align-items: baseline;
+
+  font-family: "Share_Tech_mono";
+
+}
+#content_users_list ul > li .program_year * {
+  font-family: "Share_Tech_mono";
+}
+
+#content_users_list ul > li .name {
+  flex-basis: 12vw;
+}
+
+#content_users_list .user_courses {
+  display: flex;
+  gap: calc( 2 * var(--general_gap) );
+}
+
+#content_users_list .user_courses > li {
+  display: flex;
+  gap: var(--general_gap);
+}
+
+#content_users_list ul > li .button_remove {
+  margin-left: auto;
+}

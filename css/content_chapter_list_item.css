@@ -1,0 +1,159 @@
+.chapter_list_item {
+  --height_button_add_section: 0;
+
+  padding: 15px;
+  border: 1px dashed var(--color_accent_0);
+  border-radius: var(--general_border_radius);
+  background-color: transparent;
+
+  font-size: var(--fsz_chapter_list);
+  color: var(--color_accent_0);
+
+  cursor: pointer;  
+  
+  transition: color var(--t_fast_transition), background-color var(--t_fast_transition);
+}
+.chapter_list_item:not(.expanded):hover {
+  box-shadow: 0 0 3px var(--color_accent_1);
+}
+.chapter_list_item.expanded {
+  background-color: var(--color_overlay_light);
+}  
+.chapter_list_item.ready {
+  border-style: solid;
+  color: inherit;
+}
+
+.chapter_list_item .chapter_top {
+  display: flex;
+  align-items: center;
+  gap: var(--general_gap);
+}
+
+.chapter_list_item .assignments_progress {
+  margin-left: auto;
+  margin-right: calc(4 * var(--general_gap));
+  display: flex;
+  gap: calc(4 * var(--general_gap));
+}
+
+/* SECTIONS */
+.chapter_list_item ul.section_list {
+  --gap: 0;
+  --height_basis: 163px;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  padding: var(--gap) 0;
+  transition: padding var(--t_fast_transition), height var(--t_fast_transition);
+}
+
+
+/* ADD SECTION */
+.chapter_list_item .add_section {
+  height: var(--height_button_add_section);
+  overflow: hidden;
+}
+
+/* PROGRESS AND ASSIGNMENTS */
+.chapter_list_item .progress, .chapter_list_item .assignments {
+  --height: calc(1.8 * var(--fsz_chapter_list));
+  --dims_assignment: var(--height);
+  height: var(--height);
+}
+
+/* PROGRESS */
+.chapter_list_item .progress {
+}
+.chapter_list_item .progress > ul {
+  height: 100%;
+  display: flex;
+  gap: 1.5px;
+}
+.chapter_list_item .progress > ul > li {  
+  width: 4.5px;
+  border-color: transparent;
+  border-width: 1px;
+  border-style: solid;
+
+  /* border: .5px solid transparent; */
+}
+.chapter_list_item .progress > ul > li.status_default {
+  background-color: transparent;
+  border-color: var(--color_accent_1);
+}
+.chapter_list_item .progress > ul > li.quiz {
+  /* background-color: var(--color_accent_quiz); */
+  border-color: var(--color_accent_quiz);
+}
+.chapter_list_item .progress > ul > li.status_complete {
+  background-color: var(--color_accent_completed_general);
+  border-color: var(--color_accent_completed_general);
+}
+.chapter_list_item .progress > ul > li.status_question {
+  background-color: var(--color_accent_question);
+  border-color: var(--color_accent_question);
+}
+
+/* ASSIGNMENTS */
+.chapter_list_item .assignments > ul {
+  display: flex;
+  gap: 4px;
+  height: var(--dims_assignment);
+}
+.chapter_list_item .assignments > ul > li {
+  width: var(--dims_assignment);
+  border: .5px solid var(--color_accent_1);
+  border-radius: 50%;
+
+  background-image: url(../media/assignment.png);
+  background-position: center;
+  background-size: 55%;
+  background-repeat: no-repeat;
+}
+.chapter_list_item .assignments > ul > li.status_complete {
+  background-color: var(--color_accent_completed_general);
+}
+
+/* EXPAND COMPRESS */
+.chapter_list_item .expand_compress {
+  border-radius: 50%;
+  background-color: transparent;
+  border-color: rgba(0,0,0,.2);
+  height: 32px;
+  width: 32px;
+  padding: 0;
+
+  transition: rotate var(--t_fast_transition);
+}
+.chapter_list_item .expand_compress:hover {
+  border-color: var(--color_accent_2);
+}
+.chapter_list_item .expand_compress img {
+  height: 100%;
+}
+
+.chapter_list_item.expanded ul.section_list {
+  --gap: 23px;
+}  
+.chapter_list_item.expanded ul.section_list > .section_item {
+  --height: var(--height_basis);
+  --padding: 10px;
+  --border_width: 1px;
+  --section_opacity: 1;
+  --height_button_add_section: auto;
+}
+.chapter_list_item.expanded ul.section_list > .section_item .unit_item {
+  --border_width: 1px;
+  --internal_margin: 4px;
+  --content_padding: calc(var(--size_question) / 5);
+  --size_question_unit: var(--size_question); /* resets to value @root */
+  --size_icon: calc(.25 * var(--height_basis));
+}
+.chapter_list_item.expanded {
+  --height_button_add_section: auto;
+}
+.chapter_list_item.expanded .expand_compress {
+  rotate: 180deg;
+}

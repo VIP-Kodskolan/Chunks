@@ -1,0 +1,22 @@
+name: Deploy website on push
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+
+jobs:
+  web-deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout latest code
+      uses: actions/checkout@v3
+    
+    - name: Sync files
+      uses: SamKirkland/FTP-Deploy-Action@4.3.1
+      with:
+        server: ${{ secrets.FTP_HOST }}
+        username: ${{ secrets.FTP_USER }}
+        password: ${{ secrets.FTP_PASS }}

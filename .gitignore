@@ -1,0 +1,4 @@
+*.DS_STORE
+db/backups/
+.log/
+*.db

@@ -1,0 +1,140 @@
+.section_item {
+  /* These set by content_chapter_list_item to get the expand transition */
+  --padding: 0;
+  --height: 0;
+  --border_width: 0;
+  --section_opacity: 0;
+
+  --width_title: 17%;
+  --title_units_gap: 10px;
+
+  opacity: var(--section_opacity);
+  padding: calc(2 * var(--padding)) var(--padding);
+  flex-basis: var(--height);
+  border: var(--border_width) solid var(--color_accent_1);
+  border-radius: var(--general_border_radius);
+  background-color: var(--color_back_2);
+
+  font-size: var(--fsz_section_item);
+
+  position: relative; /* ORIGIN of locked */
+  overflow: hidden;
+
+  transition: flex-basis var(--t_fast_transition), padding var(--t_fast_transition), opacity var(--t_fast_transition);
+}
+
+.section_item > .content {
+  height: 100%;
+  display: flex;
+  gap: var(--title_units_gap);
+}
+
+.section_item > .content > .top {
+  flex-shrink: 0;
+  flex-basis: var(--width_title);
+  font-size: var(--fsz_section_item);
+  overflow: hidden;
+  display: flex;
+  gap: 10px;
+}
+
+.section_item > .content > .top .control_buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--general_gap);
+}
+
+.section_item > .content > .top button {
+  font-size: var(--fsz_section_item);
+}
+
+.section_item > .content > .top h2 {
+  font-size: var(--fsz_section_item_h2);
+}
+
+/* UNITS */
+.section_item > .content > ul.unit_list {
+  flex-grow: 1;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 1vw
+}
+
+.section_item > .content .add_unit .flexer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.section_item > .content .add_unit button {
+  font-size: var(--fsz_add_unit_button);
+  flex-grow: 1;
+}
+
+
+/* LOCK (DEPENDENCIES) */
+.section_item.no_dependencies .lock {
+  display: none;
+}
+
+.section_item .lock {
+  position: absolute;
+  z-index: var(--z_index_section_lock);
+}
+
+.section_item .lock .dependencies {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  padding: var(--padding);
+}
+
+.section_item .lock .dependencies ul {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+
+.section_item.locked .lock {
+  --left: calc(var(--width_title) + var(--title_units_gap));
+  /* --top: calc(2 * var(--fsz_section_item));
+  top: var(--top); */
+  top: 0;
+  left: var(--left);
+  width: calc(100% - var(--left));
+  height: 100%;
+  /* height: calc(100% - var(--top)); */
+  background-color: rgba(220,220,220,.9);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.section_item.unlocked .lock {
+  display: none;
+  /* top: 0;
+  right: var(--padding); */
+}
+
+.section_item.locked .lock .span_unlocked {
+  display: none;
+}
+.section_item.unlocked .lock .span_locked {
+  display: none;
+}
+
+.section_item.locked .quiz_dependency {
+  padding: 3px;
+  border: 1px solid var(--color_accent_1);
+  border-radius: 4px;
+}
+
+.section_item.locked .quiz_dependency > div {
+  padding: 1px 8px;
+}
+
+.section_item.locked .quiz_dependency.status_complete > div {
+  background-color: var(--color_accent_completed_general);
+}

@@ -1,0 +1,40 @@
+#content_course_list_and_users_admin_button {
+  display: flex;
+  gap: 50px;
+  align-items: baseline;
+}
+
+#content_header #content_user {
+  display: flex;
+  gap: 20px;
+  flex-grow: 1;
+}
+
+#content_header .user_info {
+  display: flex;
+  gap: 20px;
+  margin: 0 auto;
+}
+
+#content_header .user_info.is-student {
+  width: 100%;
+  justify-content: flex-end;
+}
+
+#content_header .views .flexer {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+
+#content_header .views button {
+  background-color: transparent;
+  color: var(--color_accent_2);
+  border: 1px solid var(--color_accent_1);
+
+}
+#content_header .views button.selected {
+  background-color: var(--color_accent_1);
+  color: var(--color_back_2);
+  pointer-events: none;
+}
