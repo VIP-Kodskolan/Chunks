@@ -128,9 +128,16 @@ function render_progress_units_by_chapters(units, users_units) {
     unitsByChapters[id].push(unit);
   }
 
+  const sortedUnitsByChapters = Object.entries(unitsByChapters)
+    .sort((a, b) => {
+      const cA = chapters.find(c => c.chapter_id == a[0]);
+      const cB = chapters.find(c => c.chapter_id == b[0]);
+      return cA.spot - cB.spot;
+    });
+
   let chapterCounter = 1;
 
-  for (const [chapter_id, chapter_units] of Object.entries(unitsByChapters)) {
+  for (const [chapter_id, chapter_units] of sortedUnitsByChapters) {
     const chapterContainer = document.createElement("div");
     chapterContainer.className = `chapter chapter-${chapter_id}`;
 
