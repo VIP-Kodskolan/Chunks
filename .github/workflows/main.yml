@@ -19,4 +19,4 @@ jobs:
       with:
         server: ftp01.binero.se
         username: 244663_master
-        password: ${{ secrets.FTP_PASS }}
+        password: ${{ secrets.ftp_password }}
