@@ -2,10 +2,8 @@ name: Deploy website on push
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  pull_request_target:
-    branches:
-      - 'main'
+  # Triggers the workflow on pull request events
+  pull_request_target
 
 jobs:
   web-deploy:
