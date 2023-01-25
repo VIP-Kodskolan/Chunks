@@ -17,6 +17,6 @@ jobs:
     - name: Sync files
       uses: SamKirkland/FTP-Deploy-Action@4.3.3
       with:
-        server: ${{ secrets.FTP_HOST }}
-        username: ${{ secrets.FTP_USER }}
+        server: ftp01.binero.se
+        username: 244663_master
         password: ${{ secrets.FTP_PASS }}
