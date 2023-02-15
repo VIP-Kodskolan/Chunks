@@ -4,13 +4,13 @@ import utils from "../utils/utils.js";
 import content_section_item from "./content_section_item.js";
 
 
-export default { render }
+export default {};
 
 const id_prefix_item = "chapter_list_id_";
 
 
 // INIT
-;(() => {
+; (() => {
 
   SubPub.subscribe({
     event: "db::patch::users_units::done",
@@ -28,7 +28,7 @@ const id_prefix_item = "chapter_list_id_";
       render_assignments({ element });
     }
   });
-  
+
   SubPub.subscribe({
     events: [
       "db::delete::unit::done",
@@ -74,11 +74,18 @@ const id_prefix_item = "chapter_list_id_";
         render({ element });
       }
     }
-  })
+  });
+
+  SubPub.subscribe({
+    event: "render::chapter_list_item",
+    listener: ({ element, container_dom }) => {
+      render(element, container_dom);
+    }
+  });
 
 })();
 
-function render ({ element, container_dom }) {
+function render({ element, container_dom }) {
 
   if (!container_dom) {
     container_dom = document.getElementById(id_prefix_item + element.chapter_id);
@@ -88,7 +95,7 @@ function render ({ element, container_dom }) {
     container_dom.classList[element.done ? "add" : "remove"]("ready");
 
     container_dom.addEventListener("click", expand_compress_chapter);
-    function expand_compress_chapter () {
+    function expand_compress_chapter() {
       container_dom.classList.toggle("expanded");
       state_io.set_class_expanded_chapter(element, container_dom.classList.contains("expanded"));
     }
@@ -110,8 +117,8 @@ function render ({ element, container_dom }) {
   render_sections({ element });
 
 }
-function render_sections ({ element }) {
-  
+function render_sections({ element }) {
+
   const sections = state_io.get_chapter_sections(element.chapter_id);
   const dom = document.getElementById(id_prefix_item + element.chapter_id);
   const list_dom = dom.querySelector("ul.section_list");
@@ -121,30 +128,30 @@ function render_sections ({ element }) {
 
     const container_dom = document.createElement("li");
     list_dom.append(container_dom);
-    content_section_item.render({ element: section, container_dom })
+    content_section_item.render({ element: section, container_dom });
 
   });
 
   // ADD SECTION
-  
+
   const container_dom = document.createElement("li");
   container_dom.classList.add("add_section");
   container_dom.innerHTML = `
     <button class="teacher">+ SECTION</button>
   `;
   list_dom.append(container_dom);
-  
+
   container_dom.querySelector("button").addEventListener("click", add_section);
-  function add_section (event) {
+  function add_section(event) {
     event.stopPropagation();
     SubPub.publish({
       event: "db::post::section::request",
-      detail: { params: { chapter: element }}
+      detail: { params: { chapter: element } }
     });
   }
 
 }
-function render_top ({ element }) {
+function render_top({ element }) {
 
   const container_dom = document.getElementById(id_prefix_item + element.chapter_id);
   const top_dom = container_dom.querySelector(".chapter_top");
@@ -171,7 +178,7 @@ function render_top ({ element }) {
 
   // DELETE
   top_dom.querySelector(".button_delete").addEventListener("click", delete_chapter);
-  function delete_chapter (event) {
+  function delete_chapter(event) {
     event.stopPropagation();
     if (!confirm("DELETE CHAPTER? No undos!")) return;
 
@@ -183,7 +190,7 @@ function render_top ({ element }) {
 
   // EDIT
   top_dom.querySelector(".button_edit").addEventListener("click", open_editor);
-  function open_editor (event) {
+  function open_editor(event) {
     event && event.stopPropagation();
     SubPub.publish({
       event: "render::editor",
@@ -197,7 +204,7 @@ function render_top ({ element }) {
   is_editing && open_editor();
 
 }
-function render_assignments ({ element }) {
+function render_assignments({ element }) {
 
   const container_dom = document.getElementById(id_prefix_item + element.chapter_id);
   const asses_dom = container_dom.querySelector(".chapter_top .assignments ul");
@@ -208,7 +215,7 @@ function render_assignments ({ element }) {
 
     const ass_dom = document.createElement("li");
     const uu = state_io.state.users_units.find(uu => uu.unit_id === a.unit_id);
-    
+
     ass_dom.innerHTML = `
       <div class="status_mark">
         <div></div>
@@ -221,7 +228,7 @@ function render_assignments ({ element }) {
 
     // ass_dom.dataset.user_unit = JSON.stringify(uu);
     ass_dom.addEventListener("click", access_assignment);
-    function access_assignment (event) {
+    function access_assignment(event) {
       event.stopPropagation();
       SubPub.publish({
         event: "render::modal::new_unit",
@@ -235,17 +242,17 @@ function render_assignments ({ element }) {
 
 }
 
-function render_progress ({ element }) {
+function render_progress({ element }) {
 
 
   const container_dom = document.getElementById(id_prefix_item + element.chapter_id);
   const progress_dom = container_dom.querySelector(".chapter_top .progress ul");
   progress_dom.innerHTML = "";
-  
+
   const units = state_io.state.units.filter(u => u.chapter_id === element.chapter_id)
-                .sort((a, b) => {    
-                  return 10 * parseInt(a.section_spot) + parseInt(a.unit_spot) > 10 * parseInt(b.section_spot) + parseInt(b.unit_spot);
-                });
+    .sort((a, b) => {
+      return 10 * parseInt(a.section_spot) + parseInt(a.unit_spot) > 10 * parseInt(b.section_spot) + parseInt(b.unit_spot);
+    });
 
   units.forEach(u => {
 
@@ -262,11 +269,11 @@ function render_progress ({ element }) {
     } else {
       one_line_dom.classList.add("status_default");
     }
-    
+
     const is_empty = state_io.is_unit_empty(u);
     one_line_dom.classList[is_empty ? "add" : "remove"]("status_empty");
     progress_dom.append(one_line_dom);
-    
+
   });
 
 }
