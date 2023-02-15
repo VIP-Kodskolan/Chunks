@@ -20,7 +20,7 @@ export default {}
   }
 
   function credentials_encode(token, id) {
-    return encode_string(token) + encode_string(id);
+    return encode_string(token) + encode_string(String(id));
   }
   function encode_string(string) {
     let _string = "";
