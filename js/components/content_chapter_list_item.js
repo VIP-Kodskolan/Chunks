@@ -76,6 +76,16 @@ const id_prefix_item = "chapter_list_id_";
     }
   })
 
+  SubPub.subscribe({
+    event: "render::content_chapter_list_item",
+    listener: ({response, params}) => {
+      console.log(response, params)
+      const element = state_io.state.chapters.find(c => c.chapter_id === params.element.chapter_id)
+      const container_dom = params.container
+      render({element, container_dom})
+    }
+  })
+
 })();
 
 function render ({ element, container_dom }) {

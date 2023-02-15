@@ -77,7 +77,11 @@ function render_chapters () {
 
     const container_dom = document.createElement("li");
     list_dom.append(container_dom);
-    content_chapter_list_item.render({ element: chapter, container_dom })
+    SubPub.publish({
+      event: "render::content_chapter_list_item",
+      detail: { params: { element: chapter, container: container_dom }}
+    })
+    // content_chapter_list_item.render({ element: chapter, container_dom })
 
   });
 
