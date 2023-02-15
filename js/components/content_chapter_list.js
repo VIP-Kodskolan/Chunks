@@ -1,7 +1,7 @@
 import state_io from "../utils/state_io.js";
 import { SubPub } from "../utils/subpub.js";
 import utils from "../utils/utils.js";
-import content_chapter_list_item from "../components/content_chapter_list_item.js";
+//  import content_chapter_list_item from "../components/content_chapter_list_item.js";
 
 
 export default {}
@@ -44,7 +44,6 @@ export default {}
   });
 
 
-
 })();
 
 function render_empty () {
@@ -53,6 +52,7 @@ function render_empty () {
   dom.innerHTML = "";
 
 }
+
 function render () {
   
   const dom = document.querySelector("#content_chapter_list");
@@ -67,6 +67,7 @@ function render () {
   render_chapters();
 
 }
+
 function render_chapters () {
   
   const { chapters } = state_io.state;
@@ -77,7 +78,13 @@ function render_chapters () {
 
     const container_dom = document.createElement("li");
     list_dom.append(container_dom);
-    content_chapter_list_item.render({ element: chapter, container_dom })
+
+    //  content_chapter_list_item.render({ element: chapter, container_dom })
+
+    SubPub.publish({
+      event: "render::chapter_list_item",
+      detail: { element: chapter, container_dom }
+    })
 
   });
 

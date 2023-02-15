@@ -1,5 +1,4 @@
 // Created automatically at startup by index.php
-// test
 
 import content_chapter_list from './js/components/content_chapter_list.js';
 import content_chapter_list_item from './js/components/content_chapter_list_item.js';
