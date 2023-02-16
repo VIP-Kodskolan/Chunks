@@ -83,7 +83,7 @@ const id_prefix_item = "chapter_list_id_";
 
 })();
 
-function render ( {element, container_dom }) {
+function render ( { element, container_dom }) {
 
   if (!container_dom) {
     container_dom = document.getElementById(id_prefix_item + element.chapter_id);

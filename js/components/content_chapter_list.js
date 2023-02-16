@@ -63,13 +63,6 @@ function render () {
     <ul></ul>
   `;
 
-  // CHAPTERS
-  render_chapters();
-
-}
-
-function render_chapters () {
-  
   const { chapters } = state_io.state;
   const list_dom = document.querySelector("#content_chapter_list > ul");
 
@@ -79,9 +72,7 @@ function render_chapters () {
     const container_dom = document.createElement("li");
     list_dom.append(container_dom);
 
-    //  content_chapter_list_item.render({ element: chapter, container_dom })
-
-    SubPub.publish({
+      SubPub.publish({
       event: "render::chapter_list_item",
       detail: { element: chapter, container_dom }
     })
@@ -100,5 +91,5 @@ function render_chapters () {
       detail: { params: { course: state_io.state.course } }
     });
   }
-
 }
+
