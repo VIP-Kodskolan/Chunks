@@ -4,7 +4,7 @@ import utils from "../utils/utils.js";
 import content_section_item from "./content_section_item.js";
 
 
-export default { render }
+export default { }
 
 const id_prefix_item = "chapter_list_id_";
 
@@ -76,9 +76,14 @@ const id_prefix_item = "chapter_list_id_";
     }
   })
 
+  SubPub.subscribe({
+    event: "render::chapter_list_item",
+    listener: render
+  });
+
 })();
 
-function render ({ element, container_dom }) {
+function render ( { element, container_dom }) {
 
   if (!container_dom) {
     container_dom = document.getElementById(id_prefix_item + element.chapter_id);
@@ -166,6 +171,7 @@ function render_top ({ element }) {
 
   // FILL ASSIGNMENTS & PROGRESS
   render_assignments({ element });
+
   render_progress({ element });
 
 
