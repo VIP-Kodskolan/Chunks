@@ -4,7 +4,6 @@ import utils from "../utils/utils.js";
 
 export default {}
 
-
 // INIT
 ;(() => {
 
@@ -34,7 +33,6 @@ export default {}
 
 })();
 
-
 function render () {
 
   const user = state_io.state.user;
@@ -49,6 +47,7 @@ function render () {
   `;
 
   header_dom.querySelector(".button_logout").addEventListener("click", logout);
+  
   function logout () {
     localStorage.removeItem("logged_in_name");
     localStorage.removeItem("logged_in_token");

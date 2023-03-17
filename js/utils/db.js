@@ -100,7 +100,7 @@ export default {}
             credentials: credentials_encode (state_io.state.user.user_token, state_io.state.user.user_id),
             ...params,
           };
-          console.log(params);
+          // console.log(params);
         }
       
 
@@ -184,7 +184,7 @@ async function _post (data) {
   headers = headers || HEADERS;
   url = url || API_URL;
 
-  console.log(body);
+  // console.log(body);
 
   let request = new Request(url, {
       method: "POST",
@@ -201,7 +201,7 @@ async function _delete (data) {
   headers = headers || HEADERS;
   url = url || API_URL;
 
-  console.log(body);
+  // console.log(body);
 
   let request = new Request(url, {
       method: "DELETE",
@@ -218,7 +218,7 @@ async function _patch (data) {
   headers = headers || HEADERS;
   url = url || API_URL;
 
-  console.log(body);
+  // console.log(body);
 
   let request = new Request(url, {
       method: "PATCH",
@@ -236,18 +236,18 @@ async function _fetch (data) {
 
   try {
 
-    console.log("Requesting", body.action );
+    // console.log("Requesting", body.action );
     const _response = await fetch(request);
     middle = _response.headers.get("Content-Type").includes("text") ? "text" : "json";
     let data = await _response[middle]();
   
-    SHOW_RAW_RESPONSE && console.log(data);    
+    // SHOW_RAW_RESPONSE && console.log(data);    
   
     if (middle === "text") {
         data = JSON.parse(data);
     }
   
-    SHOW_OBJECT_RESPONSE && console.log(data);
+    // SHOW_OBJECT_RESPONSE && console.log(data);
 
     return data;
 

@@ -20,7 +20,6 @@ const selects_data =   [
 
 ];
 
-
 // INIT
 ;(() => {
 

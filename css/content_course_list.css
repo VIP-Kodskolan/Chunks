@@ -9,9 +9,11 @@
   flex-direction: column;
   gap: 5px;
 }
+
 #content_course_list .expand_course_selector {
   width: 15vw;
 }
+
 #content_course_list.expanded .expand_course_selector {
   background-color: var(--color_accent_completed_general);
   color: var(--color_accent_1);
@@ -34,6 +36,7 @@
 
   transition: gap, padding var(--t_fast_transition);
 }
+
 #content_course_list.expanded > ul {
 
   border-top: 1px solid var(--color_accent_1);
@@ -43,12 +46,14 @@
   gap: 5px;
 
 }
+
 #content_course_list > ul > * {
   font-size: 0;
   padding: 0;
   padding-left: 5px;
   transition: font-size  var(--t_fast_transition), padding var(--t_fast_transition);
 }
+
 #content_course_list.expanded > ul > * {
   font-size: calc(1 * var(--fsz_course_list));
   padding-top: 4px;

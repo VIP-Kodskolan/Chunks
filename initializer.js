@@ -17,3 +17,4 @@ import editor_quiz from './js/components/editor_quiz.js';
 import login_register from './js/components/login_register.js';
 import modal_unit from './js/components/modal_unit.js';
 import modal_unit_quiz from './js/components/modal_unit_quiz.js';
+import settings_user from './js/components/settings_user.js';

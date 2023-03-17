@@ -1,13 +1,10 @@
 import state_io from "../utils/state_io.js";
 import { SubPub } from "../utils/subpub.js";
 import utils from "../utils/utils.js";
-import content_section_item from "./content_section_item.js";
 
-
-export default { }
+export default {  }
 
 const id_prefix_item = "chapter_list_id_";
-
 
 // INIT
 ;(() => {
@@ -77,13 +74,13 @@ const id_prefix_item = "chapter_list_id_";
   })
 
   SubPub.subscribe({
-    event: "render::chapter_list_item",
+    event: "render::content_chapter_list_item",
     listener: render
   });
 
 })();
 
-function render ( { element, container_dom }) {
+function render ({ element, container_dom }) {
 
   if (!container_dom) {
     container_dom = document.getElementById(id_prefix_item + element.chapter_id);
@@ -115,6 +112,7 @@ function render ( { element, container_dom }) {
   render_sections({ element });
 
 }
+
 function render_sections ({ element }) {
   
   const sections = state_io.get_chapter_sections(element.chapter_id);
@@ -126,7 +124,11 @@ function render_sections ({ element }) {
 
     const container_dom = document.createElement("li");
     list_dom.append(container_dom);
-    content_section_item.render({ element: section, container_dom })
+
+    SubPub.publish({
+      event: "render::content_section_item",
+      detail: { element: section, container_dom }
+    })
 
   });
 
@@ -149,6 +151,7 @@ function render_sections ({ element }) {
   }
 
 }
+
 function render_top ({ element }) {
 
   const container_dom = document.getElementById(id_prefix_item + element.chapter_id);
@@ -171,7 +174,6 @@ function render_top ({ element }) {
 
   // FILL ASSIGNMENTS & PROGRESS
   render_assignments({ element });
-
   render_progress({ element });
 
 
@@ -203,6 +205,7 @@ function render_top ({ element }) {
   is_editing && open_editor();
 
 }
+
 function render_assignments ({ element }) {
 
   const container_dom = document.getElementById(id_prefix_item + element.chapter_id);
@@ -242,7 +245,6 @@ function render_assignments ({ element }) {
 }
 
 function render_progress ({ element }) {
-
 
   const container_dom = document.getElementById(id_prefix_item + element.chapter_id);
   const progress_dom = container_dom.querySelector(".chapter_top .progress ul");

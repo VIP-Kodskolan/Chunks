@@ -3,7 +3,7 @@ import { SubPub } from "../utils/subpub.js";
 import utils from "../utils/utils.js";
 
 
-export default { render }
+export default { }
 
 const id_prefix_item = "unit_id_";
 
@@ -25,10 +25,22 @@ const id_prefix_item = "unit_id_";
     }
   });
 
+  SubPub.subscribe({
+    event: "db::post::quiz_answer::done",
+    listener: ({ response, params }) => {
+      render({ element: response.unit });
+    }
+  });
+
+  SubPub.subscribe({
+    event: "render::content_unit_item",
+    listener: render
+  })
+
 })();
 
 function render ({ element, container_dom }) {
-  
+
   const text = {
     video: "VID",
     exercise: "EXE",

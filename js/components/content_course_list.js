@@ -1,6 +1,6 @@
 import state_io from "../utils/state_io.js";
 import { SubPub } from "../utils/subpub.js";
-import content_course_list_item from "./content_course_list_item.js";
+import utils from "../utils/utils.js";
 
 export default {}
 
@@ -10,7 +10,6 @@ const id_prefix_item = "course_list_id_";
 ;(() => {
 
   SubPub.subscribe({
-    // event: "db::get::user::done",
     event: "user_ok",
     listener: render,
   });
@@ -52,7 +51,12 @@ function render () {
   courses.forEach(course => {
     const container_dom = document.createElement("li");
     list_dom.append(container_dom);
-    content_course_list_item.render({ element: course, container_dom })
+
+    SubPub.publish({
+      event: "render::content_course_list_item",
+      detail: {element: course, container_dom}
+    })
+
   });
 
   // ADD COURSE
@@ -62,6 +66,7 @@ function render () {
     add_course_dom.innerHTML = "+ COURSE";
     list_dom.append(add_course_dom);
     add_course_dom.addEventListener("click", add_course);
+
     function add_course (event) {
       event.stopPropagation();
       SubPub.publish({
@@ -72,14 +77,16 @@ function render () {
   }
 
 }
+
 function toggle_course_selector () {
-  
+  console.log("toggle")
   const dom = document.querySelector("#content_course_list");
   dom.classList.toggle("expanded");
 
 }
+
 function compress_course_selector () {
-  
+  console.log("pressing a course")
   const dom = document.querySelector("#content_course_list");
   dom.classList.remove("expanded");
   

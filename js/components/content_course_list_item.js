@@ -2,7 +2,7 @@ import state_io from "../utils/state_io.js";
 import { SubPub } from "../utils/subpub.js";
 import utils from "../utils/utils.js";
 
-export default { render} 
+export default {} 
 
 const id_prefix_item = "course_list_id_";
 
@@ -18,12 +18,10 @@ const id_prefix_item = "course_list_id_";
     }
   });
 
-  // SubPub.subscribe({
-  //   event: "db::post::course::done",
-  //   listener: ({ response, params }) => {
-  //     render({ element: response.course });
-  //   }
-  // });
+  SubPub.subscribe({
+    event: "render::content_course_list_item",
+    listener: render
+  })
 
 })();
 
@@ -65,14 +63,3 @@ function render ({ element, container_dom }) {
   }
 
 }
-
-
-// function update ({ element }) {
-  
-//   const container_dom = document.getElementById(id_prefix_item + element.course_id);
-//   container_dom.setAttribute("title", element.name);
-//   container_dom.innerHTML = `
-//     ${element.alias}
-//   `;
-
-// }

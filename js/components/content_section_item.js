@@ -1,9 +1,8 @@
 import state_io from "../utils/state_io.js";
 import { SubPub } from "../utils/subpub.js";
 import utils from "../utils/utils.js";
-import content_unit_item from "./content_unit_item.js";
 
-export default { render }
+export default { }
 
 const id_prefix_item = "section_id_";
 
@@ -61,11 +60,15 @@ const id_prefix_item = "section_id_";
           render({ element });
         });
       }
-
     }
   });
-})();
 
+  SubPub.subscribe({
+    event: "render::content_section_item",
+    listener: render
+  })
+
+})();
 
 function render ({ element, container_dom }) {
   
@@ -223,7 +226,12 @@ function render_units ({ units, section_id }) {
   units.forEach(unit => {
     const container_dom = document.createElement("div");
     list_dom.append(container_dom);
-    content_unit_item.render({ element: unit, container_dom });
+
+    SubPub.publish({
+      event: "render::content_unit_item",
+      detail: { element: unit, container_dom }
+    })
+
   });
 
   // BUTTONS ADD UNIT

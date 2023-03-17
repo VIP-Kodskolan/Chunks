@@ -21,6 +21,7 @@ const id_prefix_item = "user_list_id_";
     }
   });
 
+
 })();
 
 function render ({ element, container_dom }) {

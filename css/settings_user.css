@@ -1,0 +1,57 @@
+#containerSettings {
+    position: relative;
+}
+
+.user_info {
+    width: 100%;
+}
+
+.user_name {
+    text-align: center;
+    width: 100%;
+}
+
+.settingsDiv {
+    position: absolute;
+    right: 0;
+    top: calc(100% + .50rem);
+    /* padding: 0.5rem; */
+    /* border: 1px solid black; */
+    background-color: #fff;
+    width: 20vw;
+    z-index: 100;
+    height: 0px;
+    min-width: 250px;
+    transition: height 0.5s ease-in-out;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.settingsDiv > div {
+    padding: 10px;
+    display: flex;
+    opacity: 0;
+    justify-content: space-around;
+    transition: opacity 1s ease-in;
+}
+
+#containerSettings.expanded > .settingsDiv > div {
+    opacity: 1;
+}
+
+.settingsDiv > div > input {
+    flex-grow: 1;
+    border-bottom: 1px solid gray;
+}
+
+.settingsDiv > div > label {
+    margin-right: 10px;
+    width: 80px;
+}
+
+.settingsDiv > div > a {
+    cursor: pointer;
+}

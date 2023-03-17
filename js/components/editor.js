@@ -1,9 +1,8 @@
 import state_io from "../utils/state_io.js";
 import { SubPub } from "../utils/subpub.js";
 import utils from "../utils/utils.js";
-import editor_quiz from "./editor_quiz.js";
 
-export default { render }
+export default { }
 
   // INIT
   ; (() => {
@@ -45,8 +44,9 @@ function close_editor() {
 
 }
 
-
 function render({ element }) {
+
+  console.log("render", element)
 
   const dom = document.querySelector("#editor .content");
   const element_kind = state_io.Consts.unit_kinds.includes(element.kind) ? "unit" : element.kind;
@@ -135,10 +135,13 @@ const renderers = {
   render_is_stop_quiz, render_video_link, render_folder_link, render_story, render_quiz, render_parent_chapter,
   render_week_start, render_week_count, render_done, render_dependencies, render_programmes, render_amanuens
 }
+
 function update(event) {
 
   const dom = document.querySelector("#editor .content");
   const { element_id, kind, element } = JSON.parse(dom.dataset.update_data);
+
+  console.log("updateEvent", element, element_id, kind)
 
   const params = {
     user_id: state_io.state.user.user_id,
@@ -148,10 +151,14 @@ function update(event) {
     updated_fields: []
   };
 
+  console.log("params", params)
+
+
   let updated_dependencies = null;
   dom.querySelectorAll(".editor_item:not(.editor_quiz)").forEach(editor_item_dom => {
 
     const { field, type } = JSON.parse(editor_item_dom.dataset.update_data);
+
     let value = editor_item_dom.querySelector(".input").value;
     (type === "checkbox" && (value = editor_item_dom.querySelector(".input").checked))
 
@@ -179,11 +186,12 @@ function update(event) {
         });
 
       }
-
+      
     }
-
+    
   });
-
+  
+  console.log("{params}", {params})
   params.updated_fields.length && SubPub.publish({
     event: `db::patch::${kind}::request`,
     detail: { params }
@@ -213,13 +221,14 @@ function update(event) {
   }
 
 }
+
 function render_input_item({ element, container_dom, field, type }) {
+
+  console.log("render_input_item", element, container_dom, field, type)
 
   const kind = state_io.Consts.unit_kinds.includes(element.kind) ? "unit" : element.kind;
   container_dom.dataset.update_data = JSON.stringify({ element, field, kind, type });
-
   container_dom.classList.add(field);
-
 
   // TYPE OF INPUT
   let input_html = "";
@@ -283,48 +292,64 @@ function render_input_item({ element, container_dom, field, type }) {
 function render_name({ element, container_dom }) {
   render_input_item({ element, container_dom, field: "name", type: "text" });
 }
+
 function render_week_start({ element, container_dom }) {
   render_input_item({ element, container_dom, field: "week_start", type: "number" });
 }
+
 function render_week_count({ element, container_dom }) {
   render_input_item({ element, container_dom, field: "week_count", type: "number" });
 }
+
 function render_password({ element, container_dom }) {
+  console.log("render_password", element, container_dom)
   render_input_item({ element, container_dom, field: "user_password", type: "text" });
 }
+
 function render_parent_chapter({ element, container_dom }) {
   render_input_item({ element, container_dom, field: "chapter_id", type: "number" });
 }
+
 function render_code({ element, container_dom }) {
   render_input_item({ element, container_dom, field: "code", type: "text" });
 }
+
 function render_alias({ element, container_dom }) {
   render_input_item({ element, container_dom, field: "alias", type: "text" });
 }
+
 function render_semester({ element, container_dom }) {
   render_input_item({ element, container_dom, field: "semester", type: "text" });
 }
+
 function render_canvas_url({ element, container_dom }) {
   render_input_item({ element, container_dom, field: "canvas_url", type: "text" });
 }
+
 function render_video_link({ element, container_dom }) {
   render_input_item({ element, container_dom, field: "video_link", type: "text" });
 }
+
 function render_folder_link({ element, container_dom }) {
   render_input_item({ element, container_dom, field: "folder_link", type: "text" });
 }
+
 function render_spot({ element, container_dom }) {
   render_input_item({ element, container_dom, field: "spot", type: "number" });
 }
+
 function render_is_stop_quiz({ element, container_dom }) {
   render_input_item({ element, container_dom, field: "is_stop_quiz", type: "checkbox" });
 }
+
 function render_done({ element, container_dom }) {
   render_input_item({ element, container_dom, field: "done", type: "checkbox" });
 }
+
 function render_story({ element, container_dom }) {
   render_input_item({ element, container_dom, field: "story", type: "textarea" });
 }
+
 function render_dependencies({ element, container_dom }) {
 
   const key_filter = element.kind + "_id";
@@ -335,13 +360,20 @@ function render_dependencies({ element, container_dom }) {
 
   render_input_item({ element, container_dom, field: "dependencies", type: "text" });
 }
+
 function render_programmes({ element, container_dom }) {
   render_input_item({ element, container_dom, field: "programmes", type: "text" });
 }
+
 function render_amanuens({ element, container_dom }) {
   render_input_item({ element, container_dom, field: "amanuens", type: "text" });
 }
 
-function render_quiz({ element, container_dom }) {
-  editor_quiz.render_quiz({ element, container_dom });
+function render_quiz({ element, container_dom }) { 
+
+  SubPub.publish({
+    event: "render_quiz::editor_quiz",
+    detail: { element, container_dom }
+  })
+
 }

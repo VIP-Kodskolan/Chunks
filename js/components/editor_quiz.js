@@ -1,7 +1,7 @@
 import state_io from "../utils/state_io.js";
 import { SubPub } from "../utils/subpub.js";
 
-export default { render_quiz }
+export default { }
 
 // INIT
 ;(() => {
@@ -49,6 +49,11 @@ export default { render_quiz }
       render_quiz({ element });
     }
   });
+
+  SubPub.subscribe({
+    event: "render_quiz::editor_quiz",
+    listener: render_quiz
+  })
 
 })();
 
@@ -102,6 +107,7 @@ function render_quiz ({ element, container_dom }) {
   }
 
 }
+
 function render_page({ question, container_dom }) {
 
   const quiz_question_id = question?.quiz_question_id || "head";

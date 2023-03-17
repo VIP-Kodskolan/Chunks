@@ -1,9 +1,8 @@
 import state_io from "../utils/state_io.js";
 import { SubPub } from "../utils/subpub.js";
 import utils from "../utils/utils.js";
-import modal_unit_quiz from "./modal_unit_quiz.js";
 
-export default { render }
+export default { }
 
 // INIT
 ;(() => {
@@ -137,6 +136,7 @@ function render ({ element }) {
 const renderers = {
   render_name, render_story, render_videos, render_checks, render_notes, render_folder, render_quiz,
 }
+
 function render_name ({ element, container_dom }) {
   
   if (!container_dom) {
@@ -167,6 +167,7 @@ function render_name ({ element, container_dom }) {
       detail: { element: state_io.state.units.find(u => u.unit_id === element.unit_id) } // User may have edited element and it has been updated in State
     });
   }
+
   function delete_unit () {
     
     if (!confirm("Delete this unit? No undos!")) return;
@@ -189,6 +190,7 @@ function render_name ({ element, container_dom }) {
   is_editing && open_editor();
 
 }
+
 function render_story ({ element, container_dom }) {
 
   if (!container_dom) {
@@ -204,6 +206,7 @@ function render_story ({ element, container_dom }) {
   container_dom.innerHTML = `<div>${element.story || 'No description available'}</div>`;
 
 }
+
 function render_videos ({ element, container_dom }) {
   
   if (!container_dom) {
@@ -226,6 +229,7 @@ function render_videos ({ element, container_dom }) {
   container_dom.innerHTML = video_html;
 
 }
+
 function render_checks ({ element, container_dom }) {
   
   if (!container_dom) {
@@ -238,7 +242,7 @@ function render_checks ({ element, container_dom }) {
   const is_quiz = element.kind === "quiz";
   const is_ready = is_unit_ready({ element });
 
-  console.log("is_ready", is_ready);
+  // console.log("is_ready", is_ready);
 
 
   // STATUS
@@ -300,6 +304,7 @@ function render_checks ({ element, container_dom }) {
   }
 
 }
+
 function render_notes ({ element, container_dom }) {
   
   const users_unit = state_io.state.users_units.find(u => u.unit_id === element.unit_id);
@@ -348,6 +353,7 @@ function render_notes ({ element, container_dom }) {
     if (feedback_save_dom.dataset.timer_id !== -1) clearTimeout(feedback_save_dom.dataset.timer_id);
     feedback_save_dom.dataset.timer_id = setTimeout(one_second_less, 1000);
   }
+
   function one_second_less () {
     
     const seconds_left = parseInt(feedback_save_dom.dataset.seconds_left);
@@ -367,6 +373,7 @@ function render_notes ({ element, container_dom }) {
   }
 
 }
+
 function render_folder ({ element, container_dom }) {
 
   if (!container_dom) {
@@ -394,7 +401,10 @@ function render_folder ({ element, container_dom }) {
 
 function render_quiz ({ element, container_dom }) {
 
-  modal_unit_quiz.render_quiz({ element, container_dom });
+  SubPub.publish({
+    event: "render_quiz::modal_unit_quiz",
+    detail: {element, container_dom}
+  })
 
 };
 
@@ -407,10 +417,12 @@ function is_unit_ready ({ element }) {
           || (is_quiz ? element.name === "Done" : element.story !== "");
 
 }
+
 function update_saver_timer (feedback) {
   const feedback_save_dom = document.querySelector("#modal .content .notes .feedback_save");
   feedback_save_dom.querySelector(".feedback").innerHTML = feedback || `Saving in ${feedback_save_dom.dataset.seconds_left} seconds`;
 }
+
 function patch_users_unit (event) {
 
   // Stop potential timer

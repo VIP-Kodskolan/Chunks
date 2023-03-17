@@ -1,7 +1,7 @@
 import state_io from "../utils/state_io.js";
 import { SubPub } from "../utils/subpub.js";
 
-export default { render_quiz }
+export default {  }
 
 const prefix_navigation_id = "question_navigation_id_";
 
@@ -81,9 +81,13 @@ const prefix_navigation_id = "question_navigation_id_";
     listener: ({ response, params }) => {
       const unit_id = params.question?.unit_id || params.option.unit_id;
       const element = state_io.state.units.find(u => u.unit_id == unit_id);
-      console.log(element);
       render_quiz({ element });
     }
+  })
+
+  SubPub.subscribe({
+    event: "render_quiz::modal_unit_quiz",
+    listener: render_quiz
   })
 
 })();
@@ -149,6 +153,7 @@ function render_question_navigation ({ question, container_dom }) {
   container_dom.classList.add(status);
 
 }
+
 function render_question_content ({ question }) {
 
   const content_dom = document.getElementById("quiz_page");
@@ -173,6 +178,7 @@ function render_question_content ({ question }) {
   // const element = state_io.state.units.find(u => u.unit_id === question.unit_id); 
   // render_answer_correct({ element });
 }
+
 function render_question_options({ question }) {
 
   const options = get_question_options({ question });
@@ -219,6 +225,7 @@ function render_question_options({ question }) {
   });
 
 }
+
 function render_answer_correct({ element }) {
 
   const message = is_quiz_solved({ element }) ? "Quiz Complete!" : "Next Question";
@@ -238,10 +245,10 @@ function render_answer_correct({ element }) {
 
 }
 
-
 function get_unit_quiz_questions ({ element }) {
   return state_io.state.quiz_questions.filter(q => q.unit_id === element.unit_id).sort((a,b) => a.spot - b.spot);
 }
+
 function get_current_spot ({ element }) {
 
   const questions = get_unit_quiz_questions({ element });
@@ -251,9 +258,11 @@ function get_current_spot ({ element }) {
   return spot;
 
 }
+
 function get_question_options ({ question }) {
   return state_io.state.quiz_options.filter(o => o.quiz_question_id === question.quiz_question_id);
 }
+
 function is_quiz_solved ({ element }) {
 
   const quiz_id = element.unit_id;
@@ -261,6 +270,7 @@ function is_quiz_solved ({ element }) {
   return !quiz_question_ids.some(q => !is_question_solved(q));
 
 }
+
 function is_question_solved (quiz_question_id) {
 
   if (!is_question_answered(quiz_question_id)) { return false; }
@@ -271,6 +281,7 @@ function is_question_solved (quiz_question_id) {
   });
 
 }
+
 function is_question_answered (quiz_question_id) {
 
   return state_io.state.quiz_answers.some(a => {

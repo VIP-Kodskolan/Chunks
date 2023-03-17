@@ -78,6 +78,8 @@ export default {
     {
       events: ["db::patch::user::received"],
       middleware: (response, params) => {
+        console.log("state params", params);
+        console.log("state response", response);
         const index = State.users.findIndex(u => u.user_id === response.element.user_id);
         State.users.splice(index, 1, response.element);
       }
@@ -425,7 +427,7 @@ function delete_element (table, element_id) {
   if (index !== -1) {
     State[table].splice(index, 1);
   } else {
-    console.log("Couldn't delete element", table, kind, id_field_name, element_id);
+    // console.log("Couldn't delete element", table, kind, id_field_name, element_id);
   }
 }
 function delete_sections_units (section_id) {
