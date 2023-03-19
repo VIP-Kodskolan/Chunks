@@ -107,7 +107,7 @@ function render({ response, params }) {
 
 }
 
-function render_progress_units_by_chapters(units, users_units) {
+function render_progress_units_by_chapters(chapters, units, users_units) {
   const chaptersContainer = document.querySelector("#content_course_open .weekly_progress .units_by_chapters"); 
   chaptersContainer.innerHTML = "";
 
@@ -170,6 +170,7 @@ function render_progress_units_by_chapters(units, users_units) {
 function render_progress() {
 
   render_progress_units_by_chapters(
+    state_io.state.chapters,
     state_io.state.units,
     state_io.state.users_units
   );
