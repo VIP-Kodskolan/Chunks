@@ -110,7 +110,7 @@ function fillNotes() {
         let noteText = document.createElement("p");
 
         noteDiv.classList.add("note");
-        chunkLink.href = `http://localhost:8888/?course=${chapter.course_id}&unit=${note.unit_id}`;
+        chunkLink.href = `https://maumt.se/chunks/?course=${chapter.course_id}&unit=${note.unit_id}`;
         chunkLink.textContent = `${chapter.name} chunk:${note.unit_id}`;
         noteText.textContent = note.notes;
 
