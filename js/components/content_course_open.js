@@ -67,6 +67,7 @@ function render({ response, params }) {
       <h2>(${course.code})</h2>
       <h2>(${course.semester})</h2>
       <div class="canvas_link">${canvas_link_html}</div>
+      <button id="course_notes_button">Notes</button>
     </div>
     <div class="control teacher">
       <div class="flexer">
@@ -76,9 +77,18 @@ function render({ response, params }) {
     </div>
   `;
 
+  
   // FILL PROGRESS
   render_progress();
 
+  //TOGGLE NOTES
+  dom.querySelector("#course_notes_button").addEventListener("click", toggle_notes);
+
+  function toggle_notes(){
+    SubPub.publish({
+      event: "toggle::notes"
+    })
+  }
   // EVENT: DELETE
   dom.querySelector(".button_delete").addEventListener("click", delete_course);
   function delete_course() {

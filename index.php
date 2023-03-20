@@ -100,6 +100,7 @@ function links_to_css_files () {
                     <div id="content_users_control"></div>
                     <div id="content_users_list"></div>
                 </div>
+                <div id="notes_div"></div>
             </div>
             <div id="content_footer"></div>
         </div>
