@@ -20,17 +20,14 @@ export default {}
 })();
 
 function render( data ) {
-    console.log("render", data );
-    const { response } = data
-    console.log("render", response );
-    const header = document.querySelector("#content_user");
+    let { response } = data
+    let header = document.querySelector("#content_user");
 
     header.querySelectorAll("div").forEach(div => {
         if (div.id === "containerSettings") { 
             div.remove();
         }
-    })
-
+    });
 
     let container = document.createElement("div");
     container.id = "containerSettings";
@@ -39,102 +36,99 @@ function render( data ) {
     let settingsBtn = document.createElement("button");
     settingsBtn.innerText = "Settings";
 
-    let settingsDiv = document.createElement("form");
-    settingsDiv.classList.add("settingsDiv");
-    container.append(settingsBtn, settingsDiv);
+    let settingsForm = document.createElement("form");
+    settingsForm.classList.add("settingsDiv");
+    container.append(settingsBtn, settingsForm);
 
     settingsBtn.addEventListener("click", settings);
 
-    settingsDiv.innerHTML = `
+    settingsForm.innerHTML = `
         <div>
             <label> Old password </label>
             <input type="password" id="old_password" placeholder="Old password">
+            <div class="pwErrorOld"> </div>
         </div>
         <div>
             <label> New password </label>
             <input type="password" id="new_password" placeholder="New password">
+            <div class="pwErrorNew"> </div>
         </div>
         <div> 
             <a class="cancelSet"> Cancel </a>
             <button class="changeSet"> Change </button>
         </div>
-        `
-
+    `
     change_password(response);
 }
 
 function settings () {
     const container = document.querySelector("#containerSettings");
-    const settingsDiv = document.querySelector("#containerSettings > form");
+    const settingsForm = document.querySelector("#containerSettings > form");
 
     document.querySelector("#old_password").value = "";
     document.querySelector("#new_password").value = "";
 
     container.classList.toggle("expanded");
-    container.classList.contains("expanded")? settingsDiv.style.height = "125px" : settingsDiv.style.height = "0px";
+    container.classList.contains("expanded") ? settingsForm.style.height = "200px" : settingsForm.style.height = "0px";
 }  
 
 function change_password( response ) { 
-
+    
     document.querySelector(".cancelSet").addEventListener("click", (e) => { 
         e.preventDefault();
-        settings()
+        settings();
     });
     
-    console.log("change_password response", response );
-    const data = response.user ? response.user : response.element;
-    console.log("change_password data", data);
+    const user = response.user ? response.user : response.element;
+    
+    const params = {
+        user_id: user.user_id,
+        kind: "user", 
+        element: user,
+        element_id: user.user_id,
+        updated_fields: []
+    }
 
     document.querySelector(".changeSet").addEventListener("click", (e) => { 
         e.preventDefault();
+        
         let old_password = document.querySelector("#old_password");
         let new_password = document.querySelector("#new_password");
 
         let oldPw, newPw;
 
-        const params = {
-            user_id: data.user_id,
-            kind: "user", 
-            element: data,
-            element_id: data.user_id,
-            updated_fields: []
-        }
+        old_password.value === "" ? document.querySelector(".pwErrorOld").classList.add("error") : document.querySelector(".pwErrorOld").classList.remove("error");
+        old_password.value === "" ? document.querySelector(".pwErrorOld").textContent = " The old password is not enterd" : document.querySelector(".pwErrorOld").textContent = "";
+        
+        new_password.value === "" ? document.querySelector(".pwErrorNew").classList.add("error") : document.querySelector(".pwErrorNew").classList.remove("error");
+        new_password.value === "" ? document.querySelector(".pwErrorNew").textContent = " There is no new password enterd" : document.querySelector(".pwErrorNew").textContent = "";
 
-        console.log("change_password params", params);
-        if ( old_password.value == "" || new_password.value == "" ) { 
-
-            old_password.value === "" ? old_password.style.borderBottom = " 1px solid red" : old_password.style.borderBottom = "";
-            new_password.value === "" ? new_password.style.borderBottom = " 1px solid red" : new_password.style.borderBottom = "";
-            return; 
-
-        } else {
-
+        if ( old_password.value !== "" && new_password.value !== "" ) { 
             oldPw = old_password.value;
             newPw = new_password.value;
-
         }
 
-        if ( oldPw !== data.user_password ) {
-
-            console.log("Old password is wrong");
-
+        if ( oldPw !== user.user_password ) {
+            document.querySelector(".pwErrorOld").textContent = " The old password is incorrect";
         } else {
+
+            document.querySelector(".pwErrorOld").textContent = " Change the password ";
 
             params.updated_fields.push({
                 field: "user_password",
                 value: newPw,
-                is_text: "text" ? true : false
+                is_text: true 
             })
 
-            // can_add_courses: "0" need to be boolean changes in state_io response 
-            // user_start_year: "21" needs to be a number changes in state_io response 
+            settings();
 
-            console.log("change_password params2", {params});
-            params.updated_fields.length && SubPub.publish({
-                event: `db::patch::user::request`,
-                detail: { params }
-            });
-
+            setTimeout(() => {
+                SubPub.publish({
+                    event: `db::patch::user::request`,
+                    detail: { params }
+                });
+            }, 500)
+            
         }
     });
 }

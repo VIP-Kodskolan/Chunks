@@ -78,10 +78,12 @@ export default {
     {
       events: ["db::patch::user::received"],
       middleware: (response, params) => {
-        console.log("state params", params);
-        console.log("state response", response);
-        const index = State.users.findIndex(u => u.user_id === response.element.user_id);
-        State.users.splice(index, 1, response.element);
+
+        if ( !State.user ) {
+          const index = State.users.findIndex(u => u.user_id === response.element.user_id);
+          State.users.splice(index, 1, response.element);
+        } 
+
       }
     },
 

@@ -13,6 +13,9 @@ export default {}
 ;(() => {
 
   function on_response ({ response, parsed_event, params  }) {
+
+    
+    console.log("DB.JS on_response", { response, params }, `${parsed_event.type}::${parsed_event.name}::${parsed_event.action}::received`);
     SubPub.publish({
       event: parsed_event.type + "::" + parsed_event.name + "::" + parsed_event.action + "::received",
       detail: { response, params },
@@ -22,6 +25,7 @@ export default {}
   function credentials_encode(token, id) {
     return encode_string(token) + encode_string(id);
   }
+  
   function encode_string(string) {
     let _string = "";
     for (let i = 0; i < string.length; i++) {
@@ -100,10 +104,12 @@ export default {}
             credentials: credentials_encode (state_io.state.user.user_token, state_io.state.user.user_id),
             ...params,
           };
-          // console.log(params);
+        
+        console.log("DB.JS params", params)
         }
       
 
+        console.log("DB.JS switch", parsed_event.name)
         switch (parsed_event.name) {
 
           case "get":
@@ -149,7 +155,9 @@ export default {}
               on_response({ response: null, parsed_event, params });
             } else {
               _patch({ body: { action, params }})
-                .then( response => on_response({ response, parsed_event, params }));
+                .then( response => {
+                  on_response({ response, parsed_event, params })
+              });
             }
 
             break;
@@ -214,6 +222,8 @@ async function _delete (data) {
 }
 async function _patch (data) {
 
+  console.log("DB.JS _patch parameters", data)
+  
   let { body, url, headers } = data;
   headers = headers || HEADERS;
   url = url || API_URL;
@@ -226,11 +236,13 @@ async function _patch (data) {
       body: JSON.stringify(body)
   });
 
+  console.log("DB.JS _patch await _fetch", { request, headers, ...data })
   return await _fetch({ request, headers, ...data });
 
 }
 async function _fetch (data) {
 
+  console.log("DB.JS _fetch prameters", data)
   let { request, body } = data;
   let middle;
 
@@ -238,6 +250,7 @@ async function _fetch (data) {
 
     // console.log("Requesting", body.action );
     const _response = await fetch(request);
+    console.log("DB.JS _fetch response", _response.status)
     middle = _response.headers.get("Content-Type").includes("text") ? "text" : "json";
     let data = await _response[middle]();
   
@@ -249,6 +262,7 @@ async function _fetch (data) {
   
     // SHOW_OBJECT_RESPONSE && console.log(data);
 
+    console.log("DB.JS _fetch recourse", data)
     return data;
 
   } catch (e) {

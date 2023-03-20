@@ -26,6 +26,10 @@ const id_prefix_item = "user_list_id_";
 
 function render ({ element, container_dom }) {
 
+  if (container_dom === undefined) { 
+    return;
+  }
+
   if (!container_dom) {
     container_dom = document.getElementById(id_prefix_item + element.user_id);
   } else {
