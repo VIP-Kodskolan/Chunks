@@ -1,0 +1,108 @@
+.darkMode_I {
+    background-color: #121212;
+}
+
+#content.darkMode_II > * {
+    background-color: #292929;
+    color: #dcdcdc;
+}
+
+.assignments.darkMode_III li {
+    background-image: url(../media/assignment.png);
+    filter: invert(60%) sepia(66%) saturate(1994%) hue-rotate(218deg) brightness(99%) contrast(101%);
+}
+
+/* .assignment.darkMode_III li.status_complete {
+    background-color: #bb86fc;
+} */
+
+.chapter_list_item .progress > ul > li.quiz.darkMode_IV{
+    border-color: rgb(255, 156, 42);
+}
+
+.expand_compress.darkMode_V img {
+    filter: invert(56%) sepia(0%) saturate(2%) hue-rotate(64deg) brightness(97%) contrast(93%);
+}
+
+.expand_compress.darkMode_V {
+    border-color: #8a8a8a;
+}
+
+.chapter_list_item .progress > ul >li.status_complete.darkMode_VI{
+    background-color: #bb86fc;
+}
+
+.progress.darkMode_VII ul > li.status_default {
+    border-color: #6f6f6f;
+}
+
+.progress.darkMode_VII ul > li.status_complete {
+    border-color: #bb86fc;
+}
+
+.progress.darkMode_VII ul > li.status_complete.status_question,
+.progress.darkMode_VII ul > li.status_default.status_question {
+    background-color: rgb(255, 62, 204);
+    border-color: rgb(255, 62, 204);
+}
+
+.chapter_list_item .assignments.darkMode_III > ul > li.status_complete{
+    filter: invert(100%) sepia(0%) saturate(644%) hue-rotate(177deg) brightness(92%) contrast(88%);
+    background-color: #6a5d79;
+}
+
+.ready.darkMode_VIII {
+    background-color: #3c3c3c;
+}
+
+.section_item.unlocked.darkMode_IX {
+    background-color: #474747;
+  }
+
+  .section_item.unlocked.darkMode_IX ul > * {
+    border-color: #8a8a8a;
+    color: #dcdcdc;
+}
+
+.darkMode_IX .darkMode_VI div.icon {
+    background-color: transparent;
+    border-color: #d1acff;;
+}
+
+.darkMode_IX .darkMode_VI.status_complete div.icon,
+.darkMode_IX .darkMode_VI.status_complete div.quiz_progress .answered_correct {
+    background-color: #d1acff;
+    border-color: #d1acff;
+}
+
+.darkMode_IX .darkMode_VI div.quiz_progress .answered_no,
+.darkMode_X.unit_item > .content .answered_no {
+    border-color: #6f6f6f
+}
+
+.darkMode_IX .darkMode_VI.unit_item > .content::after {
+    filter: invert(81%) sepia(63%) saturate(3772%) hue-rotate(338deg) brightness(102%) contrast(101%);
+}
+
+.darkMode_X.unit_item > .content .icon {
+    background-color: transparent;
+    filter: invert(60%) sepia(66%) saturate(1994%) hue-rotate(218deg) brightness(99%) contrast(101%);
+    border: 1px solid #d1acff;
+}
+
+.chapter_list_item.expanded.darkMode_XI {
+    background-color: #3c3c3c;
+}
+
+#modal.darkMode_XII {
+    background-color: #3c3c3c;
+}
+
+#modal.darkMode_XII .content {
+    background-color: #3c3c3c;
+    color: #dcdcdc;
+}
+
+#modal.darkMode_XII .content .options .option {
+    border-color: #dcdcdc;
+}
