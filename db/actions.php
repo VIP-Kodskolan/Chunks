@@ -114,6 +114,7 @@ function PATCH ($params, $pdo) {
     case "unit": $kind_parent = "section"; break;
     default: $kind_parent = "";
   }
+  
   if ($kind_parent) $parent_id = $element[$kind_parent."_id"];
 
   // UPDATE FIELDS

@@ -46,12 +46,12 @@ function render( data ) {
         <div>
             <label> Old password </label>
             <input type="password" id="old_password" placeholder="Old password">
-            <div class="pwErrorOld"> </div>
+            <div class="pwOld"> </div>
         </div>
         <div>
             <label> New password </label>
             <input type="password" id="new_password" placeholder="New password">
-            <div class="pwErrorNew"> </div>
+            <div class="pwNew"> </div>
         </div>
         <div> 
             <a class="cancelSet"> Cancel </a>
@@ -81,54 +81,51 @@ function change_password( response ) {
     
     const user = response.user ? response.user : response.element;
     
-    const params = {
-        user_id: user.user_id,
-        kind: "user", 
-        element: user,
-        element_id: user.user_id,
-        updated_fields: []
-    }
-
     document.querySelector(".changeSet").addEventListener("click", (e) => { 
         e.preventDefault();
         
         let old_password = document.querySelector("#old_password");
         let new_password = document.querySelector("#new_password");
 
-        let oldPw, newPw;
-
-        old_password.value === "" ? document.querySelector(".pwErrorOld").classList.add("error") : document.querySelector(".pwErrorOld").classList.remove("error");
-        old_password.value === "" ? document.querySelector(".pwErrorOld").textContent = " The old password is not enterd" : document.querySelector(".pwErrorOld").textContent = "";
+        old_password.value === "" ? document.querySelector(".pwOld").classList.add("error") : document.querySelector(".pwOld").classList.remove("error");
+        old_password.value === "" ? document.querySelector(".pwOld").textContent = "Old password was not enterd" : document.querySelector(".pwOld").textContent = "";
         
-        new_password.value === "" ? document.querySelector(".pwErrorNew").classList.add("error") : document.querySelector(".pwErrorNew").classList.remove("error");
-        new_password.value === "" ? document.querySelector(".pwErrorNew").textContent = " There is no new password enterd" : document.querySelector(".pwErrorNew").textContent = "";
+        new_password.value === "" ? document.querySelector(".pwNew").classList.add("error") : document.querySelector(".pwNew").classList.remove("error");
+        new_password.value === "" ? document.querySelector(".pwNew").textContent = "There is no new password" : document.querySelector(".pwNew").textContent = "";
 
         if ( old_password.value !== "" && new_password.value !== "" ) { 
-            oldPw = old_password.value;
-            newPw = new_password.value;
-        }
-
-        if ( oldPw !== user.user_password ) {
-            document.querySelector(".pwErrorOld").textContent = " The old password is incorrect";
-        } else {
-
-            document.querySelector(".pwErrorOld").textContent = " Change the password ";
-
-            params.updated_fields.push({
-                field: "user_password",
-                value: newPw,
-                is_text: true 
-            })
-
-            settings();
-
-            setTimeout(() => {
-                SubPub.publish({
-                    event: `db::patch::user::request`,
-                    detail: { params }
-                });
-            }, 500)
             
+            if ( old_password.value !== user.user_password ) {
+
+                document.querySelector(".pwOld").textContent = "The old password is incorrect";
+
+            } else {
+    
+                document.querySelector(".pwOld").textContent = " Change the password ";
+    
+                const params = {
+                    kind: "user", 
+                    element_id: user.user_id,
+                    updated_fields: [
+                        {
+                            field: "user_password",
+                            value: new_password.value,
+                            is_text: true 
+                        }
+                    ]
+                }
+
+                settings();
+    
+                setTimeout(() => {
+                    SubPub.publish({
+                        event: `db::patch::user::request`,
+                        detail: { params }
+                    });
+                }, 500)
+                
+            }
         }
+
     });
 }
