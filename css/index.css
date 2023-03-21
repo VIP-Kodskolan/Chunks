@@ -42,9 +42,6 @@ body {
   align-items: center;
 }
 
-#content_main {
-}
-
 #content_main > div {
   display: flex;
   flex-direction: column;
@@ -60,4 +57,19 @@ body {
 
   border-bottom-left-radius: var(--general_border_radius);
   border-bottom-right-radius: var(--general_border_radius);
+}
+
+#mode{
+  height: 50px;
+  width: 50px;
+  right: 5px;
+  background-color: var(--color_back_1);
+  border: 10px solid var(--color_back_1);
+}
+
+#modeswitch{
+  height: 100%;
+  width: 100%;
+  background-size: contain;
+
 }

@@ -23,8 +23,7 @@
   src: url("../media/fonts/Share_Tech_Mono/ShareTechMono-Regular.ttf");
 }
 
-:root {
-
+:root{
   --teacher_display: none;
 
   --unit_height: 7rem;
@@ -56,19 +55,9 @@
   --t_fast_transition: .5s;
 
   --color_accent_1_overlay: rgba(174,174,174,.5);
-  --color_overlay_dark: rgba(30,30,30,.8);
-  --color_overlay_light: rgba(230,230,230,.8);
-  
-  --color_back_0: #a8c2c6; /*#9cacae;*/
-  --color_back_1: #d4d5d9; /*#c5c7cc; */
-  --color_back_2: #ddd; /* #acb7b6; */
-  --color_back_2B: #eee; /* #acb7b6; */
-  --color_accent_0: #838380;
-  --color_accent_1: #434a4a;
-  --color_accent_2: #303839;
+
   --color_accent_question: #b68904;
   --color_accent_completed_unit: #bece99; /* #97a871; */ /* #7a963b; */
-  --color_accent_completed_general: #73a600; /* #97a871; /* #7a963b; */
   --color_accent_incorrect: #dd99b4; /* #901e4a; */
   --color_accent_quiz: #11aab5;
   --color_accent_correct: #334208;
@@ -81,6 +70,36 @@
   --z_index_modal: 40;
   --z_index_question_modal: 41;
   --z_index_editor: 60;
+}
+
+.light-theme{
+  
+  --color_overlay_dark: rgba(30,30,30,.8);
+  --color_overlay_light: rgba(230,230,230,.8);
+  
+  --color_back_0: #bcc5c6; /*#9cacae;*/
+  --color_back_1: #d4d5d9; /*#c5c7cc; */
+  --color_back_2: #ddd; /* #acb7b6; */
+  --color_back_2B: #eee; /* #acb7b6; */
+  --color_accent_0: #838380;
+  --color_accent_1: #434a4a;
+  --color_accent_2: #303839;
+  
+  --color_accent_completed_general: #73a600; /* #97a871; /* #7a963b; */
+}
+
+.dark-theme{
+  --color_overlay_light: rgba(156, 156, 156, 0.8);
+  --color_accent_1_overlay:rgba(29, 29, 29, 0.5);
+
+  --color_back_0: #303839;
+  --color_back_1: #434a4a;
+  --color_back_2: #69686b;
+  --color_accent_0: #8a8b8d;
+  --color_accent_1: #a2a2a2;
+  --color_accent_2: black;
+  
+  --color_accent_completed_general:#446200;
 }
 
 * {

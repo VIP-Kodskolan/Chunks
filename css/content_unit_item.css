@@ -84,7 +84,7 @@
 .unit_item > .content .icon {
   border-radius: 50%;
   padding: calc(2 * var(--content_padding));
-  background-color: rgb(230, 230, 230);
+  background-color: var(--color_back_0);
 
   margin-top: var(--icon_progress_margin_top);
 

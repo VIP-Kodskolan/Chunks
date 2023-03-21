@@ -66,8 +66,22 @@ function links_to_css_files () {
 
     return $links;
 }
+//tillsätter en cookie om theme (light/dark)
+//om den inte redan finns
+$themeClass = '';
+if (!empty($_COOKIE['theme'])) {
+    //echo $_COOKIE['theme'];
+    if ($_COOKIE['theme'] == 'dark') {
+        $themeClass = 'dark-theme';
+    } else if ($_COOKIE['theme'] == 'light') {
+        $themeClass = 'light-theme';
+    }  
+}
 
 ?>
+
+<script>console.log("theme: ")</script>
+<script>console.log("<?php echo $_COOKIE['theme']; ?>")</script>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -78,7 +92,7 @@ function links_to_css_files () {
 
     <?php echo links_to_css_files(); ?>
 </head>
-<body id="body">
+<body id="body" class="<?php echo $themeClass; ?>">
     <!-- body ID for specificity -->
     
     <div id="wrapper">
@@ -90,6 +104,9 @@ function links_to_css_files () {
                     <div id="users_admin"></div>
                 </div>
                 <div id="content_user"></div>
+                <div id="mode">
+                    <div id="modeswitch"><?php // echo $themeBtn; ?></div>
+                </div>
             </div>
             <div id="content_main">
                 <div id="content_course">
