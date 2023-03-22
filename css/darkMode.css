@@ -1,3 +1,59 @@
+/* === DARK MODE BTN === */
+
+#theme {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    transition: background 0.2s linear;
+    position: relative;
+    box-sizing: border-box;
+  }
+
+.viewMode {
+    box-sizing: border-box;
+    opacity: 0;
+    /* position: absolute; */
+  }
+  
+  .label {
+    width: 30px;
+    height: 15px;
+    background-color:#111;
+    display: flex;
+    border-radius:50px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px;
+    position: relative;
+    transform: scale(1.5);
+  }
+  
+  .ball {
+    width: 11px;
+    height: 11px;
+    background-color: #dcdcdc;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    border-radius: 50%;
+    transition: transform 0.2s linear;
+  }
+  
+  /*  target the elemenent after the label*/
+  .viewMode:checked + .label .ball {
+    transform: translateX(15px);
+  }
+  
+ .darkMode_lbl {
+    background-color: #dcdcdc
+ }
+ .darkMode_ball {
+    background-color:#111;
+ }
+
+ /* === DARK MODE CONTENT === */
+
 .darkMode_I {
     background-color: #121212;
 }
@@ -12,11 +68,7 @@
     filter: invert(60%) sepia(66%) saturate(1994%) hue-rotate(218deg) brightness(99%) contrast(101%);
 }
 
-/* .assignment.darkMode_III li.status_complete {
-    background-color: #bb86fc;
-} */
-
-.chapter_list_item .progress > ul > li.quiz.darkMode_IV{
+.chapter_list_item .progress > ul > li.stop_quiz.darkMode_IV{
     border-color: rgb(255, 156, 42);
 }
 
@@ -44,6 +96,11 @@
 .progress.darkMode_VII ul > li.status_default.status_question {
     background-color: rgb(255, 62, 204);
     border-color: rgb(255, 62, 204);
+}
+
+.chapter_list_item ul.section_list > .section_item .unit_item.darkMode_VI .question_mark,
+#modal.darkMode_XII .checks.status_question .question_mark {
+    background-color: rgb(255, 62, 204);
 }
 
 .chapter_list_item .assignments.darkMode_III > ul > li.status_complete{
@@ -80,7 +137,7 @@
     border-color: #6f6f6f
 }
 
-.darkMode_IX .darkMode_VI.unit_item > .content::after {
+.darkMode_IX .unit_item > .content::after {
     filter: invert(81%) sepia(63%) saturate(3772%) hue-rotate(338deg) brightness(102%) contrast(101%);
 }
 
@@ -105,4 +162,33 @@
 
 #modal.darkMode_XII .content .options .option {
     border-color: #dcdcdc;
+}
+
+#modal.darkMode_XII .content textarea {
+    background-color:#292929;
+    color: #dcdcdc;
+}
+
+#modal.darkMode_XII .content .checks.status_complete > .content, 
+#modal.darkMode_XII .content .checks.status_complete {
+    background-color: #d1acff;
+}
+
+#modal.darkMode_XII .content .checks.status_complete,
+#modal.darkMode_XII .content .checks {
+    border-color: #d1acff;
+}
+
+#modal.darkMode_XII .checks:not(.checks.status_complete) * {
+    color: #dcdcdc;
+}
+
+#modal.darkMode_XII .content #quiz_navigation .question_navigation.answered_correct .number .content,
+#modal.darkMode_XII .content #quiz_page .option.correct .content {
+    background-color: #d1acff;
+    color: #3c3c3c;
+}
+
+#modal.darkMode_XII .content #quiz_navigation .question_navigation .number {
+    border-color: #dcdcdc7b;
 }

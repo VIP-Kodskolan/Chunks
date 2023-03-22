@@ -46,28 +46,34 @@ function render() {
   const button_expand_course_selector_dom = dom.querySelector(".expand_course_selector");
 
   // NOTE: dark mode experiment begins
+
   dom.innerHTML += `
-    <div id="theme">
-      <button class="viewMode">Light mode</button>
-    </div>
+  <div id="theme">
+    <input type="checkbox" class="viewMode" id="viewMode">
+      <label for="viewMode" class="label">
+        <i class="fas fa-moon"></i>
+        <i class='fas fa-sun'></i>
+        <div class='ball'>
+      </label>
+  </div>
   `;
 
   const toggleBtn = dom.querySelector('.viewMode');
   const theme = document.getElementById("theme");
+
   let darkMode = localStorage.getItem("dark-mode");
+  let toggleState = localStorage.getItem("toggled");
 
   const enableDarkMode = () => {
     theme.classList.add("dark-mode-theme");
     toggleBtn.classList.remove("dark-mode-toggle");
     localStorage.setItem("dark-mode", "enabled");
-    darkModeColorTheme();
   };
 
   const disableDarkMode = () => {
     theme.classList.remove("dark-mode-theme");
     toggleBtn.classList.add("dark-mode-toggle");
     localStorage.setItem("dark-mode", "disabled");
-    lightModeColorTheme();
   };
 
   const darkModeColorTheme = () => {
@@ -114,29 +120,59 @@ function render() {
         }
       });
     });
+    document.querySelectorAll('.chapter_list_item').forEach(exp => exp.classList.remove('darkMode_XI'));
+    document.querySelectorAll('.unit_item').forEach(unItm => unItm.classList.remove('darkMode_X'));
+    document.querySelector('#modal').classList.remove('darkMode_XII');
+    document.querySelectorAll('.section_item').forEach(secItm => secItm.classList.remove('darkMode_IX'));
   };
 
   if (darkMode === "enabled") {
     enableDarkMode(); // set state of darkMode on page load
+    darkModeColorTheme();
+    document.querySelector('.ball').classList.add('darkMode_ball');
+    document.querySelector('.label').classList.add('darkMode_lbl');
+  } else {
+    disableDarkMode();
+    lightModeColorTheme();
+    document.querySelector('.ball').classList.remove('darkMode_ball');
+    document.querySelector('.label').classList.remove('darkMode_lbl');
   }
 
-  toggleBtn.addEventListener("click", (e) => {
-    darkMode = localStorage.getItem("dark-mode"); // update darkMode when clicked
-    let currentVal = toggleBtn.innerText;
-    let darkModeTxt = "Dark Mode";
-    let lightModeTxt = "Light Mode";
-
-    if (darkMode === "disabled") {
-      enableDarkMode();
-      currentVal = darkModeTxt;
-    } else {
+  toggleBtn.addEventListener("change", (e) => {
+    if (!toggleBtn.checked) {
+      localStorage.setItem("toggled", 'false');
       disableDarkMode();
-      currentVal = lightModeTxt;
-
+      lightModeColorTheme();
+      document.querySelector('.ball').classList.remove('darkMode_ball');
+      document.querySelector('.label').classList.remove('darkMode_lbl');
+    } else {
+      localStorage.setItem("toggled", 'true');
+      enableDarkMode();
+      darkModeColorTheme();
+      document.querySelector('.ball').classList.add('darkMode_ball');
+      document.querySelector('.label').classList.add('darkMode_lbl');
     }
-    console.log(localStorage);
-    toggleBtn.innerText = currentVal;
+    darkMode = localStorage.getItem("dark-mode"); // update darkMode when clicked
+
+    // if (darkMode == "enabled") {
+    //   disableDarkMode();
+    //   lightModeColorTheme();
+    //   document.querySelector('.ball').classList.remove('darkMode_ball');
+    //   document.querySelector('.label').classList.remove('darkMode_lbl');
+    // } else {
+    //   enableDarkMode();
+    //   darkModeColorTheme();
+    //   document.querySelector('.ball').classList.add('darkMode_ball');
+    //   document.querySelector('.label').classList.add('darkMode_lbl');
+
+    // }
   });
+
+  if (toggleState == "true") {
+    toggleBtn.checked == true;
+  } else {
+    toggleBtn.checked == false;
+  }
 
   // NOTE: dark mode experiment ends
 
