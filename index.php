@@ -76,6 +76,8 @@ if (!empty($_COOKIE['theme'])) {
     } else if ($_COOKIE['theme'] == 'light') {
         $themeClass = 'light-theme';
     }  
+} else {
+    $themeClass = 'light-theme'; //default
 }
 
 ?>
@@ -105,7 +107,7 @@ if (!empty($_COOKIE['theme'])) {
                 </div>
                 <div id="content_user"></div>
                 <div id="mode">
-                    <div id="modeswitch"><?php // echo $themeBtn; ?></div>
+                    <div id="modeswitch"></div>
                 </div>
             </div>
             <div id="content_main">

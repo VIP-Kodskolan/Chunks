@@ -42,6 +42,9 @@ function render () {
     <button class="expand_course_selector">Choose a course</button>
     <ul></ul>
   `;
+
+  //dom.innerHTML += "<div>hej</div>";
+
   const list_dom = dom.querySelector("ul");
   const button_expand_course_selector_dom = dom.querySelector(".expand_course_selector");
 

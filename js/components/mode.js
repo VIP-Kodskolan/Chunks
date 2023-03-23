@@ -9,57 +9,73 @@ export default { render };
       listener: render,
     });
 
+    //ur funktion
+    //SubPub.subscribe({
+    //  event: "db::patch::user_mode::done",
+    //  listener: ({response, params}) => {
+    //    //hämta user_mode från state
+    //  }
+    //})
+
   })();
 
-//knapp för light eller dark mode
+//renderar light eller dark mode
 function render (){
-
-  //om jag använder dbn får jag dra in state io o sånt här
-  //och ändra knappen efterhand 
-    // const mode_dom = document.querySelector("#mode");
-// 
-    // mode_dom.innerHTML = `
-    // 
-    // `;
-
-}
-
+  
   const btn = document.querySelector("#modeswitch");
-  console.log(btn);
 
-//kollar av vilken preferens användaren har
-if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-  var theme = "dark"
-  changeTheme(document.body, "dark", btn);
-} else {
-  var theme = "light"
-  changeTheme(document.body, "light", btn);
+  //kollar av vilken preferens användaren har
+  checkPreferScheme(btn);
+
+  //om inte användaren har en systempreferens
+  //får den light
+  getBodyTheme(btn);
+
+  //ändrar användarens preferens manuellt
+  //och uppdaterar cookienFF
+  btn.addEventListener("click", () => {
+    if(document.body.classList.contains("dark-theme")){
+      //vill ha light
+      var theme = "light"
+      changeTheme(document.body, "light", btn);
+    }else if(document.body.classList.contains("light-theme")){
+      //vill ha dark
+      var theme = "dark"
+      changeTheme(document.body, "dark", btn);
+    }
+    document.cookie = "theme=" + theme;
+  })
+
 }
-document.cookie = "theme=" + theme;
 
-
-//ändrar användarens preferens manuellt
-//och uppdaterar cookienFF
-btn.addEventListener("click", () => {
-  console.log("klick");
-  if(document.body.classList.contains("dark-theme")){
-    console.log("villhalight");
-    //vill ha light
-    var theme = "light"
-    changeTheme(document.body, "light", btn);
-  }else if(document.body.classList.contains("light-theme")){
-    console.log("villhadark");
-    //vill ha dark
-    var theme = "dark"
-    changeTheme(document.body, "dark", btn);
-  }
-  document.cookie = "theme=" + theme;
-})
-
+//tar bort bodyns klass(er) och lägger till temat
 function changeTheme(element, theme, button){
   element.className="";
   element.classList.add(`${theme}-theme`);
   button.style.backgroundImage = `url("./media/${theme}.png")`;
+}
+
+function getBodyTheme(button){
+  let bodyEl = document.body.className;
+  let modeClass = bodyEl.replace(/-theme/g, '')
+
+  if (bodyEl === ''){
+    changeTheme(document.body, "light", button);
+  }else {
+    changeTheme(document.body, modeClass, button);
+  }
+  
+}
+
+function checkPreferScheme(button){
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      var theme = "dark"
+      changeTheme(document.body, "dark", button);
+    } else {
+      var theme = "light"
+      changeTheme(document.body, "light", button);
+    }
+    document.cookie = "theme=" + theme;
 }
 
 
