@@ -46,7 +46,7 @@ function close_editor() {
 
 function render({ element }) {
 
-  console.log("render", element)
+  // console.log("render", element)
 
   const dom = document.querySelector("#editor .content");
   const element_kind = state_io.Consts.unit_kinds.includes(element.kind) ? "unit" : element.kind;
@@ -141,7 +141,7 @@ function update(event) {
   const dom = document.querySelector("#editor .content");
   const { element_id, kind, element } = JSON.parse(dom.dataset.update_data);
 
-  console.log("updateEvent", element, element_id, kind)
+  // console.log("updateEvent", element, element_id, kind)
 
   const params = {
     user_id: state_io.state.user.user_id,
@@ -150,9 +150,6 @@ function update(event) {
     kind,
     updated_fields: []
   };
-
-  console.log("params", params)
-
 
   let updated_dependencies = null;
   dom.querySelectorAll(".editor_item:not(.editor_quiz)").forEach(editor_item_dom => {
@@ -224,7 +221,7 @@ function update(event) {
 
 function render_input_item({ element, container_dom, field, type }) {
 
-  console.log("render_input_item", element, container_dom, field, type)
+  // console.log("render_input_item", element, container_dom, field, type)
 
   const kind = state_io.Consts.unit_kinds.includes(element.kind) ? "unit" : element.kind;
   container_dom.dataset.update_data = JSON.stringify({ element, field, kind, type });
@@ -289,6 +286,21 @@ function render_input_item({ element, container_dom, field, type }) {
 
 }
 
+
+
+
+function render_password({ element, container_dom }) {
+  console.log("render_password", element, container_dom)
+  render_input_item({ element, container_dom, field: "user_password", type: "text" });
+}
+
+
+
+
+
+
+
+
 function render_name({ element, container_dom }) {
   render_input_item({ element, container_dom, field: "name", type: "text" });
 }
@@ -299,11 +311,6 @@ function render_week_start({ element, container_dom }) {
 
 function render_week_count({ element, container_dom }) {
   render_input_item({ element, container_dom, field: "week_count", type: "number" });
-}
-
-function render_password({ element, container_dom }) {
-  console.log("render_password", element, container_dom)
-  render_input_item({ element, container_dom, field: "user_password", type: "text" });
 }
 
 function render_parent_chapter({ element, container_dom }) {

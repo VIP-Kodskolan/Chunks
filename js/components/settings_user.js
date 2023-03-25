@@ -12,12 +12,24 @@ export default {}
         listener: render,
     });
 
+    // SubPub.subscribe({
+    //     event: "db::patch::user_password::done",
+    //     listener: render
+    // });
+
+    // SubPub.subscribe({
+    //     event: "password_error",
+    //     listener: render_error
+    // });
+
     SubPub.subscribe({
-        event: "db::patch::user::done",
-        listener: render
-    });
+        event: "db::patch::user_password::done",
+        listener: render_password_confirmd
+    })
 
 })();
+
+// db::patch::user works 
 
 function render( data ) {
     let { response } = data
@@ -83,49 +95,35 @@ function change_password( response ) {
     
     document.querySelector(".changeSet").addEventListener("click", (e) => { 
         e.preventDefault();
-        
-        let old_password = document.querySelector("#old_password");
+
         let new_password = document.querySelector("#new_password");
+        let old_password = document.querySelector("#old_password");
 
-        old_password.value === "" ? document.querySelector(".pwOld").classList.add("error") : document.querySelector(".pwOld").classList.remove("error");
-        old_password.value === "" ? document.querySelector(".pwOld").textContent = "Old password was not enterd" : document.querySelector(".pwOld").textContent = "";
-        
-        new_password.value === "" ? document.querySelector(".pwNew").classList.add("error") : document.querySelector(".pwNew").classList.remove("error");
-        new_password.value === "" ? document.querySelector(".pwNew").textContent = "There is no new password" : document.querySelector(".pwNew").textContent = "";
-
-        if ( old_password.value !== "" && new_password.value !== "" ) { 
-            
-            if ( old_password.value !== user.user_password ) {
-
-                document.querySelector(".pwOld").textContent = "The old password is incorrect";
-
-            } else {
-    
-                document.querySelector(".pwOld").textContent = " Change the password ";
-    
-                const params = {
-                    kind: "user", 
-                    element_id: user.user_id,
-                    updated_fields: [
-                        {
-                            field: "user_password",
-                            value: new_password.value,
-                            is_text: true 
-                        }
-                    ]
+        const params = {
+            kind: "user_password", 
+            element_id: user.user_id,
+            old_password: old_password.value,
+            updated_fields: [
+                {
+                    field: "user_password",
+                    value: new_password.value,
+                    is_text: true
                 }
-
-                settings();
-    
-                setTimeout(() => {
-                    SubPub.publish({
-                        event: `db::patch::user::request`,
-                        detail: { params }
-                    });
-                }, 500)
-                
-            }
+            ]
         }
 
+        SubPub.publish({
+            event: `db::patch::user_password::request`,
+            detail: { params }
+        });
+        
     });
+}
+
+function render_password_confirmd ( ) { 
+    document.querySelector(".settingsDiv").style.backgroundColor = "#83d083";
+}
+
+function render_error (d) {
+    document.querySelector(".settingsDiv").style.backgroundColor = "red";
 }

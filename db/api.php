@@ -82,12 +82,8 @@ if ($method_action !== "GET_login") {
     $user_id = intval(credentials_decode(substr($credentials, $n_chars_token)));
 
     $user = _get_user($user_id, $pdo);
-    $is_teacher = $user["user_programme"] === "TCH";
 
-    // if ($method_action === "PATCH_users_units") {
-    //     echo " ($user_token)(".$user["user_token"].")($credentials) ";
-    //     var_dump($body);
-    // }
+    $is_teacher = $user["user_programme"] === "TCH";
 
     if ($user["user_token"] !== $user_token) {
         $response_function([
@@ -107,15 +103,15 @@ if ($method_action !== "GET_login") {
         }
 
         // 2) NON-TEACHERS CAN ONLY POST AND PATCH users_units and quiz_answers.
-        if ( ($method === "POST" || $method === "PATCH") && ($action !== "users_units" && $action !== "quiz_answer" && $action !== "user") ) {
+        if ( ($method === "POST" || $method === "PATCH") && ($action !== "users_units" && $action !== "quiz_answer" && $action !== "user_password") ) {
             $response_function([
                 "code" => 400,
                 "message" => "action not allowed"
             ]);    
         }
-        
+
         // 3) ONLY UPDATE YOUR OWN users_units and quiz_answers
-        if ($action === "users_units" && $action === "quiz_answer" &&  $action !== "user") {
+        if ($action === "users_units" && $action === "quiz_answer" &&  $action === "user_password") {
             $update_user_id = $params["user_id"];
             if ($user_id !== $update_user_id ) {
                 $response_function([
@@ -124,6 +120,37 @@ if ($method_action !== "GET_login") {
                 ]);    
             }
         }
+
+        // PASSWROD CANGE 
+        // if ($action === "user_password") {
+
+        //     $userCurrentPassword = $user["user_password"];
+        //     // $oldPasswordEnter = $params["old_password"];
+        //     // $updated_fields = $params["updated_fields"];
+        //     // $newPassword = $updated_fields["value"];
+
+        //     $response_function([
+        //         "code" => 340,
+        //         "data" => $userCurrentPassword 
+        //     ]);
+        //     if ($oldPasswordEnter === "") {
+        //     }
+            
+        //     if ($newPassword === "") {
+        //         $response_function([
+        //             "code" => 330,
+        //             "data" => $updated_fields 
+        //         ]);
+        //     }
+
+        //     if ($oldPasswordEnter !== $userCurrentPassword) { 
+        //         $response_function([
+        //             "code" => 300,
+        //             "data" => "old password does not match current password"
+        //         ]);
+        //     }
+
+        // }
 
         // NON-TEACHERS CANNOT GET USERS
         if ($method_action === "GET_users") {
@@ -181,6 +208,12 @@ if ($method !== "GET") {
 
 // EXECUTE ACTION
 if ($method_action) {
+    // if ($action === "user_password") {
+        // $response_function([
+        //     "code" => 200,
+        //     "message" => $params
+        // ]);   
+    // }
     $response_function($method_action($params, $pdo));    
 } else {
     $response_function([

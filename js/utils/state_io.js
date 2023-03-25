@@ -78,12 +78,23 @@ export default {
     {
       events: ["db::patch::user::received"],
       middleware: (response, params) => {
-
-        if ( !State.user ) {
+        // if ( !State.user ) {
           const index = State.users.findIndex(u => u.user_id === response.element.user_id);
           State.users.splice(index, 1, response.element);
-        } 
+        // } 
+      }
+    },
 
+    // PASSWORD
+    {
+      events: ["db::patch::user_password::received"],
+      middleware: (response, params) => {
+        if (response === null) {
+          SubPub.publish({
+            event: "password_error",
+            detail: response
+          }) 
+        }
       }
     },
 
@@ -306,13 +317,12 @@ export default {
     if (!Array.isArray(events)) {
       events = [events];
     }
-
+    
     events.forEach(event => {
 
       SubPub.subscribe({
         event,
         listener: ({ response, params }) => {
-          
           response = response?.payload?.data;
           middleware && middleware(response, params);
 

@@ -14,8 +14,7 @@ export default {}
 
   function on_response ({ response, parsed_event, params  }) {
 
-    
-    console.log("DB.JS on_response", { response, params }, `${parsed_event.type}::${parsed_event.name}::${parsed_event.action}::received`);
+    // console.log("DB.JS on_response", { response, params }, `${parsed_event.type}::${parsed_event.name}::${parsed_event.action}::received`);
     SubPub.publish({
       event: parsed_event.type + "::" + parsed_event.name + "::" + parsed_event.action + "::received",
       detail: { response, params },
@@ -45,6 +44,9 @@ export default {}
     "db::delete::user::request",
     "db::patch::user::request",
     "db::post::user::request",
+
+    ///
+    "db::patch::user_password::request",
 
     // USERS_UNITS
     "db::patch::users_units::request",
@@ -105,11 +107,11 @@ export default {}
             ...params,
           };
         
-        console.log("DB.JS params", params)
+        // console.log("DB.JS params", params)
         }
       
 
-        console.log("DB.JS switch", parsed_event.name)
+        // console.log("DB.JS switch", parsed_event.name)
         switch (parsed_event.name) {
 
           case "get":
@@ -221,8 +223,7 @@ async function _delete (data) {
 
 }
 async function _patch (data) {
-
-  console.log("DB.JS _patch parameters", data)
+  // console.log("DB.JS _patch parameters", data)
   
   let { body, url, headers } = data;
   headers = headers || HEADERS;
@@ -236,13 +237,13 @@ async function _patch (data) {
       body: JSON.stringify(body)
   });
 
-  console.log("DB.JS _patch await _fetch", { request, headers, ...data })
+  // console.log("DB.JS _patch await _fetch", { request, headers, ...data })
   return await _fetch({ request, headers, ...data });
 
 }
 async function _fetch (data) {
 
-  console.log("DB.JS _fetch prameters", data)
+  // console.log("DB.JS _fetch prameters", data)
   let { request, body } = data;
   let middle;
 
@@ -267,7 +268,7 @@ async function _fetch (data) {
 
   } catch (e) {
     console.log(e);
-    kasta_error();
+    // kasta_error();
   }
 
 }

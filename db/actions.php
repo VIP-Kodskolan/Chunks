@@ -98,16 +98,23 @@ function GET_users ($params, $pdo) {
 function PATCH ($params, $pdo) {
 
   $user_id = $params["user_id"];
-
+  
   $element = $params["element"];
   $kind = $params["kind"];
   $element_id = $params["element_id"];
   $updated_fields = $params["updated_fields"];
-  $id_field_name = $kind."_id";
 
+  // here check ------------------------------------- 
+  if ($kind === "user_password") {
+    $id_field_name = "user_id";
+  } else {
+    $id_field_name = $kind."_id";
+  }
+  // here check ------------------------------------- 
+  
   $get_function = "_get_$kind";
   $existing_element = $get_function($element_id, $pdo);
-
+  
   switch ($kind) {
     case "chapter": $kind_parent = "course"; break;
     case "section": $kind_parent = "chapter"; break;
@@ -116,14 +123,20 @@ function PATCH ($params, $pdo) {
   }
   
   if ($kind_parent) $parent_id = $element[$kind_parent."_id"];
-
+  
   // UPDATE FIELDS
   foreach ($updated_fields as $one_field) {
-
     $field = $one_field["field"];
     $new_value = $one_field["value"];
     $old_value = $existing_element[$field];
-    $table = $kind."s";
+    
+    // check .-----------------
+    if ($kind === "user_password") {
+      $table = "users";
+    } else {
+      $table = $kind."s";
+    }
+    // check .-----------------
 
     // REQUIRE SPECIAL TREATMENT: SPOT, CHAPTER_ID (moves section), AMANUENS
     if ($field === "spot") {
@@ -169,8 +182,15 @@ function PATCH ($params, $pdo) {
         $pdo->query("INSERT INTO users_courses (user_id, course_id, role) VALUES ($user_id, $course_id, 'amanuens')");
       }
 
-    } else {
-
+    } 
+    // else if ($field === "user_password") { 
+    //   $enterOld = $params["old_password"];
+    //   if ($enterOld !== $old_value) {
+    //     return ["data" => ["error" => "enter password does not match current password"]];
+    //   }
+    // }
+    else {
+      
       $is_text = $one_field["is_text"];
       $value = $is_text ? "'" . $one_field["value"] . "'" : $one_field["value"];
       if ($one_field["value"] === false) $value = "false";
@@ -178,11 +198,10 @@ function PATCH ($params, $pdo) {
       
       // echo " UPDATE $table SET $field = $value WHERE $id_field_name = $element_id; ";
       $pdo -> query("UPDATE $table SET $field = $value WHERE $id_field_name = $element_id;");
-            
     }     
-
+    
   }
-
+  
   // PREPARE RETURN
   $elements = null;
   switch ($kind) {
@@ -194,6 +213,10 @@ function PATCH ($params, $pdo) {
       $element = _get_user($element_id, $pdo);
       $element["courses"] = _get_user_courses($element_id, $pdo);
       break;
+    case "user_password":
+      $element = _get_user_password($element_id, $pdo);
+      // $element["courses"] = _get_user_courses($element_id, $pdo);
+    break;
     default:
       $function_name_element = "_get_$kind";
       $function_name_elements = "_get_$kind_parent"."_$kind"."s";
@@ -210,6 +233,29 @@ function PATCH ($params, $pdo) {
   ];
 
 }
+
+// USERS
+function PATCH_user ($params, $pdo) {
+  return PATCH($params, $pdo);
+}
+
+function PATCH_user_password ($params, $pdo) {
+  return PATCH($params, $pdo);
+}
+
+function _get_user_password ( $user_id, $pdo) {
+  
+  $user = array_from_query($pdo, "SELECT * FROM users WHERE user_id = $user_id")[0];
+  // $user["user"] = "user";
+  // $user["name"] = $user["name"];
+  // $user["courses"] = _get_user_courses($user_id, $pdo);
+
+  return $user;
+}
+
+
+
+
 // SPOT UPDATER
 function update_spot ($pdo, $parent_id, $new_spot, $old_spot, $kind, $kind_parent) {
     
@@ -319,6 +365,7 @@ function DELETE_course ($params, $pdo) {
   ];
 
 }
+
 function PATCH_course ($params, $pdo) {
   return PATCH($params, $pdo);
 }
@@ -554,10 +601,27 @@ function DELETE_dependencies ($params, $pdo) {
 }
 
 
-// USERS
-function PATCH_user ($params, $pdo) {
-  return PATCH($params, $pdo);
-}
+// // USERS
+// function PATCH_user ($params, $pdo) {
+//   return PATCH($params, $pdo);
+// }
+
+// function PATCH_user_password ($params, $pdo) {
+//   return PATCH($params, $pdo);
+// }
+
+// function _get_user_password ( $user_id, $pdo) {
+
+//   return ["data" => ["_get_user_password" => "_get_user_password"]];
+
+//   $user = array_from_query($pdo, "SELECT * FROM users WHERE user_id = $user_id")[0];
+//   $user["kind"] = "user";
+//   $user["name"] = $user["name"];
+//   $user["courses"] = _get_user_courses($user_id, $pdo);
+
+//   return $user;
+// }
+
 function POST_user ($params, $pdo) {
 
   $name = $params["name"];
@@ -915,6 +979,7 @@ function _get_user ($user_id, $pdo) {
 
   return $user;
 }
+
 function _get_users ($pdo) {
   $users = array_from_query($pdo, "
     SELECT user_id, name, user_programme, user_start_year    

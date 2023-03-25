@@ -79,14 +79,13 @@ function render () {
 }
 
 function toggle_course_selector () {
-  console.log("toggle")
   const dom = document.querySelector("#content_course_list");
   dom.classList.toggle("expanded");
 
 }
 
 function compress_course_selector () {
-  console.log("pressing a course")
+  // console.log("pressing a course")
   const dom = document.querySelector("#content_course_list");
   dom.classList.remove("expanded");
   
