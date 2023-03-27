@@ -122,35 +122,17 @@ if ($method_action !== "GET_login") {
         }
 
         // PASSWROD CANGE 
-        // if ($action === "user_password") {
+        if ($action === "user_password") {
+            $userCurrentPassword = $user["user_password"];
+            $oldPasswordEnter = $params["old_password"];
 
-        //     $userCurrentPassword = $user["user_password"];
-        //     // $oldPasswordEnter = $params["old_password"];
-        //     // $updated_fields = $params["updated_fields"];
-        //     // $newPassword = $updated_fields["value"];
-
-        //     $response_function([
-        //         "code" => 340,
-        //         "data" => $userCurrentPassword 
-        //     ]);
-        //     if ($oldPasswordEnter === "") {
-        //     }
-            
-        //     if ($newPassword === "") {
-        //         $response_function([
-        //             "code" => 330,
-        //             "data" => $updated_fields 
-        //         ]);
-        //     }
-
-        //     if ($oldPasswordEnter !== $userCurrentPassword) { 
-        //         $response_function([
-        //             "code" => 300,
-        //             "data" => "old password does not match current password"
-        //         ]);
-        //     }
-
-        // }
+            if ($oldPasswordEnter !== $userCurrentPassword) { 
+                $response_function([
+                    "code" => 400,
+                    "message" => "old password does not match current password"
+                ]);
+            }
+        }
 
         // NON-TEACHERS CANNOT GET USERS
         if ($method_action === "GET_users") {
@@ -208,12 +190,6 @@ if ($method !== "GET") {
 
 // EXECUTE ACTION
 if ($method_action) {
-    // if ($action === "user_password") {
-        // $response_function([
-        //     "code" => 200,
-        //     "message" => $params
-        // ]);   
-    // }
     $response_function($method_action($params, $pdo));    
 } else {
     $response_function([

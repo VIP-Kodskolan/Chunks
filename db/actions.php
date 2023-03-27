@@ -183,12 +183,6 @@ function PATCH ($params, $pdo) {
       }
 
     } 
-    // else if ($field === "user_password") { 
-    //   $enterOld = $params["old_password"];
-    //   if ($enterOld !== $old_value) {
-    //     return ["data" => ["error" => "enter password does not match current password"]];
-    //   }
-    // }
     else {
       
       $is_text = $one_field["is_text"];

@@ -16,7 +16,7 @@
     position: absolute;
     right: 0;
     top: calc(100% + .50rem);
-    background-color: #fff;
+    background-color: var(--color_back_2);
     width: 20vw;
     z-index: 100;
     height: 0px;
@@ -25,11 +25,27 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
     box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
 }
 
-.settingsDiv > div {
+.cancelSet, .optionPW, .optionTheme{
+    cursor: pointer;
+    border: 1px solid var(--color_accent_2);
+    padding: 5px 15px;
+    border-radius: var(--button_border_radius);
+    background-color: var(--color_accent_1);
+    color: var(--color_back_1);
+    font-size: var(--fsz_button_default);
+    transition: background-color 0.3 ease-in-out;
+    text-align: center;
+}
+
+.cancelSet:hover, .optionPW:hover, .optionTheme:hover {
+    background-color: var(--color_accent_0);
+    border-color: var(--color_accent_0);
+}
+
+.optionDiv{
     padding: 10px;
     display: flex;
     opacity: 0;
@@ -42,9 +58,34 @@
     opacity: 1;
 }
 
-.settingsDiv > div > input {
+#containerSettings.expanded > .settingsDiv > .openForm {
+    display: none;
+}
+
+#containerSettings.expanded > .settingsDiv > .openForm.active {
+    display: block;
+    padding: 10px;
+}
+
+#containerForm{
+    border: 1px solid var(--color_accent_0);
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.PasswordBts {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    width: 100%;
+}
+
+#new_password, #old_password {
     flex-grow: 1;
-    border-bottom: 1px solid gray;
+    border-bottom: 1px solid var(--color_accent_0);
     background: transparent;
 }
 
@@ -53,30 +94,13 @@
     width: 80px;
 }
 
-.cancelSet{
-    cursor: pointer;
-    border: 1px solid var(--color_accent_2);
-    padding: 2px 10px;
-    border-radius: var(--button_border_radius);
-    background-color: var(--color_accent_1);
-    color: var(--color_back_1);
-    font-size: var(--fsz_button_default);
-    transition: background-color 0.3 ease-in-out;
-}
-
-.cancelSet:hover {
-    background-color: var(--color_accent_0);
-    border-color: var(--color_accent_0);
-}
-
-.pwOld, .pwNew{
-    display: hidden;
+.settingsDiv > .pwNew{
+    display: none;
     width: 100%;
     text-align: center;
     margin-top: 5px;
 }
 
-.pwOld.error, .pwNew.error{
-    color: red;
+.settingsDiv > .pwNew.error{
     display: block;
 }

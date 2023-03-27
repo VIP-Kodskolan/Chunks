@@ -1,0 +1,19 @@
+.dark {
+    --color_accent_1_overlay: #252526;
+    --color_overlay_dark: rgba(249, 102, 226, 0.8);
+    --color_overlay_light: #1e1e1e;
+    --color_back_0: #f962e2;
+    --color_back_1: #3e3e42;
+    --color_back_2: #1e1e1e;
+    --color_back_2B: #007acc;
+    --color_accent_0: #4869cb;
+    --color_accent_1: #007acc;
+    --color_accent_2: #399bdd;
+    --color_accent_question: #51748b;
+    --color_accent_completed_unit: #007acc;
+    --color_accent_completed_general: #7fa9f7;
+    --color_accent_incorrect: #9a1047;
+    --color_accent_quiz: #11aab5;
+    --color_accent_correct: #acf1f8;
+    --color-text: red;
+}

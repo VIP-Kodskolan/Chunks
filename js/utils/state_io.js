@@ -89,12 +89,7 @@ export default {
     {
       events: ["db::patch::user_password::received"],
       middleware: (response, params) => {
-        if (response === null) {
-          SubPub.publish({
-            event: "password_error",
-            detail: response
-          }) 
-        }
+
       }
     },
 
@@ -323,20 +318,28 @@ export default {
       SubPub.subscribe({
         event,
         listener: ({ response, params }) => {
-          response = response?.payload?.data;
-          middleware && middleware(response, params);
 
-          fix_ints_and_booleans_state();
-          response.element && fix_ints_and_booleans_elements(response.element);
-          response.elements && fix_ints_and_booleans_elements(response.elements);
-          response.user && fix_ints_and_booleans_elements(response.user);
+          if (response.payload.data === null) {
+            SubPub.publish({
+              event: "password_error",
+              detail: response
+            }) 
+          } else {
+            response = response?.payload?.data;
+            middleware && middleware(response, params);
   
-          const parsed_event = SubPub.parseEvent(event);        
-          SubPub.publish({
-            event: parsed_event.type + "::" + parsed_event.name + "::" + parsed_event.action + "::done",
-            detail: { response, params }
-          });
-  
+            fix_ints_and_booleans_state();
+            response.element && fix_ints_and_booleans_elements(response.element);
+            response.elements && fix_ints_and_booleans_elements(response.elements);
+            response.user && fix_ints_and_booleans_elements(response.user);
+    
+            const parsed_event = SubPub.parseEvent(event);        
+            SubPub.publish({
+              event: parsed_event.type + "::" + parsed_event.name + "::" + parsed_event.action + "::done",
+              detail: { response, params }
+            });
+          }
+    
         }
       });
 
