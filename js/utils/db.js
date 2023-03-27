@@ -240,8 +240,11 @@ async function _fetch (data) {
     const _response = await fetch(request);
     middle = _response.headers.get("Content-Type").includes("text") ? "text" : "json";
     let data = await _response[middle]();
-  
-    SHOW_RAW_RESPONSE && console.log(data);    
+    SHOW_RAW_RESPONSE && console.log(data);  
+    
+    if(data.message === "Wrong Password"){
+      return
+    }
   
     if (middle === "text") {
         data = JSON.parse(data);

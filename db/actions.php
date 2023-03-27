@@ -96,7 +96,6 @@ function GET_users ($params, $pdo) {
 
 // PATCHER
 function PATCH ($params, $pdo) {
-
   $user_id = $params["user_id"];
 
   $element = $params["element"];
@@ -118,7 +117,6 @@ function PATCH ($params, $pdo) {
 
   // UPDATE FIELDS
   foreach ($updated_fields as $one_field) {
-
     $field = $one_field["field"];
     $new_value = $one_field["value"];
     $old_value = $existing_element[$field];
@@ -168,7 +166,10 @@ function PATCH ($params, $pdo) {
         $pdo->query("INSERT INTO users_courses (user_id, course_id, role) VALUES ($user_id, $course_id, 'amanuens')");
       }
 
-    } else {
+    }  else if ($field === "password"){
+      $value = $one_field["value"];
+      $pdo -> query("UPDATE $table SET $field = $value WHERE user_id = $user_id;");
+    }else {
 
       $is_text = $one_field["is_text"];
       $value = $is_text ? "'" . $one_field["value"] . "'" : $one_field["value"];
@@ -555,8 +556,19 @@ function DELETE_dependencies ($params, $pdo) {
 
 // USERS
 function PATCH_user ($params, $pdo) {
+  $user_id = $params["user_id"];
+  $password = $params["oldPassword"];
+  $user = _get_user($user_id, $pdo);
+
+  if($user["user_password"] !== $password){
+    return [
+      "data" => 
+      ["message" => "Wrong Password"]];
+  }
+
   return PATCH($params, $pdo);
 }
+
 function POST_user ($params, $pdo) {
 
   $name = $params["name"];

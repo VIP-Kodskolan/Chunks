@@ -106,8 +106,8 @@ if ($method_action !== "GET_login") {
             ]);    
         }
 
-        // 2) NON-TEACHERS CAN ONLY POST AND PATCH users_units and quiz_answers.
-        if ( ($method === "POST" || $method === "PATCH") && ($action !== "users_units" && $action !== "quiz_answer") ) {
+        // 2) NON-TEACHERS CAN ONLY POST AND PATCH users_units and quiz_answers. (Caspian added user to patch password)
+        if ( ($method === "POST" || $method === "PATCH") && ($action !== "users_units" && $action !== "quiz_answer" && $action !== "user") ) {
             $response_function([
                 "code" => 400,
                 "message" => "action not allowed"
@@ -115,7 +115,7 @@ if ($method_action !== "GET_login") {
         }
         
         // 3) ONLY UPDATE YOUR OWN users_units and quiz_answers
-        if ($action === "users_units" && $action === "quiz_answer") {
+        if ($action === "users_units" && $action === "quiz_answer" && $action === "user") {
             $update_user_id = $params["user_id"];
             if ($user_id !== $update_user_id ) {
                 $response_function([
@@ -159,7 +159,7 @@ if ($method !== "GET") {
     
     } else {
 
-        $kind_of_post = ( strpos($method_action, "users_unit") !== false || strpos($method_action, "quiz_answer") !== false ) ? "progress" : "create";
+        $kind_of_post = ( strpos($method_action, "users_unit") !== false || strpos($method_action, "quiz_answer") !== false || strpos($method_action, "PATCH_user") !== false) ? "progress" : "create";
         $counter = intval($counters["counter_$kind_of_post"."_post"]) + 1;
 
         $max_counters = [

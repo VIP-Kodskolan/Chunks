@@ -43,8 +43,17 @@ function render () {
   header_dom.innerHTML = `
     <div class="user_info">
       <h2 class="user_name">${user.name}</h2>
+      <button class="button_settings">SETTINGS</button>
       <button class="button_logout">LOGOUT</button>
     </div>
+    <div class="settings_div">
+      <label for="old_password">Old Password</label>
+      <input type="password" name="old_password" class="old_password">
+      <label for="new_password">New Password</label>
+      <input type="password" name="new_password" class="new_password">
+      <button class="change_password">Change password</button>
+    </div>
+    <div class="patch_response">This is an error message</div>
     <div class="views"></div>
   `;
 
@@ -55,6 +64,23 @@ function render () {
 
     utils.push_state_window_history("");
     window.location.reload(true);
+  }
+  header_dom.querySelector(".button_settings").addEventListener("click", show_settings)
+  function show_settings(){
+    header_dom.querySelector(".settings_div").classList.toggle("show_settings")
+  }
+  header_dom.querySelector(".change_password").addEventListener("click", new_password)
+  function new_password(){
+    SubPub.publish({
+      event:"db::patch::user::request",
+      detail: { params:{
+        updated_fields: {"user_password": {
+          value:  document.querySelector(".new_password").value,
+        }},
+        kind: "user",
+        user_id: state_io.state.user.user_id,
+        oldPassword: document.querySelector(".old_password").value
+    }}})
   }
 
   // USERS_ADMIN
