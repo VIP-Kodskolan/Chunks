@@ -233,12 +233,14 @@ async function _fetch (data) {
 
   let { request, body } = data;
   let middle;
-
+console.log(data.headers);
+  console.log(data, request);
   try {
-
     console.log("Requesting", body.action );
     const _response = await fetch(request);
+    console.log(_response.headers);
     middle = _response.headers.get("Content-Type").includes("text") ? "text" : "json";
+    console.log(middle);
     let data = await _response[middle]();
     SHOW_RAW_RESPONSE && console.log(data);  
     

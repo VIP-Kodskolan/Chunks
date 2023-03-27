@@ -168,6 +168,7 @@ function PATCH ($params, $pdo) {
 
     }  else if ($field === "password"){
       $value = $one_field["value"];
+      $element_id = $user_id;
       $pdo -> query("UPDATE $table SET $field = $value WHERE user_id = $user_id;");
     }else {
 
@@ -204,6 +205,7 @@ function PATCH ($params, $pdo) {
 
   return [
     "data" => [
+      "header" => "Content-Type: application/json",
       "element" => $element,
       "elements" => $elements,
     ]
