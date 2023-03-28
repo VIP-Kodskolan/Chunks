@@ -73,3 +73,55 @@ body {
   background-size: contain;
 
 }
+
+#user_settings{
+  width: 50px;
+  height: 50px;
+  border-radius: 50px;
+  background-color: var(--color_back_0);
+  position:relative;
+}
+
+#user_settings_wrapper{
+  width: 215px;
+  height: 155px;
+  background-color: var(--color_back_0);
+  z-index: 100;
+  position: relative;
+  right: 150px;
+  top: 55px;
+  border-radius: var(--general_border_radius);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+}
+#user_settings_wrapper.hidden{
+  display: none;
+  opacity: 0;
+}
+
+#user_settings_wrapper .settings_exit{
+  display: flex;
+  justify-content: center;
+  width: 20px;
+  position: relative;
+  right: -188px;
+  top: -7px;
+  height: 26px;
+  }
+
+#user_settings_wrapper form{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  gap: var(--general_gap);
+  margin: 0px 25px;
+}
+#user_settings_wrapper input{
+  background-color: var(--color_back_2);
+  border-radius: var(--general_border_radius);
+  height: 30px;
+}

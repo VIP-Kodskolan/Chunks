@@ -42,6 +42,7 @@ export default {}
     "db::patch::user::request",
     "db::post::user::request",
 
+
     // USERS_UNITS
     "db::patch::users_units::request",
 
@@ -245,6 +246,11 @@ async function _fetch (data) {
   
     if (middle === "text") {
         data = JSON.parse(data);
+    }
+
+    console.log(_response.status);
+    if (_response.status === 450){
+      window.alert("Wrong password.");
     }
   
     SHOW_OBJECT_RESPONSE && console.log(data);

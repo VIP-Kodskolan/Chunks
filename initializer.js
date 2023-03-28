@@ -18,3 +18,4 @@ import login_register from './js/components/login_register.js';
 import modal_unit from './js/components/modal_unit.js';
 import modal_unit_quiz from './js/components/modal_unit_quiz.js';
 import mode from './js/components/mode.js';
+import user_settings from './js/components/user_settings.js';

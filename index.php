@@ -82,8 +82,8 @@ if (!empty($_COOKIE['theme'])) {
 
 ?>
 
-<script>console.log("theme: ")</script>
-<script>console.log("<?php echo $_COOKIE['theme']; ?>")</script>
+<!-- <script>console.log("theme: ")</script>
+<script>console.log("<?php //echo $_COOKIE['theme']; ?>")</script> !-->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -108,6 +108,9 @@ if (!empty($_COOKIE['theme'])) {
                 <div id="content_user"></div>
                 <div id="mode">
                     <div id="modeswitch"></div>
+                </div>
+                <div id="user_settings">
+                    <div id="user_settings_wrapper" class="hidden"></div>
                 </div>
             </div>
             <div id="content_main">

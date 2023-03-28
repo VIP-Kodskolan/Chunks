@@ -106,8 +106,8 @@ if ($method_action !== "GET_login") {
             ]);    
         }
 
-        // 2) NON-TEACHERS CAN ONLY POST AND PATCH users_units and quiz_answers.
-        if ( ($method === "POST" || $method === "PATCH") && ($action !== "users_units" && $action !== "quiz_answer") ) {
+        // 2) NON-TEACHERS CAN ONLY POST AND PATCH users_units and quiz_answers... och ändra user password...
+        if ( ($method === "POST" || $method === "PATCH") && ($action !== "users_units" && $action !== "quiz_answer" && $action !== "user") ) {
             $response_function([
                 "code" => 400,
                 "message" => "action not allowed"
