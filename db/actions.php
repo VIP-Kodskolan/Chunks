@@ -205,10 +205,10 @@ function PATCH ($params, $pdo) {
 
   return [
     "data" => [
-      "header" => "Content-Type: application/json",
       "element" => $element,
       "elements" => $elements,
-    ]
+    ],
+    "header" => "Content-Type: application/json"
   ];
 
 }

@@ -53,7 +53,7 @@ function render () {
       <input type="password" name="new_password" class="new_password">
       <button class="change_password">Change password</button>
     </div>
-    <div class="patch_response">This is an error message</div>
+    <div class="patch_response"></div>
     <div class="views"></div>
   `;
 

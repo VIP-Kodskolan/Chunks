@@ -111,6 +111,7 @@
   background-position: center;
   background-size: 55%;
   background-repeat: no-repeat;
+  background-color: #cdbebe6b;
 }
 .chapter_list_item .assignments > ul > li.status_complete {
   background-color: var(--color_accent_completed_general);
@@ -119,7 +120,7 @@
 /* EXPAND COMPRESS */
 .chapter_list_item .expand_compress {
   border-radius: 50%;
-  background-color: transparent;
+  background-color: #cdbebe6b;
   border-color: rgba(0,0,0,.2);
   height: 32px;
   width: 32px;

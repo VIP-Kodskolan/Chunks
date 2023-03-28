@@ -8,6 +8,26 @@ body {
   height: 100vh;
 }
 
+#body.nightmode{
+  --color_accent_1_overlay: rgba(174,174,174,.5);
+  --color_overlay_dark: rgba(30,30,30,.8);
+  --color_overlay_light: rgba(42, 36, 36, 0.8);
+  
+  --color_back_0: #a8c2c6; /*#9cacae;*/
+  --color_back_1: #454143; /*#c5c7cc; */
+  --color_back_2: #211e1f; /* #acb7b6; */
+  --color_back_2B: #504a4c; /* #acb7b6; */
+  --color_accent_0: #838380;
+  --color_accent_1: #d5bfcd;
+  --color_accent_2: #aea1a8;
+  --color_accent_question: #b68904;
+  --color_accent_completed_unit: #6b00a6; /* #97a871; */ /* #7a963b; */
+  --color_accent_completed_general: #6b00a6; /* #97a871; /* #7a963b; */
+  --color_accent_incorrect: #dd99b4; /* #901e4a; */
+  --color_accent_quiz: #7311b5;
+  --color_accent_correct: #334208;
+}
+
 #wrapper {
   --padding: var(--wrapper_pad);
   position: relative; /* Modal, Editor Origin */
@@ -95,7 +115,7 @@ body {
   position: absolute;
   display: flex;
   right: -200px;
-  top: 8vh;
+  top: 75px;
   flex-direction: column;
   background-color: var(--color_accent_2);
   padding: var(--padding);

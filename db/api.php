@@ -7,8 +7,8 @@ define('PATH_TO_SQLITE_FILE', './phpsqlite.db');
 require_once("./actions.php");
 
 $response_function = function ($response) {
-    $header = $response["header"] ? $response["header"] : "Content-Type: text/json";
-    header($header);
+    // $header = $response["header"] ? $response["header"] : "Content-Type: text/json";
+    header("Content-Type: application/json");
     $code = $response["code"] ? $response["code"] : 200;
     http_response_code($code);
     $payload = [
