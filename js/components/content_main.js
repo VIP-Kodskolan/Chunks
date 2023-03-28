@@ -4,22 +4,22 @@ import utils from "../utils/utils.js";
 
 export default {}
 
-// INIT
-;(() => {
+  // INIT
+  ; (() => {
 
-  SubPub.subscribe({
-    event: "user_ok",
-    listener: render
-  });
+    SubPub.subscribe({
+      event: "user_ok",
+      listener: render
+    });
 
-  SubPub.subscribe({
-    event: "db::get::course::done",
-    listener: render_courses
-  });
+    SubPub.subscribe({
+      event: "db::get::course::done",
+      listener: render_courses
+    });
 
-})();
+  })();
 
-function render () {
+function render() {
 
   const open_users_admin = utils.get_parameter("users") && utils.get_parameter("users") === "admin";
 
@@ -35,8 +35,8 @@ function render () {
 
 }
 
-function render_users_admin () {
-  
+function render_users_admin() {
+
   document.querySelector("#content_course").classList.add("hidden");
   document.querySelector("#content_users_admin").classList.remove("hidden");
 
@@ -47,7 +47,7 @@ function render_users_admin () {
 
 }
 
-function render_courses () {
+function render_courses() {
 
   document.querySelector("#content_course").classList.remove("hidden");
   document.querySelector("#content_users_admin").classList.add("hidden");

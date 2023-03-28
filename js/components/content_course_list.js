@@ -41,22 +41,37 @@ function render() {
   dom.innerHTML = `
     <button class="expand_course_selector">Choose a course</button>
     <ul></ul>
-  `;
-  const list_dom = dom.querySelector("ul");
-  const button_expand_course_selector_dom = dom.querySelector(".expand_course_selector");
-
-  // NOTE: dark mode experiment begins
-
-  dom.innerHTML += `
-  <div id="theme">
+    <div id="theme">
     <input type="checkbox" class="viewMode" id="viewMode">
       <label for="viewMode" class="label">
         <i class="fas fa-moon"></i>
         <i class='fas fa-sun'></i>
-        <div class='ball'>
+        <div class='ball'></div>
       </label>
   </div>
   `;
+  const list_dom = dom.querySelector("ul");
+  const button_expand_course_selector_dom = dom.querySelector(".expand_course_selector");
+
+  console.log(list_dom.childNodes.length);
+
+
+  // EVENT: OPEN COURSE SELECTOR
+  button_expand_course_selector_dom.addEventListener("click", toggle_course_selector);
+
+
+  console.log(dom.innerHTML);
+
+  // LIST COURSES
+  courses.forEach(course => {
+    const container_dom = document.createElement("li");
+    list_dom.append(container_dom);
+    content_course_list_item.render({ element: course, container_dom });
+  });
+
+  // NOTE: dark mode experiment begins
+
+  //after courses loop || in same DOM innerHTML
 
   const toggleBtn = dom.querySelector('.viewMode');
   const theme = document.getElementById("theme");
@@ -68,12 +83,15 @@ function render() {
     theme.classList.add("dark-mode-theme");
     toggleBtn.classList.remove("dark-mode-toggle");
     localStorage.setItem("dark-mode", "enabled");
+    darkModeColorTheme();
+    toggleBtn.checked = true;
   };
 
   const disableDarkMode = () => {
     theme.classList.remove("dark-mode-theme");
     toggleBtn.classList.add("dark-mode-toggle");
     localStorage.setItem("dark-mode", "disabled");
+    lightModeColorTheme();
   };
 
   const darkModeColorTheme = () => {
@@ -103,6 +121,8 @@ function render() {
       }
     });
     document.querySelector('#modal').classList.add('darkMode_XII');
+    document.querySelector('#content_course_open').classList.add('darkMode_XIII');
+    document.querySelector('#content_course_list_and_users_admin_button').classList.add('darkMode_XIV');
   };
 
   const lightModeColorTheme = () => {
@@ -124,67 +144,43 @@ function render() {
     document.querySelectorAll('.unit_item').forEach(unItm => unItm.classList.remove('darkMode_X'));
     document.querySelector('#modal').classList.remove('darkMode_XII');
     document.querySelectorAll('.section_item').forEach(secItm => secItm.classList.remove('darkMode_IX'));
+    document.querySelector('#content_course_open').classList.remove('darkMode_XIII');
+    document.querySelector('#content_course_open').classList.remove('darkMode_XIV');
   };
 
-  if (darkMode === "enabled") {
-    enableDarkMode(); // set state of darkMode on page load
-    darkModeColorTheme();
-    document.querySelector('.ball').classList.add('darkMode_ball');
-    document.querySelector('.label').classList.add('darkMode_lbl');
-  } else {
-    disableDarkMode();
-    lightModeColorTheme();
-    document.querySelector('.ball').classList.remove('darkMode_ball');
-    document.querySelector('.label').classList.remove('darkMode_lbl');
-  }
-
   toggleBtn.addEventListener("change", (e) => {
-    if (!toggleBtn.checked) {
-      localStorage.setItem("toggled", 'false');
+
+    darkMode = localStorage.getItem("dark-mode"); // update darkMode when clicked
+
+    if (darkMode == "enabled") {
       disableDarkMode();
       lightModeColorTheme();
       document.querySelector('.ball').classList.remove('darkMode_ball');
       document.querySelector('.label').classList.remove('darkMode_lbl');
+      localStorage.setItem("toggled", 'false');
     } else {
-      localStorage.setItem("toggled", 'true');
       enableDarkMode();
       darkModeColorTheme();
       document.querySelector('.ball').classList.add('darkMode_ball');
       document.querySelector('.label').classList.add('darkMode_lbl');
+      localStorage.setItem("toggled", 'true');
+
     }
-    darkMode = localStorage.getItem("dark-mode"); // update darkMode when clicked
-
-    // if (darkMode == "enabled") {
-    //   disableDarkMode();
-    //   lightModeColorTheme();
-    //   document.querySelector('.ball').classList.remove('darkMode_ball');
-    //   document.querySelector('.label').classList.remove('darkMode_lbl');
-    // } else {
-    //   enableDarkMode();
-    //   darkModeColorTheme();
-    //   document.querySelector('.ball').classList.add('darkMode_ball');
-    //   document.querySelector('.label').classList.add('darkMode_lbl');
-
-    // }
   });
 
-  if (toggleState == "true") {
-    toggleBtn.checked == true;
+  if (darkMode == "enabled") {
+    enableDarkMode();
+    setTimeout(darkModeColorTheme, 100);
+    document.querySelector('.ball').classList.add('darkMode_ball');
+    document.querySelector('.label').classList.add('darkMode_lbl');
   } else {
-    toggleBtn.checked == false;
+    disableDarkMode();
+    setTimeout(lightModeColorTheme, 100);
+    document.querySelector('.ball').classList.remove('darkMode_ball');
+    document.querySelector('.label').classList.remove('darkMode_lbl');
   }
 
-  // NOTE: dark mode experiment ends
-
-  // EVENT: OPEN COURSE SELECTOR
-  button_expand_course_selector_dom.addEventListener("click", toggle_course_selector);
-
-  // LIST COURSES
-  courses.forEach(course => {
-    const container_dom = document.createElement("li");
-    list_dom.append(container_dom);
-    content_course_list_item.render({ element: course, container_dom });
-  });
+  // NOTE: dark mode experiment ends;
 
   // ADD COURSE
   if (state_io.state.user.can_add_courses) {
@@ -201,7 +197,7 @@ function render() {
       });
     }
   }
-
+  console.log(list_dom.childNodes.length);
 }
 function toggle_course_selector() {
 
@@ -217,9 +213,11 @@ function compress_course_selector() {
 }
 
 function mark_course({ response, params }) {
-
+  const dom = document.querySelector("#content_course_list ul");
+  console.log("MARK COURSE:" + dom.childNodes.length);
   const { course } = response;
   document.querySelectorAll(".course_list_item").forEach(x => x.classList.remove("selected"));
+  console.log(id_prefix_item, course.course_id);
   document.getElementById(id_prefix_item + course.course_id).classList.add("selected");
 
   setTimeout(compress_course_selector, 100);

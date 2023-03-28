@@ -192,3 +192,28 @@
 #modal.darkMode_XII .content #quiz_navigation .question_navigation .number {
     border-color: #dcdcdc7b;
 }
+
+#content_course_open.darkMode_XIII > .weekly_progress .units_by_chapters .chapter-unit.check_complete {
+    background-color: #d1acff;
+    /* border-color: #d1acff; */
+}
+
+#content_course_open.darkMode_XIII > .course_info > .canvas_link a {
+    color: #dcdcdcb7;
+    transition: 0.3s;
+}
+
+#content_course_open.darkMode_XIII > .course_info > .canvas_link a:hover {
+    color: rgb(255, 156, 42);
+}
+
+#content_course_list_and_users_admin_button.darkMode_XIV > #content_course_list.expanded > ul > * {
+    background-color: #343434;
+    color: #d1acff;
+}
+
+#content_course_list_and_users_admin_button.darkMode_XIV > #content_course_list.expanded .expand_course_selector,
+#content_course_list_and_users_admin_button.darkMode_XIV > #content_course_list > ul {
+    background-color: #d1acff;
+}
+

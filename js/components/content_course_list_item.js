@@ -52,6 +52,7 @@ function render ({ element, container_dom }) {
   (is_open && !already_showing) && open_course();
   function open_course () {
 
+    console.log(document.querySelector('#content_course_list ul').childNodes.length);
     SubPub.publish({
       event: "db::get::course::request",
       detail: {

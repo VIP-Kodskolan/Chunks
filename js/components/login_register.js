@@ -4,34 +4,36 @@ import utils from "../utils/utils.js";
 
 export default {}
 
-;(() => {
+  ; (() => {
 
-  SubPub.subscribe({
-    event: "start_up_login",
-    listener: render_login
-  });
+    SubPub.subscribe({
+      event: "start_up_login",
+      listener: render_login
+    });
 
-  SubPub.subscribe({
-    event: "db::get::login::done",
-    listener: check_login_answer
-  });
-
-
-})()
+    SubPub.subscribe({
+      event: "db::get::login::done",
+      listener: check_login_answer
+    });
 
 
-function render_login () {
+  })();
+
+
+function render_login() {
 
   if (localStorage.getItem("logged_in_name")) {
 
     SubPub.publish({
       event: "db::get::login::request",
-      detail: { params: {
-        username: localStorage.getItem("logged_in_name"),
-        usertoken: localStorage.getItem("logged_in_token"),
-      }}
+      detail: {
+        params: {
+          username: localStorage.getItem("logged_in_name"),
+          usertoken: localStorage.getItem("logged_in_token"),
+        }
+      }
     });
-    
+
   } else {
 
     const login_dom = document.getElementById("login_register");
@@ -49,17 +51,19 @@ function render_login () {
         <input type="submit" value="LOGIN">
       </form>  
     `;
-  
+
     login_dom.querySelector("form").addEventListener("submit", submit_login);
-    function submit_login (event) {
+    function submit_login(event) {
       event.preventDefault();
-  
+
       SubPub.publish({
         event: "db::get::login::request",
-        detail: { params: {
-          username: document.querySelector(".username input").value,
-          password: document.querySelector(".password input").value,
-        }}
+        detail: {
+          params: {
+            username: document.querySelector(".username input").value,
+            password: document.querySelector(".password input").value,
+          }
+        }
       });
     }
 
@@ -67,7 +71,7 @@ function render_login () {
 
 }
 
-function check_login_answer ({ response, params }) {
+function check_login_answer({ response, params }) {
 
   const { status } = response;
 
@@ -84,7 +88,6 @@ function check_login_answer ({ response, params }) {
 
     localStorage.setItem("logged_in_name", state_io.state.user.name);
     localStorage.setItem("logged_in_token", response.token);
-
     SubPub.publish({
       event: "user_ok",
       detail: { response, params }
