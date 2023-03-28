@@ -17,5 +17,6 @@ import editor_quiz from './js/components/editor_quiz.js';
 import login_register from './js/components/login_register.js';
 import modal_unit from './js/components/modal_unit.js';
 import modal_unit_quiz from './js/components/modal_unit_quiz.js';
+import passwordButton from './js/components/passwordButton.js';
 import themeButton from './js/components/themeButton.js';
 import themeButtonTwo from './js/components/themeButtonTwo.js';
