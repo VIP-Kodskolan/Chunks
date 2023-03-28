@@ -45,6 +45,14 @@ body {
 #content_main {
 }
 
+#darkmode{
+  background-color: darkgrey;
+}
+
+#lightmode{
+  background-color: white;
+}
+
 #content_main > div {
   display: flex;
   flex-direction: column;
