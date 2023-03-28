@@ -52,6 +52,10 @@ function render () {
       <label for="new_password">New Password</label>
       <input type="password" name="new_password" class="new_password">
       <button class="change_password">Change password</button>
+      <label class="switch">
+        <input type="checkbox">
+        <span class="slider round"></span>
+      </label>
     </div>
     <div class="patch_response"></div>
     <div class="views"></div>
@@ -81,6 +85,24 @@ function render () {
         user_id: state_io.state.user.user_id,
         oldPassword: document.querySelector(".old_password").value
     }}})
+  }
+  header_dom.querySelector(".switch > input").addEventListener("click", toggle_darkmode)
+
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    console.log(JSON.parse(localStorage.getItem("darkmode")));
+    if(JSON.parse(localStorage.getItem("darkmode")) && JSON.parse(localStorage.getItem("darkmode")) !== null)
+    header_dom.querySelector(".switch > input").checked = true;
+    toggle_darkmode()
+  }
+
+  function toggle_darkmode(){
+    if(header_dom.querySelector(".switch > input").checked){
+      document.querySelector("body").classList.add("darkmode")
+      localStorage.setItem("darkmode", JSON.stringify(true))
+    } else{
+      document.querySelector("body").classList.remove("darkmode")
+      localStorage.setItem("darkmode", JSON.stringify(false))
+    }
   }
 
   // USERS_ADMIN

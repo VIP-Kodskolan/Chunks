@@ -37,10 +37,12 @@
   width: 2px;
   background-color: var(--color_accent_1_overlay);
   /* border: 1px solid var(--color_accent_1); */
+  transition: background-color var(--t_fast_transition)
 }
 #content_course_open > .weekly_progress ul.units > li.status_complete {
   /* border-color: var(--color_accent_completed_general); */
   background-color: var(--color_accent_completed_general);
+  transition: background-color var(--t_fast_transition)
 }
 
 #content_course_open > .weekly_progress ul.weeks {
@@ -93,12 +95,15 @@
   width: 2px;
   height: 30px;
   background-color: var(--color_accent_1_overlay);
+  transition: background-color var(--t_fast_transition)
 }
 
 #content_course_open > .weekly_progress .units_by_chapters .chapter-unit.check_complete {
   background-color: var(--color_accent_completed_general);
+  transition: background-color var(--t_fast_transition)
 }
 
 #content_course_open > .weekly_progress .units_by_chapters .chapter-unit.check_question {
   background-color: var(--color_accent_question);
+  transition: background-color var(--t_fast_transition)
 }

@@ -20,7 +20,7 @@
   position: relative; /* ORIGIN of locked */
   overflow: hidden;
 
-  transition: flex-basis var(--t_fast_transition), padding var(--t_fast_transition), opacity var(--t_fast_transition);
+  transition: flex-basis var(--t_fast_transition), padding var(--t_fast_transition), opacity var(--t_fast_transition), background-color var(--t_fast_transition);
 }
 
 .section_item > .content {

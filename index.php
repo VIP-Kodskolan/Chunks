@@ -78,7 +78,7 @@ function links_to_css_files () {
 
     <?php echo links_to_css_files(); ?>
 </head>
-<body id="body" class="nightmode">
+<body id="body">
     <!-- body ID for specificity -->
     
     <div id="wrapper">

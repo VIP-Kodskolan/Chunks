@@ -56,6 +56,7 @@
 /* QUIZ */
 .unit_item.quiz {
   border-color: var(--color_accent_quiz);
+  transition: border-color var(--t_fast_transition);
 }
 .unit_item.quiz.stop_quiz > .content::after {
   --dims: 2vw;
@@ -88,7 +89,7 @@
 
   margin-top: var(--icon_progress_margin_top);
 
-  transition: padding var(--t_fast_transition);
+  transition: padding var(--t_fast_transition), background-color var(--t_fast_transition);
 }
 .unit_item > .content .icon img {
   height: var(--size_icon);
@@ -118,15 +119,18 @@
 }
 .unit_item > .content .quiz_progress > div.answered_correct {
   background-color: var(--color_accent_completed_unit);
+  transition: background-color var(--t_fast_transition);
 }
 .unit_item > .content .quiz_progress > div.answered_incorrect {
   background-color: var(--color_accent_incorrect);
+  transition: background-color var(--t_fast_transition);
 }
 
 
 /* STATUS */
 .unit_item.status_complete > .content .icon {
   background-color: var(--color_accent_completed_unit);
+  transition: background-color var(--t_fast_transition);
 }
 .unit_item.status_question > .content .question_mark {
   z-index: var(--z_index_question_unit);
@@ -135,4 +139,5 @@
 .unit_item.status_complete .content .quiz_progress > div.answered_correct {
   background-color: var(--color_accent_completed_unit);
   border-color: var(--color_accent_completed_unit);
+  transition: background-color var(--t_fast_transition), border-color var(--t_fast_transition);
 }
