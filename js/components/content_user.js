@@ -74,18 +74,18 @@ function render () {
     header_dom.querySelector(".settings_div").classList.toggle("show_settings")
   }
   header_dom.querySelector(".change_password").addEventListener("click", new_password)
+
   function new_password(){
     SubPub.publish({
       event:"db::patch::user::request",
       detail: { params:{
-        updated_fields: {"user_password": {
-          value:  document.querySelector(".new_password").value,
-        }},
-        kind: "user",
+        field_name: "user_password",
+        newUsername:  document.querySelector(".new_password").value,
         user_id: state_io.state.user.user_id,
         oldPassword: document.querySelector(".old_password").value
     }}})
   }
+
   header_dom.querySelector(".switch > input").addEventListener("click", toggle_darkmode)
 
   if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {

@@ -423,7 +423,7 @@ function patch_users_unit (event) {
   const type = event.target.type;
   const value = type === "checkbox" ? event.target.checked : event.target.value;
   const { field_name, element } = JSON.parse(event.target.dataset.update_data);
-  
+  console.log(field_name, value, element);
   SubPub.publish({
     event: "db::patch::users_units::request",
     detail: { params: {

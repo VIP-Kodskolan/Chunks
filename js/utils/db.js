@@ -225,7 +225,7 @@ async function _patch (data) {
       headers,
       body: JSON.stringify(body)
   });
-
+  console.log(request);
   return await _fetch({ request, headers, ...data });
 
 }

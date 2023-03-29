@@ -560,6 +560,8 @@ function DELETE_dependencies ($params, $pdo) {
 function PATCH_user ($params, $pdo) {
   $user_id = $params["user_id"];
   $password = $params["oldPassword"];
+  $field_name = $params["field_name"];
+  $value = $params["newUsername"];
   $user = _get_user($user_id, $pdo);
 
   if($user["user_password"] !== $password){
@@ -568,7 +570,19 @@ function PATCH_user ($params, $pdo) {
       ["message" => "Wrong Password"]];
   }
 
-  return PATCH($params, $pdo);
+  // if(_get_user($user_id, $pdo)){
+    $sql = "UPDATE users SET $field_name = $value WHERE user_id = $user_id";
+    $pdo -> query($sql);
+
+    return [
+      "data" => [
+      "user" => _get_user($user_id, $pdo)
+      ]
+    ];
+  // }
+
+
+  // return PATCH($params, $pdo);
 }
 
 function POST_user ($params, $pdo) {
