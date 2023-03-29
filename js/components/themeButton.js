@@ -1,6 +1,28 @@
 import { SubPub } from "../utils/subpub.js";
 
-let theme = localStorage.getItem("theme")
+let theme = "";
+if(localStorage.getItem("theme"))
+{
+theme = localStorage.getItem("theme")
+}else{
+    localStorage.setItem("theme", "lightmode")
+}
+
+/*
+if (window.matchMedia) {
+  // Check if the dark-mode Media-Query matches
+  if(window.matchMedia('(prefers-color-scheme: dark)').matches){
+    // Dark
+  } else {
+    // Light
+  }
+} else {
+  // Default (when Media-Queries are not supported)
+}
+*/
+
+console.log("den är tom")
+
 console.log(localStorage.getItem("theme"))
 console.log(theme)
 
