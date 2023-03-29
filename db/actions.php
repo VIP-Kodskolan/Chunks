@@ -563,9 +563,9 @@ function PATCH_user ($params, $pdo) {
 
 function PATCH_user_password ($params, $pdo) {
   $user_id = $params["user_id"];
-  $password = $params["oldPassword"];
+  $password = $params["old_password"];
   $field_name = $params["field_name"];
-  $newUsername = $params["newUsername"];
+  $newUsername = $params["new_password"];
   $user = _get_user($user_id, $pdo);
 
   if($user["user_password"] !== $password){

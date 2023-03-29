@@ -90,7 +90,7 @@ function render () {
         field_name: "user_password",
         new_password:  new_password,
         user_id: state_io.state.user.user_id,
-        old_Password: old_password
+        old_password: old_password
     }}})
   }
 
