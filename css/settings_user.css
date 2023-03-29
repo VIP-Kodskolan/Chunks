@@ -69,7 +69,7 @@
 
 #containerForm{
     border: 1px solid var(--color_accent_0);
-    height: 150px;
+    height: 170px;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
@@ -104,3 +104,12 @@
 .settingsDiv > .pwNew.error{
     display: block;
 }
+
+.error {
+    color: #f15b4175;
+}
+
+.confimredChange {
+    background-color: #0076c44f;
+    color: #007acc;
+} 

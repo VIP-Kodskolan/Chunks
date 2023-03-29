@@ -123,6 +123,7 @@ if ($method_action !== "GET_login") {
 
         // PASSWROD CANGE 
         if ($action === "user_password") {
+
             $userCurrentPassword = $user["user_password"];
             $oldPasswordEnter = $params["old_password"];
 
