@@ -77,7 +77,7 @@ function render () {
 
   function new_password(){
     SubPub.publish({
-      event:"db::patch::user::request",
+      event:"db::patch::user_password::request",
       detail: { params:{
         field_name: "user_password",
         newUsername:  document.querySelector(".new_password").value,

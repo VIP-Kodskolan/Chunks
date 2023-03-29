@@ -107,7 +107,7 @@ if ($method_action !== "GET_login") {
         }
 
         // 2) NON-TEACHERS CAN ONLY POST AND PATCH users_units and quiz_answers. (Caspian added user to patch password)
-        if ( ($method === "POST" || $method === "PATCH") && ($action !== "users_units" && $action !== "quiz_answer" && $action !== "user") ) {
+        if ( ($method === "POST" || $method === "PATCH") && ($action !== "users_units" && $action !== "quiz_answer" && $action !== "user_password") ) {
             $response_function([
                 "code" => 400,
                 "message" => "action not allowed"
@@ -115,7 +115,7 @@ if ($method_action !== "GET_login") {
         }
         
         // 3) ONLY UPDATE YOUR OWN users_units and quiz_answers
-        if ($action === "users_units" && $action === "quiz_answer" && $action === "user") {
+        if ($action === "users_units" && $action === "quiz_answer" && $action === "user_password") {
             $update_user_id = $params["user_id"];
             if ($user_id !== $update_user_id ) {
                 $response_function([

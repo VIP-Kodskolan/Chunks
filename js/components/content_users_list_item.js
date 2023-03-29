@@ -16,6 +16,12 @@ const id_prefix_item = "user_list_id_";
   SubPub.subscribe({
     event: "db::patch::user::done",
     listener: ({ response, params }) => {
+      render({ element: response.element });
+    },
+  });
+  SubPub.subscribe({
+    event: "db::patch::user_password::done",
+    listener: ({ response, params }) => {
       console.log(response.message);
       if (response.message == "Wrong Password") {
         document.querySelector(".patch_response").textContent = response.message;

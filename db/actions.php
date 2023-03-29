@@ -558,6 +558,10 @@ function DELETE_dependencies ($params, $pdo) {
 
 // USERS
 function PATCH_user ($params, $pdo) {
+  return PATCH($params, $pdo);
+}
+
+function PATCH_user_password ($params, $pdo) {
   $user_id = $params["user_id"];
   $password = $params["oldPassword"];
   $field_name = $params["field_name"];
