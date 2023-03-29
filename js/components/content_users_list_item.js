@@ -23,13 +23,15 @@ const id_prefix_item = "user_list_id_";
     event: "db::patch::user_password::done",
     listener: ({ response, params }) => {
       console.log(response.message);
-      if (response.message == "Wrong Password") {
+      if (!response.password) {
         document.querySelector(".patch_response").textContent = response.message;
         document.querySelector(".patch_response").classList.add("display_response")
         setTimeout(() => document.querySelector(".patch_response").classList.remove("display_response"), 5000)
         return;
       }
-      render({ element: response.element });
+      document.querySelector(".patch_response").textContent = "Change Success!";
+        document.querySelector(".patch_response").classList.add("display_response")
+        setTimeout(() => document.querySelector(".patch_response").classList.remove("display_response"), 5000)
     },
   });
 })();

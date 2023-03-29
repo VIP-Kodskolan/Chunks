@@ -76,13 +76,21 @@ function render () {
   header_dom.querySelector(".change_password").addEventListener("click", new_password)
 
   function new_password(){
+    let new_password = document.querySelector(".new_password").value
+    let old_password = document.querySelector(".old_password").value
+    if(new_password.length < 3 || old_password == ""){
+      document.querySelector(".patch_response").textContent = "Passwords need to be longer than 3 characters";
+        document.querySelector(".patch_response").classList.add("display_response")
+        setTimeout(() => document.querySelector(".patch_response").classList.remove("display_response"), 5000)
+        return;
+    }
     SubPub.publish({
       event:"db::patch::user_password::request",
       detail: { params:{
         field_name: "user_password",
-        newUsername:  document.querySelector(".new_password").value,
+        new_password:  new_password,
         user_id: state_io.state.user.user_id,
-        oldPassword: document.querySelector(".old_password").value
+        old_Password: old_password
     }}})
   }
 

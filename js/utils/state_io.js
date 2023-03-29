@@ -86,11 +86,10 @@ export default {
       events: ["db::patch::user_password::received"],
       middleware: (response, params) => {
         console.log(response, params);
-        if(response.message === "Wrong Password"){
+        if(!response.password){
           return
         }
-        const index = State.users.findIndex(u => u.user_id === response.element.user_id);
-        State.users.splice(index, 1, response.element);
+        return response
       }
     },
 

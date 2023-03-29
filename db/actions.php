@@ -565,28 +565,22 @@ function PATCH_user_password ($params, $pdo) {
   $user_id = $params["user_id"];
   $password = $params["oldPassword"];
   $field_name = $params["field_name"];
-  $value = $params["newUsername"];
+  $newUsername = $params["newUsername"];
   $user = _get_user($user_id, $pdo);
 
   if($user["user_password"] !== $password){
     return [
       "data" => 
-      ["message" => "Wrong Password"]];
+      ["message" => "Wrong Password",
+      "USER" => $user]];
   }
 
-  // if(_get_user($user_id, $pdo)){
-    $sql = "UPDATE users SET $field_name = $value WHERE user_id = $user_id";
+    $sql = "UPDATE users SET $field_name = '$newUsername' WHERE user_id = $user_id";
     $pdo -> query($sql);
 
-    return [
-      "data" => [
-      "user" => _get_user($user_id, $pdo)
-      ]
+    return ["data" => [
+      "password" => true]
     ];
-  // }
-
-
-  // return PATCH($params, $pdo);
 }
 
 function POST_user ($params, $pdo) {

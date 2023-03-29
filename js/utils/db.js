@@ -244,10 +244,6 @@ console.log(data.headers);
     console.log(middle);
     let data = await _response[middle]();
     SHOW_RAW_RESPONSE && console.log(data);  
-    
-    if(data.message === "Wrong Password"){
-      return
-    }
   
     if (middle === "text") {
         data = JSON.parse(data);
