@@ -121,20 +121,6 @@ if ($method_action !== "GET_login") {
             }
         }
 
-        // PASSWROD CANGE 
-        if ($action === "user_password") {
-
-            $userCurrentPassword = $user["user_password"];
-            $oldPasswordEnter = $params["old_password"];
-
-            if ($oldPasswordEnter !== $userCurrentPassword) { 
-                $response_function([
-                    "code" => 400,
-                    "message" => "old password does not match current password"
-                ]);
-            }
-        }
-
         // NON-TEACHERS CANNOT GET USERS
         if ($method_action === "GET_users") {
             $response_function([

@@ -92,7 +92,6 @@ function render( data ) {
 
 function change_password( response ) { 
 
-    console.log(response);
     let new_password = document.querySelector("#new_password");
     let old_password = document.querySelector("#old_password");
 
@@ -107,7 +106,7 @@ function change_password( response ) {
 
     });
     
-    const user = response.user ? response.user : response.element;
+    const user = response.user;
     
     document.querySelector(".changeSet").addEventListener("click", (e) => { 
         e.preventDefault();

@@ -105,11 +105,7 @@ function PATCH ($params, $pdo) {
   $updated_fields = $params["updated_fields"];
 
   // here check ------------------------------------- 
-  if ($kind === "user_password") {
-    $id_field_name = "user_id";
-  } else {
     $id_field_name = $kind."_id";
-  }
   // here check ------------------------------------- 
   
   $get_function = "_get_$kind";
@@ -131,11 +127,7 @@ function PATCH ($params, $pdo) {
     $old_value = $existing_element[$field];
     
     // check .-----------------
-    if ($kind === "user_password") {
-      $table = "users";
-    } else {
       $table = $kind."s";
-    }
     // check .-----------------
 
     // REQUIRE SPECIAL TREATMENT: SPOT, CHAPTER_ID (moves section), AMANUENS
@@ -207,10 +199,6 @@ function PATCH ($params, $pdo) {
       $element = _get_user($element_id, $pdo);
       $element["courses"] = _get_user_courses($element_id, $pdo);
       break;
-    case "user_password":
-      $element = _get_user_password($element_id, $pdo);
-      // $element["courses"] = _get_user_courses($element_id, $pdo);
-    break;
     default:
       $function_name_element = "_get_$kind";
       $function_name_elements = "_get_$kind_parent"."_$kind"."s";
@@ -234,21 +222,26 @@ function PATCH_user ($params, $pdo) {
 }
 
 function PATCH_user_password ($params, $pdo) {
-  return PATCH($params, $pdo);
-}
 
-function _get_user_password ( $user_id, $pdo) {
-  
+  $user_id = $params["element_id"];
+  $old_password = $params["old_password"];
+  $new_password = $params["updated_fields"]["new_password"];
   $user = array_from_query($pdo, "SELECT * FROM users WHERE user_id = $user_id")[0];
-  // $user["user"] = "user";
-  // $user["name"] = $user["name"];
-  // $user["courses"] = _get_user_courses($user_id, $pdo);
 
-  return $user;
+  if ($user["user_password"] !== $old_password) {
+    return [ 
+      "data" => [
+        "password" => false
+      ]];
+  } else {
+    $pdo -> query("UPDAT users SET user_password = '$new_password' WHERE name = '$user_id'" );
+  }
+  return [
+    "data" => [
+      "password" => true
+    ]
+  ];
 }
-
-
-
 
 // SPOT UPDATER
 function update_spot ($pdo, $parent_id, $new_spot, $old_spot, $kind, $kind_parent) {

@@ -89,7 +89,7 @@ export default {
     {
       events: ["db::patch::user_password::received"],
       middleware: (response, params) => {
-
+        console.log(response);
       }
     },
 
