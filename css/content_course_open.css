@@ -8,6 +8,26 @@
   gap: 10px;
 }
 
+#content_course_open.filters{
+  display:flex;
+  flex-direction: column;
+  width: 500px;
+  margin-top:10px;
+}
+.alles{background-color: var(--color_accent_completed_general);}
+.nolles{background-color: var(--color_accent_incorrect);}
+.qeuion{background-color: var(--color_accent_question);}
+
+#content_course_open h3{
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+#content_course_open.filters > div{
+  display: flex;
+  flex-direction: row;
+}
+
 #content_course_open > .course_info {
   display: flex;
   justify-content: center;

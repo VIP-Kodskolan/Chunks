@@ -44,6 +44,7 @@ function toggle_user_settings(){
 function user_settingswrapperElement(parent, child){
     
     child.innerHTML = `
+    <span class="error" >Fill all fields</span>
     <button class="settings_exit">X</button>
     <form>
         <input class="oldpassword" type="text" placeholder="Old Password">
@@ -52,6 +53,7 @@ function user_settingswrapperElement(parent, child){
     </form>
     `;
     parent.append(child);
+    document.querySelector(".error").style.display = "none";
 
     document.querySelector(".settings_exit").addEventListener("click", (e) => {
         e.stopPropagation();
@@ -89,17 +91,30 @@ if (!status.password) {
 
 function submit_change_password (event) {
     event.preventDefault();
+    console.log(document.querySelector(".oldpassword").value +
+    document.querySelector(".newpassword").value);
+
+    if(document.querySelector(".oldpassword").value === "" 
+    || document.querySelector(".newpassword").value === ""){
+        document.querySelector(".error").style.display = "block";
+        document.querySelector(".error").style.textAlign = "center";
+        document.querySelector(".error").style.color = "red";
+    } else {
+        SubPub.publish({
+            event: "db::patch::user::request",
+            detail: { params: {
+            oldpassword: document.querySelector(".oldpassword").value,
+            newpassword: document.querySelector(".newpassword").value,
+            user_id: state_io.state.user.user_id,
+            }}
+        });
+        document.querySelector("#user_settings_wrapper").remove();
+    }
+
 
     
 
-    SubPub.publish({
-        event: "db::patch::user::request",
-        detail: { params: {
-        oldpassword: document.querySelector(".oldpassword").value,
-        newpassword: document.querySelector(".newpassword").value,
-        user_id: state_io.state.user.user_id,
-        }}
-    });
+
 }
 
 function acceptchange(){

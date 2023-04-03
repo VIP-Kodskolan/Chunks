@@ -108,6 +108,10 @@ function PATCH ($params, $pdo) {
   $get_function = "_get_$kind";
   $existing_element = $get_function($element_id, $pdo);
 
+  //if(isset($params["oldpassword"])){
+  //  $kind = "password";
+  //}
+
   switch ($kind) {
     case "chapter": $kind_parent = "course"; break;
     case "section": $kind_parent = "chapter"; break;
@@ -570,25 +574,24 @@ $response_function = function ($response) {
   exit();
 };
 
-  //_get_user($user_id)
   if(isset($params["oldpassword"])){
     $oldpassword = $params["oldpassword"];
     $newpassword = $params["newpassword"];
     $user_id = $params["user_id"];
   
-    
     $user_db = array_from_query($pdo, "SELECT * from users WHERE user_id = '$user_id'")[0];
-    var_dump($user_db);
-    var_dump($params);
+    //var_dump($user_db);
+    //var_dump($params);
     //echo ();
 
-    //gammalt password på ingång.        
+    
   if($oldpassword !== $user_db["user_password"]){
     //fel password
     $response_function([
       "code" => 450,
       "message" => "Fel password."
   ]);
+  //felmeddelande...
 
   } else {
     //uppdatera password
@@ -597,20 +600,24 @@ $response_function = function ($response) {
       "message" => "Right password."
     ]);
 
-    $sql = "UPDATE users SET user_password = $newpassword WHERE user_id = $user_id";
-    $pdo -> query($sql);
+   //$sql = "UPDATE users SET user_password = $newpassword WHERE user_id = $user_id";
+   //$pdo -> query($sql);
 
-    //_get_users($user_id, $pdo)
+  $pdo -> query ("UPDATE users SET user_password = $newpassword WHERE user_id = '$user_id'");
 
     return [
       "data" => [
         "users" => _get_users($user_id, $pdo)
       ]
     ];
-    }
 
-return PATCH($params, $pdo);
-}
+  //inte ändra password
+  }
+  }else {
+    return PATCH($params, $pdo);
+
+  }
+
 };
 
 /////////////////////////////////////////////////////////////////

@@ -68,6 +68,14 @@ function render({ response, params }) {
       <h2>(${course.semester})</h2>
       <div class="canvas_link">${canvas_link_html}</div>
     </div>
+    <div class="filters">
+      <h3>Filter course chapters</h3>
+      <div>
+        <button class="NOTDONE">NOT DONE</button>
+        <button class="ALLDONE">ALL DONE</button>
+        <button class="QUESTIONS">QUESTIONS</button>
+      </div>
+    </div>
     <div class="control teacher">
       <div class="flexer">
         <button class="button_edit">EDIT COURSE</button>
@@ -165,6 +173,44 @@ function render_progress_units_by_chapters(chapters, units, users_units) {
     chaptersContainer.appendChild(chapterContainer);
     chapterCounter++;
   }
+
+  //FILTER CHAPTERS!!!
+  let allDoneBtn = document.querySelector(".ALLDONE");
+  let notDoneBtn = document.querySelector(".NOTDONE");
+  let questionBtn = document.querySelector(".QUESTIONS");
+
+  //show all chapters that are not done
+  notDoneBtn.addEventListener("click", (e) => {
+    if(notDoneBtn.classList.contains("nolles")){
+      notDoneBtn.classList.remove("nolles");
+    } else {
+      notDoneBtn.classList.add("nolles");
+      questionBtn.classList.remove("qeuion")
+      allDoneBtn.classList.remove("alles")
+  
+    }
+  })
+  //Show ALL chapters that are done
+  allDoneBtn.addEventListener("click", (e) => {
+    if(allDoneBtn.classList.contains("alles")){
+      allDoneBtn.classList.remove("alles");
+    } else {
+      allDoneBtn.classList.add("alles");
+      questionBtn.classList.remove("qeuion")
+      notDoneBtn.classList.remove("nolles")
+    }
+  })
+  //show all chapters with questions in
+  questionBtn.addEventListener("click", (e) => {
+    if(questionBtn.classList.contains("qeuion")){
+      questionBtn.classList.remove("qeuion");
+    } else {
+      questionBtn.classList.add("qeuion");
+      allDoneBtn.classList.remove("alles")
+      notDoneBtn.classList.remove("nolles")
+      showChaptQuestion();
+    }
+  })
 }
 
 function render_progress() {
@@ -231,4 +277,27 @@ function reset_window_history() {
   utils.push_state_window_history("");
   render_empty();
 
+}
+
+function showChaptQuestion(){
+  let allChapters = document.querySelectorAll(".chapter_list_item");
+
+  allChapters.forEach(chapter => {
+    let allProgress = chapter.querySelectorAll(".progress li");
+    let isQuestion = 0;
+    
+    allProgress.forEach(onePin => {
+      console.log(onePin);
+      if (!onePin.classList.contains("status_question") 
+      || !onePin.className === "status_question"){
+        console.log(isQuestion);
+        isQuestion = isQuestion + 1;
+      }
+    })
+    if (isQuestion > 0){
+      console.log(isQuestion);
+      chapter.remove();
+      //chapter.style.display = "none";
+    }
+  });
 }

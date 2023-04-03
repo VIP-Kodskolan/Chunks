@@ -55,12 +55,14 @@
   --t_fast_transition: .5s;
 
   --color_accent_1_overlay: rgba(174,174,174,.5);
+  --color_accent_completed_general: #73a600;
 
   --color_accent_question: #b68904;
   --color_accent_completed_unit: #bece99; /* #97a871; */ /* #7a963b; */
   --color_accent_incorrect: #dd99b4; /* #901e4a; */
   --color_accent_quiz: #11aab5;
   --color_accent_correct: #334208;
+  
 
   --opacity_empty: .6;
 
@@ -84,8 +86,6 @@
   --color_accent_0: #838380;
   --color_accent_1: #434a4a;
   --color_accent_2: #303839;
-  
-  --color_accent_completed_general: #73a600; /* #97a871; /* #7a963b; */
 }
 
 .dark-theme{
@@ -98,8 +98,7 @@
   --color_accent_0: #8a8b8d;
   --color_accent_1: #a2a2a2;
   --color_accent_2: black;
-  
-  --color_accent_completed_general:#446200;
+
 }
 
 * {
