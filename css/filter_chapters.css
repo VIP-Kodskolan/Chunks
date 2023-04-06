@@ -6,7 +6,10 @@
 
 #filterBtnsContainer > button {
     position: relative;
-    width: 20%;
+    width: 18%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 }
 
 .btnCircle {
@@ -14,10 +17,12 @@
     right: 5px;
     width: 18px;
     height: 18px;
-    border: 1px solid var(--color_accent_1_overlay);
     border-radius: 50%;
+    border: 1px solid transparent;
+    transition: border 0.2s ease-in-out, background-color 0.5s ease-in-out;
 }
 
 .Filteractive > .btnCircle {
-    background-color: var(--color_accent_1_overlay);
+    border: 1px solid var(--color_back_1);
+    background-color: var(--color_back_1);
 }
