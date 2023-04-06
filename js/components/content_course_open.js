@@ -216,6 +216,7 @@ function render_progress() {
   }
 
 }
+
 function render_empty() {
 
   const dom = document.querySelector("#content_course_open");

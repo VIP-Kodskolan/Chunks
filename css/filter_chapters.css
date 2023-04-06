@@ -1,0 +1,23 @@
+#filterBtnsContainer {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
+
+#filterBtnsContainer > button {
+    position: relative;
+    width: 20%;
+}
+
+.btnCircle {
+    position: absolute;
+    right: 5px;
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--color_accent_1_overlay);
+    border-radius: 50%;
+}
+
+.Filteractive > .btnCircle {
+    background-color: var(--color_accent_1_overlay);
+}

@@ -103,7 +103,7 @@ if ($method_action !== "GET_login") {
         }
 
         // 2) NON-TEACHERS CAN ONLY POST AND PATCH users_units and quiz_answers.
-        if ( ($method === "POST" || $method === "PATCH") && ($action !== "users_units" && $action !== "quiz_answer" && $action !== "user_password") ) {
+        if ( ($method === "POST" || $method === "PATCH") && ($action !== "users_units" && $action !== "quiz_answer") && ($action !== "user_password") ) {
             $response_function([
                 "code" => 400,
                 "message" => "action not allowed"

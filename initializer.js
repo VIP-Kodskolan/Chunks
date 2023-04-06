@@ -14,6 +14,7 @@ import content_users_list from './js/components/content_users_list.js';
 import content_users_list_item from './js/components/content_users_list_item.js';
 import editor from './js/components/editor.js';
 import editor_quiz from './js/components/editor_quiz.js';
+import filter_chapters from './js/components/filter_chapters.js';
 import login_register from './js/components/login_register.js';
 import modal_unit from './js/components/modal_unit.js';
 import modal_unit_quiz from './js/components/modal_unit_quiz.js';

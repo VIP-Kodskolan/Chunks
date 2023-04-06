@@ -22,6 +22,11 @@ export default {}
     listener: render
   });
 
+  // SubPub.subscribe({
+  //   events: ["db::get::course::done"],
+  //   listener: fillNotes,
+  // });
+
   SubPub.subscribe({
     event: "db::post::chapter::done",
     listener: render
@@ -40,7 +45,6 @@ export default {}
       }
     }
   });
-
 
 })();
 
@@ -93,3 +97,29 @@ function render () {
 
 }
 
+// function fillNotes() {
+//   document.querySelector("#notes_div").innerHTML = ""
+//   const { chapters, users_units } = state_io.state;
+//   console.log(chapters);
+//   console.log(users_units);
+//   for (let note of users_units) {
+//     for (let chapter of chapters) {
+//       if (note.chapter_id === chapter.chapter_id) {
+//         console.log(note);
+//         console.log(chapter);
+//         let noteDiv = document.createElement("div");
+//         let chunkLink = document.createElement("a");
+//         let noteText = document.createElement("p");
+
+//         noteDiv.classList.add("note");
+//         chunkLink.href = `https://maumt.se/chunks/?course=${chapter.course_id}&unit=${note.unit_id}`;
+//         chunkLink.textContent = `${chapter.name} chunk:${note.unit_id}`;
+//         noteText.textContent = note.notes;
+
+//         noteDiv.append(chunkLink, noteText);
+
+//         document.querySelector("#notes_div").append(noteDiv);
+//       }
+//     }
+//   }
+// }

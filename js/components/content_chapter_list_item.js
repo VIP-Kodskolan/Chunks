@@ -278,3 +278,4 @@ function render_progress ({ element }) {
   });
 
 }
+

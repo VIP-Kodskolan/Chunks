@@ -104,9 +104,7 @@ function PATCH ($params, $pdo) {
   $element_id = $params["element_id"];
   $updated_fields = $params["updated_fields"];
 
-  // here check ------------------------------------- 
-    $id_field_name = $kind."_id";
-  // here check ------------------------------------- 
+  $id_field_name = $kind."_id";
   
   $get_function = "_get_$kind";
   $existing_element = $get_function($element_id, $pdo);
@@ -126,9 +124,7 @@ function PATCH ($params, $pdo) {
     $new_value = $one_field["value"];
     $old_value = $existing_element[$field];
     
-    // check .-----------------
-      $table = $kind."s";
-    // check .-----------------
+    $table = $kind."s";
 
     // REQUIRE SPECIAL TREATMENT: SPOT, CHAPTER_ID (moves section), AMANUENS
     if ($field === "spot") {
@@ -222,7 +218,6 @@ function PATCH_user ($params, $pdo) {
 }
 
 function PATCH_user_password ($params, $pdo) {
-
   $user_id = $params["element_id"];
   $old_password = $params["old_password"];
   $new_password = $params["updated_fields"]["new_password"];
@@ -235,12 +230,13 @@ function PATCH_user_password ($params, $pdo) {
       ]];
   } else {
     $pdo -> query("UPDAT users SET user_password = '$new_password' WHERE name = '$user_id'" );
+
+    return [
+      "data" => [
+        "password" => true
+      ]];
   }
-  return [
-    "data" => [
-      "password" => true
-    ]
-  ];
+  
 }
 
 // SPOT UPDATER

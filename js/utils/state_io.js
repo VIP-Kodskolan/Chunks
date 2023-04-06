@@ -78,10 +78,8 @@ export default {
     {
       events: ["db::patch::user::received"],
       middleware: (response, params) => {
-        // if ( !State.user ) {
-          const index = State.users.findIndex(u => u.user_id === response.element.user_id);
-          State.users.splice(index, 1, response.element);
-        // } 
+        const index = State.users.findIndex(u => u.user_id === response.element.user_id);
+        State.users.splice(index, 1, response.element);
       }
     },
 
@@ -89,7 +87,7 @@ export default {
     {
       events: ["db::patch::user_password::received"],
       middleware: (response, params) => {
-        console.log(response);
+        console.log("this is respon", response)
       }
     },
 
@@ -319,12 +317,6 @@ export default {
         event,
         listener: ({ response, params }) => {
 
-          if (response.payload.data === null) {
-            SubPub.publish({
-              event: "password_error",
-              detail: response
-            }) 
-          } else {
             response = response?.payload?.data;
             middleware && middleware(response, params);
   
@@ -338,7 +330,6 @@ export default {
               event: parsed_event.type + "::" + parsed_event.name + "::" + parsed_event.action + "::done",
               detail: { response, params }
             });
-          }
     
         }
       });

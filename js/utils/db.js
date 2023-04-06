@@ -251,7 +251,7 @@ async function _fetch (data) {
 
     // console.log("Requesting", body.action );
     const _response = await fetch(request);
-    console.log("DB.JS _fetch response", _response.status)
+    // console.log("DB.JS _fetch response", _response.status)
     middle = _response.headers.get("Content-Type").includes("text") ? "text" : "json";
     let data = await _response[middle]();
   
@@ -263,7 +263,7 @@ async function _fetch (data) {
   
     // SHOW_OBJECT_RESPONSE && console.log(data);
 
-    console.log("DB.JS _fetch recourse", data)
+    // console.log("DB.JS _fetch recourse", data)
     return data;
 
   } catch (e) {
