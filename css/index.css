@@ -18,8 +18,8 @@ body {
   --color_back_2: #211e1f; /* #acb7b6; */
   --color_back_2B: #504a4c; /* #acb7b6; */
   --color_accent_0: #838380;
-  --color_accent_1: #d5bfcd;
-  --color_accent_2: #aea1a8;
+  --color_accent_1: #e5d0dd;
+  --color_accent_2: #fbc7e3;
   --color_accent_question: #b68904;
   --color_accent_completed_unit: #6b00a6; /* #97a871; */ /* #7a963b; */
   --color_accent_completed_general: #6b00a6; /* #97a871; /* #7a963b; */
@@ -219,4 +219,16 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+.filter_buttons{
+  width: 100%;
+}
+
+.chapBTN{
+  width: 200px;
+}
+
+.chapBTN.active{
+  background-color: var(--color_accent_0);
 }

@@ -74,7 +74,14 @@ function render({ response, params }) {
         <button class="button_edit">EDIT COURSE</button>
         <button class="button_delete">DELETE COURSE</button>
       </div>
-    </div>
+      </div>
+      <div class="filter_buttons">
+        <div class="flexer">
+          <button class="show_finished_chapters chapBTN">Finished Chapters</button>
+          <button class="show_unfinished_chapters chapBTN">Unfinished Chapters</button>
+          <button class="show_chapters_with_questions chapBTN">Chapters With Questions</button>
+        </div>
+      </div>
   `;
 
   
@@ -110,12 +117,52 @@ function render({ response, params }) {
     });
   }
 
+  // EVENT: FILTER
+  let chapBTN = Array.from(dom.querySelectorAll(".chapBTN"))
+  chapBTN.forEach(e => e.addEventListener("click", toggle_filter));
+  
+  function toggle_filter(event){
+    if(event.target.classList.contains("active")){
+      event.target.classList.remove("active")
+    } else {
+      let chapBTN = Array.from(document.querySelectorAll(".chapBTN"))
+    
+      chapBTN.forEach(e => e.classList.remove("active"))
+      event.target.classList.add("active")
+    }
+  }
+
+  dom.querySelector(".show_finished_chapters").addEventListener("click", show_finished_chapters)
+  function show_finished_chapters(){
+    SubPub.publish({
+      event: "filter::finished_chapters",
+    });
+  }
+  
+  dom.querySelector(".show_finished_chapters").addEventListener("click", show_unfinished_chapters)
+  function show_unfinished_chapters(){
+    SubPub.publish({
+      event: "filter::unfinished_chapters",
+    });
+  }
+  
+  dom.querySelector(".show_finished_chapters").addEventListener("click", 
+  show_chapters_with_questions)
+  function show_chapters_with_questions(){
+    SubPub.publish({
+      event: "filter::chapters_with_questions",
+    });
+  }
+
+
+
   // THIS SPECIFIC ELEMENT EDITING?
   let is_editing = utils.get_parameter("edit_kind") && utils.get_parameter("edit_kind") === "course";
   is_editing = is_editing && utils.get_parameter("edit_id") && utils.get_parameter("edit_id") === course.course_id;
   is_editing && open_editor();
 
 }
+
 
 function render_progress_units_by_chapters(chapters, units, users_units) {
   const chaptersContainer = document.querySelector("#content_course_open .weekly_progress .units_by_chapters"); 
