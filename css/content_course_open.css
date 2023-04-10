@@ -18,6 +18,13 @@
 .nolles{background-color: var(--color_accent_incorrect);}
 .qeuion{background-color: var(--color_accent_question);}
 
+.ALLDONE:hover{background-color:#90cd00;}
+.ALLDONE:active{background-color:#567b00;}
+.NOTDONE:hover{background-color:#f5a9c8;}
+.NOTDONE:active{background-color:#b77f95;}
+.QUESTIONS:hover{background-color:#dea805;}
+.QUESTIONS:active{background-color:#926f03;}
+
 #content_course_open h3{
   text-align: center;
   margin-bottom: 5px;
