@@ -362,7 +362,6 @@ function renderChaps(chaptersIn){
     filteredOrNotChaps.push(...chapters);
   } else {
 
-    console.log("chaptersIn got stuff");
     //only keep id number of chapter
     chaptersIn.forEach(element => {
       var id = element.getAttribute( 'id' );
@@ -378,8 +377,6 @@ function renderChaps(chaptersIn){
     filteredOrNotChaps.push(...intersection);
     
   }
-
-  console.log(filteredOrNotChaps);
 
   list_dom.innerHTML = "";
   filteredOrNotChaps.forEach(chapter => {
