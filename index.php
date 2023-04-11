@@ -93,6 +93,12 @@ function links_to_css_files()
                     <div id="users_admin"></div>
                 </div>
                 <div id="content_user"></div>
+                <div class="filter-container">
+                <button class="filterUnfinishedButton">Filter Unfinished</button>
+                   <button class="filterDoneButton">Filter done</button>
+                   <button class="filterQuestionButton">Filter question</button>
+                    </label>
+                </div>
                 <div class="theme-switch-container">
                     <label class="theme-slider" for="checkbox">
                         <input type="checkbox" id="checkbox" />
