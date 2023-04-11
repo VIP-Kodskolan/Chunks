@@ -12,7 +12,7 @@ const Consts = {
 };
 
 export default {
-  get state() { return State },
+  get state() { return State; },
   bullet_number_element,
   get_section_units,
   get_chapter_assignments, get_chapter_sections, get_chapter_units,
@@ -59,7 +59,7 @@ export default {
     },
     {
       events: ["db::get::date_time::received"],
-      middleware: () => {}
+      middleware: () => { }
     },
 
     // USERS
@@ -80,6 +80,18 @@ export default {
       middleware: (response, params) => {
         const index = State.users.findIndex(u => u.user_id === response.element.user_id);
         State.users.splice(index, 1, response.element);
+      }
+    },
+    {
+      events: ["db::patch::user_password::received"],
+      middleware: (response, params) => {
+        // const index = State.users.findIndex(u => u.user_id === response.element.user_id);
+        // State.users.splice(index, 1, response.element);
+        if (response.password) {
+          console.log("All went well.");
+        } else {
+          console.log("All is NOT well...");
+        }
       }
     },
 
@@ -106,7 +118,7 @@ export default {
             State.users_units.splice(index, 1);
           }
           State.users_units.push(response.users_unit);
-  
+
         }
       }
     },
@@ -167,7 +179,7 @@ export default {
       events: ["db::patch::unit::received"],
       middleware: (response, params) => {
         // response contains units in one section
-        response.elements.forEach( unit => {
+        response.elements.forEach(unit => {
           const index = State.units.findIndex(u => u.unit_id === unit.unit_id);
           State.units.splice(index, 1, unit);
         });
@@ -178,7 +190,7 @@ export default {
       middleware: (response, params) => {
 
         cascade_delete("unit", response.element.unit_id);
-        
+
         // spot has been updated. Update section's units
         response.elements.forEach(unit => {
           delete_element("units", unit.unit_id);
@@ -206,7 +218,7 @@ export default {
         }
 
         // response contains sections in one chapter (old chapter if section was moved)
-        response.elements.forEach( section => {
+        response.elements.forEach(section => {
           const index = State.sections.findIndex(s => s.section_id === section.section_id);
           State.sections.splice(index, 1, section);
         });
@@ -217,13 +229,13 @@ export default {
       middleware: (response, params) => {
 
         cascade_delete("section", response.section_id);
-        
+
         // spot has been updated. Update chapter's sections
         response.sections.forEach(section => {
           delete_element("sections", section.section_id);
           State.sections.push(section);
         });
-        
+
       }
     },
 
@@ -250,13 +262,13 @@ export default {
     },
     {
       events: ["db::patch::chapter::received"],
-      middleware: (response, params) => {        
+      middleware: (response, params) => {
         State.chapters = response.elements;
       }
     },
     {
       events: ["db::delete::chapter::received"],
-      middleware: (response, params) => {        
+      middleware: (response, params) => {
         cascade_delete("chapter", response.chapter_id);
 
         // spots have been updated
@@ -291,8 +303,8 @@ export default {
           }
         });
       }
-    },    
-    
+    },
+
   ];
 
   subscriptions.forEach(sb => {
@@ -308,7 +320,7 @@ export default {
       SubPub.subscribe({
         event,
         listener: ({ response, params }) => {
-          
+
           response = response?.payload?.data;
           middleware && middleware(response, params);
 
@@ -316,13 +328,13 @@ export default {
           response.element && fix_ints_and_booleans_elements(response.element);
           response.elements && fix_ints_and_booleans_elements(response.elements);
           response.user && fix_ints_and_booleans_elements(response.user);
-  
-          const parsed_event = SubPub.parseEvent(event);        
+
+          const parsed_event = SubPub.parseEvent(event);
           SubPub.publish({
             event: parsed_event.type + "::" + parsed_event.name + "::" + parsed_event.action + "::done",
             detail: { response, params }
           });
-  
+
         }
       });
 
@@ -333,7 +345,7 @@ export default {
   // Can't seem to get int or boolean type as response from sqlite.
   const int_keys = ["spot", "week_start", "week_count", "user_start_year"];
   const boolean_keys = ["can_add_courses", "is_stop_quiz", "check_question", "check_complete", "correct", "done"];
-  function fix_ints_and_booleans_state () {
+  function fix_ints_and_booleans_state() {
     for (let entity in State) {
       if (Array.isArray(State[entity])) {
         State[entity].forEach(element => {
@@ -341,27 +353,26 @@ export default {
         });
       }
       if (entity === "course") {
-        fix_ints_and_booleans_in_this_object(State[entity])
+        fix_ints_and_booleans_in_this_object(State[entity]);
       }
     }
   }
-  function fix_ints_and_booleans_elements (elements) {
+  function fix_ints_and_booleans_elements(elements) {
     if (!Array.isArray(elements)) elements = [elements];
     elements.forEach(element => {
       fix_ints_and_booleans_in_this_object(element);
     });
-  }  
-  function fix_ints_and_booleans_in_this_object (object) {
+  }
+  function fix_ints_and_booleans_in_this_object(object) {
     for (const key in object) {
       int_keys.includes(key) && (object[key] = parseInt(object[key]));
-      boolean_keys.includes(key) && (object[key] = !!(object[key] == "1") );
+      boolean_keys.includes(key) && (object[key] = !!(object[key] == "1"));
     }
   }
 
 })();
 
-
-function bullet_number_element (element) {
+function bullet_number_element(element) {
 
   let bullet = "";
 
@@ -382,14 +393,14 @@ function bullet_number_element (element) {
   return bullet;
 }
 
-function cascade_delete (entity, id) {
+function cascade_delete(entity, id) {
 
   const entities = ["course", "chapter", "section", "unit", "quiz_question", "quiz_option", "quiz_answer"];
   const index = entities.indexOf(entity);
 
   if (index !== -1) {
 
-    const next_entity = index >= entities.length -1 ? false : entities[index + 1];
+    const next_entity = index >= entities.length - 1 ? false : entities[index + 1];
     delete_element(entity + "s", id);
 
     if (next_entity) {
@@ -409,16 +420,16 @@ function cascade_delete (entity, id) {
   if (entity === "section") {
     State.dependencies && delete_elements(State.dependencies.filter(x => x.section_id === id), State.dependencies, "section_id");
   }
-  
+
 
 }
-function delete_elements (to_delete, from_array, key) {
+function delete_elements(to_delete, from_array, key) {
   to_delete.forEach(x => {
     const index = from_array.findIndex(xx => x[key] === xx[key]);
     from_array.splice(index, 1);
   });
 }
-function delete_element (table, element_id) {
+function delete_element(table, element_id) {
   const kind = table.substring(0, table.length - 1);
   const id_field_name = kind + "_id";
   const index = State[table].findIndex(x => x[id_field_name] === element_id);
@@ -428,19 +439,19 @@ function delete_element (table, element_id) {
     console.log("Couldn't delete element", table, kind, id_field_name, element_id);
   }
 }
-function delete_sections_units (section_id) {
+function delete_sections_units(section_id) {
 
   for (let i = State.units.length - 1; i >= 0; i--) {
     const unit = State.units[i];
     if (unit.section_id === section_id) {
 
-      delete_users_units (unit.unit_id);
+      delete_users_units(unit.unit_id);
       delete_element("units", unit.unit_id);
 
     }
   }
 }
-function delete_chapters_sections (chapter_id) {
+function delete_chapters_sections(chapter_id) {
 
   for (let i = State.sections.length - 1; i >= 0; i--) {
     const section = State.sections[i];
@@ -452,37 +463,37 @@ function delete_chapters_sections (chapter_id) {
     }
   }
 }
-function delete_users_units (id, by_user = false) {
+function delete_users_units(id, by_user = false) {
 
   let index;
   if (by_user) {
 
     index = State.users_units.findIndex(uu => uu.user_id == id);
-  
+
   } else {
 
     index = State.users_units.findIndex(uu => uu.unit_id == id);
-  
-  } 
+
+  }
 
   if (index !== -1) State.users_units.splice(index, 1);
   // else console.log("Unavailable users_units. ID: " + id + ". By user: " + (by_user ? "yes" : "no"));
 
 }
 
-function is_unit_empty (element) {
+function is_unit_empty(element) {
 
   return element.kind !== "quiz" && !element.story ||
-         element.kind === "quiz" && element.name !== "Done";
+    element.kind === "quiz" && element.name !== "Done";
 }
 
-function get_class_expanded_chapter (element) {
+function get_class_expanded_chapter(element) {
 
   const expanded_chapters = JSON.parse(localStorage.getItem("expanded_chapters"));
   return !!expanded_chapters?.find(c => c.chapter_id === element.chapter_id && c.course_id === element.course_id);
 
 }
-function set_class_expanded_chapter (element, expanded) {
+function set_class_expanded_chapter(element, expanded) {
 
   const expanded_chapters = JSON.parse(localStorage.getItem("expanded_chapters")) || [];
   if (expanded) {
@@ -498,22 +509,22 @@ function set_class_expanded_chapter (element, expanded) {
 
 }
 
-function get_chapter_sections (chapter_id) {
-  return State.sections.filter(c => c.chapter_id === chapter_id).sort( (a, b) => a.spot > b.spot );
+function get_chapter_sections(chapter_id) {
+  return State.sections.filter(c => c.chapter_id === chapter_id).sort((a, b) => a.spot > b.spot);
 }
-function get_section_units (section_id) {
-  return State.units.filter(c => c.section_id === section_id).sort( (a, b) => a.spot > b.spot );
+function get_section_units(section_id) {
+  return State.units.filter(c => c.section_id === section_id).sort((a, b) => a.spot > b.spot);
 }
-function get_chapter_units (chapter_id) {
+function get_chapter_units(chapter_id) {
   let units = [];
   get_chapter_sections(chapter_id).forEach(s => units = [...units, ...get_section_units(s.section_id)]);
   return units;
 }
-function get_chapter_assignments (chapter_id) {
+function get_chapter_assignments(chapter_id) {
   return get_chapter_units(chapter_id).filter(u => u.kind === "assignment");
 }
 
-function get_quiz_question_status (question) {
+function get_quiz_question_status(question) {
 
   let status = "answered_no";
   const answers = get_question_answers({ question });
@@ -523,10 +534,10 @@ function get_quiz_question_status (question) {
   return status;
 
 }
-function get_question_answers ({ question }) {
+function get_question_answers({ question }) {
   return State.quiz_answers.filter(a => a.quiz_question_id === question.quiz_question_id);
 }
-function is_answer_correct ({ answer }) {
+function is_answer_correct({ answer }) {
   const option = State.quiz_options.find((op => op.quiz_option_id === answer.quiz_option_id));
   return option.correct;
 }

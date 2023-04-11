@@ -1,0 +1,37 @@
+.hidden {
+    display: none;
+}
+
+.dialogue_parent {
+    position: relative;
+}
+
+.dialogue_child {
+    position: absolute;
+    top: 35px;
+    right: 25px;
+    height: 170px;
+    width: 220px;
+    background-color: #e0e1e4;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #78787894;
+}
+
+.dialogue_child label, .dialogue_child input {
+    margin-bottom: 5px;
+}
+
+.dialogue_child input {
+    border: 1px solid rgba(124, 124, 124, 0.66);
+}
+
+#change_pw {
+    margin-top: 5px;
+    width: 40%;
+}

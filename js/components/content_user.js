@@ -5,37 +5,37 @@ import utils from "../utils/utils.js";
 export default {}
 
 
-// INIT
-;(() => {
+  // INIT
+  ; (() => {
 
-  SubPub.subscribe({
-    event: "user_ok",
-    listener: render,
-  });
+    SubPub.subscribe({
+      event: "user_ok",
+      listener: render,
+    });
 
-  SubPub.subscribe({
-    event: "db::get::course::done",
-    listener: ({ response, params }) => {
-  
-      if (response.course.role === "teacher") {
-        render_views("teacher_create");
+    SubPub.subscribe({
+      event: "db::get::course::done",
+      listener: ({ response, params }) => {
+
+        if (response.course.role === "teacher") {
+          render_views("teacher_create");
+        }
+
+        // Hide anonymous student usernames
+        if (response.course.role === "student") {
+          const h2 = document.querySelector("h2.user_name");
+          if (h2) h2.remove();
+
+          const userInfoDiv = document.querySelector("div.user_info");
+          if (userInfoDiv) userInfoDiv.classList.add("is-student");
+        }
       }
-      
-      // Hide anonymous student usernames
-      if (response.course.role === "student") {
-        const h2 = document.querySelector("h2.user_name");
-        if (h2) h2.remove();
+    });
 
-        const userInfoDiv = document.querySelector("div.user_info");
-        if (userInfoDiv) userInfoDiv.classList.add("is-student");
-      }
-    }
-  });  
-
-})();
+  })();
 
 
-function render () {
+function render() {
 
   const user = state_io.state.user;
   const header_dom = document.querySelector("#content_user");
@@ -44,18 +44,66 @@ function render () {
     <div class="user_info">
       <h2 class="user_name">${user.name}</h2>
       <button class="button_logout">LOGOUT</button>
+      <button class="button_pw">CHANGE PASSWORD</button>
+      <div id="dialogue_pw" class="hidden">
+        <div id="dialogue_content" class="hidden">
+        <label for="old_pw">Old password:</label><br>
+        <input type="password" id="old_pw" name="old_pw"><br>
+        <label for="new_pw">New password:</label><br>
+        <input type="password" id="new_pw" name="new_pw">
+        <button id='change_pw'>Change</button>
+        </div>
+      </div>
     </div>
     <div class="views"></div>
   `;
 
   header_dom.querySelector(".button_logout").addEventListener("click", logout);
-  function logout () {
+  function logout() {
     localStorage.removeItem("logged_in_name");
     localStorage.removeItem("logged_in_token");
 
     utils.push_state_window_history("");
     window.location.reload(true);
   }
+  // NOTE: start
+
+  header_dom.querySelector(".button_pw").addEventListener("click", openDlg);
+  function openDlg() {
+    let dialogueBox = header_dom.querySelector("#dialogue_pw");
+
+    dialogueBox.classList.toggle('hidden');
+    if (!dialogueBox.classList.contains('hidden')) {
+      dialogueBox.classList.add('dialogue_parent');
+      dialogueBox.querySelector('div').classList.add('dialogue_child');
+      document.addEventListener('mouseup', function (event) {
+
+        if (!dialogueBox.contains(event.target) && !document.querySelector('.button_pw').contains(event.target)) {
+          dialogueBox.className = "";
+          dialogueBox.classList.add('hidden');
+        }
+      });
+    }
+
+  }
+
+  header_dom.querySelector("#change_pw").addEventListener("click", submit_password_change);
+  function submit_password_change(event) {
+    event.preventDefault();
+
+    SubPub.publish({
+      event: "db::patch::user_password::request",
+      detail: {
+        params: {
+          user: user.name,
+          old_pw: document.querySelector("#old_pw").value,
+          new_pw: document.querySelector("#new_pw").value
+        }
+      }
+    });
+  }
+
+  // NOTE: end
 
   // USERS_ADMIN
   if (state_io.state.user.user_programme === "TCH") {
@@ -64,15 +112,15 @@ function render () {
     `;
 
     document.querySelector("#users_admin button").addEventListener("click", admin_users);
-    function admin_users () {
+    function admin_users() {
       utils.push_state_window_history("?users=admin");
       window.location.reload();
     }
   }
-  
+
 }
 
-function render_views ( selected_view ) {
+function render_views(selected_view) {
 
   const views_dom = document.querySelector("#content_header .views");
 
@@ -102,7 +150,7 @@ function render_views ( selected_view ) {
   }
 
   views_dom.querySelectorAll("button").forEach(x => x.addEventListener("click", change_view));
-  function change_view (event) {
+  function change_view(event) {
     render_views(event.target.name);
     SubPub.publish({
       event: `render::new_view`,

@@ -10,3 +10,11 @@
   flex-direction: column;
   gap: 15px;
 }
+
+.hide {
+  display: none;
+}
+
+.opt_blocked + label {
+  opacity: 50%;
+}

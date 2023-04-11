@@ -98,7 +98,7 @@ function GET_users ($params, $pdo) {
 function PATCH ($params, $pdo) {
 
   $user_id = $params["user_id"];
-
+  
   $element = $params["element"];
   $kind = $params["kind"];
   $element_id = $params["element_id"];
@@ -609,6 +609,36 @@ function DELETE_user ($params, $pdo) {
   ];
 }
 
+// USER PW
+
+function PATCH_user_password ($params, $pdo) {
+    // NOTE: password addition
+    $user_name = $params["user"]; 
+    $old_password = $params["old_pw"];
+    $new_password = $params["new_pw"];
+
+    $user_db = array_from_query($pdo, "SELECT * from users WHERE name = '$user_name'")[0];
+
+    if($user_db["user_password"] == $old_password) {
+      $pdo -> query("UPDATE users SET user_password = '$new_password' WHERE name = '$user_name';");
+    } else {
+      return [
+        "data" => [
+          "password" => false,
+        ]
+      ]; 
+    }
+
+    return [
+      "data" => [
+        "password" => true,
+      ]
+    ]; 
+
+  
+    // NOTE: end of pw addition
+
+}
 
 // USERS_UNITS
 function PATCH_users_units ($params, $pdo) {
