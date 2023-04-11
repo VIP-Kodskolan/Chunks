@@ -61,14 +61,20 @@ function render() {
       KAPITEL I KURSEN
     </div>
     <div class="top" id="chapter_filters">
-      <input type="checkbox" id="opt_complete" name="selector">
-      <label for="opt_complete">Only completed</label>
+      <div>
+        <input type="checkbox" id="opt_complete" name="selector">
+        <label for="opt_complete">Avklarade</label>
+      </div>
 
-      <input type="checkbox" id="opt_non_complete" name="selector">
-      <label for="opt_non_complete">Only non-completed</label>
+      <div>
+        <input type="checkbox" id="opt_non_complete" name="selector">
+        <label for="opt_non_complete">Icke-avklarade</label>
+      </div>
 
-      <input type="checkbox" id="opt_question" name="selector">
-      <label for="opt_question">Only questions</label>
+      <div>
+        <input type="checkbox" id="opt_question" name="selector">
+        <label for="opt_question">Frågor</label>
+      </div>
     </div>
     <ul></ul>
   `;
@@ -77,7 +83,6 @@ function render() {
   render_chapters();
 
   // CHAPTER FILTERS
-  check_status();
   chapter_filters(document.querySelector('#chapter_filters'));
 
 }
@@ -89,6 +94,7 @@ function chapter_filters(parent_div) {
   inputs.forEach(input => {
     input.addEventListener('change', function () {
       if (this.checked == true) {
+        check_status();
         inputs.forEach(box => {
           if (box != this) {
             box.disabled = true;
@@ -96,12 +102,16 @@ function chapter_filters(parent_div) {
           }
         });
         show_selected_chapters(this);
+        let text = document.querySelector(`#${this.id} + label`).innerText;
+        let altered = text.split(" (");
+        localStorage.setItem('checkbox_text', altered[0]);
       } else {
         inputs.forEach(box => {
           box.disabled = false;
           box.classList.remove('opt_blocked');
         });
         show_all_chapters();
+        document.querySelector(`#${this.id} + label`).innerText = localStorage.getItem('checkbox_text');
       }
     });
   });
@@ -153,6 +163,14 @@ function check_status() {
         chapter.classList.add('has_question');
       }
     });
+
+    if (progress_bar.querySelectorAll('.status_question').length == 0 && chapter.classList.contains('has_question')) {
+      chapter.classList.remove('has_question');
+    };
+
+    if (progress_bar.querySelectorAll('.status_complete').length === chapter.querySelectorAll('.progress li').length) {
+      chapter.classList.remove('not_complete');
+    }
   });
 }
 
@@ -163,6 +181,7 @@ function show_selected_chapters(checkbox) {
   let all_chapters = document.querySelectorAll('.chapter_list_item');
 
   switch (box_id) {
+
     case "opt_complete":
       not_complete.forEach(chapter => chapter.classList.add('hide'));
       break;
@@ -182,6 +201,10 @@ function show_selected_chapters(checkbox) {
     default:
       break;
   }
+
+  let all_visible = document.querySelectorAll('.chapter_list_item:not(.hide)');
+  document.querySelector(`#${box_id} + label`).innerText += " (" + all_visible.length + ")";
+
 }
 
 function show_all_chapters() {
@@ -191,4 +214,5 @@ function show_all_chapters() {
       chapter.classList.remove('hide');
     }
   });
+
 }
