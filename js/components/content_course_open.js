@@ -2,59 +2,55 @@ import state_io from "../utils/state_io.js";
 import { SubPub } from "../utils/subpub.js";
 import utils from "../utils/utils.js";
 
-export default {}
+export default {};
 
-  // INIT
-  ; (() => {
+// INIT
+(() => {
+  SubPub.subscribe({
+    event: "db::get::course::done",
+    listener: render,
+  });
 
-    SubPub.subscribe({
-      event: "db::get::course::done",
-      listener: render
-    });
+  SubPub.subscribe({
+    event: "db::patch::course::done",
+    listener: render,
+  });
 
-    SubPub.subscribe({
-      event: "db::patch::course::done",
-      listener: render
-    });
+  SubPub.subscribe({
+    event: "db::delete::course::done",
+    listener: reset_window_history,
+  });
 
-    SubPub.subscribe({
-      event: "db::delete::course::done",
-      listener: reset_window_history
-    });
+  SubPub.subscribe({
+    event: "user_ok",
+    listener: render_empty,
+  });
 
-    SubPub.subscribe({
-      event: "user_ok",
-      listener: render_empty
-    });
-
-    SubPub.subscribe({
-      events: [
-        "db::patch::users_units::done",
-        "db::delete::chapter::done",
-        "db::post::unit::done",
-      ],
-      listener: render_progress
-    });
-
-  })();
-
+  SubPub.subscribe({
+    events: [
+      "db::patch::users_units::done",
+      "db::delete::chapter::done",
+      "db::post::unit::done",
+    ],
+    listener: render_progress,
+  });
+})();
 
 function render({ response, params }) {
-
   let { course } = response;
   if (!course) course = response.element;
 
   const dom = document.querySelector("#content_course_open");
 
-  const canvas_url = course.canvas_url ?
-    course.canvas_url.startsWith("https://")
+  const canvas_url = course.canvas_url
+    ? course.canvas_url.startsWith("https://")
       ? course.canvas_url
       : `https://${course.canvas_url}`
-    : ""
+    : "";
 
-  const canvas_link_html = canvas_url ?
-    `<a href="${canvas_url}">Link to Canvas</a>` :
-    'No canvas link yet'
+  const canvas_link_html = canvas_url
+    ? `<a href="${canvas_url}">Link to Canvas</a>`
+    : "No canvas link yet";
 
   dom.innerHTML = `
     <div class="weekly_progress">
@@ -84,27 +80,27 @@ function render({ response, params }) {
       </div>
   `;
 
-  
   // FILL PROGRESS
   render_progress();
 
   //TOGGLE NOTES
-  dom.querySelector("#course_notes_button").addEventListener("click", toggle_notes);
+  dom
+    .querySelector("#course_notes_button")
+    .addEventListener("click", toggle_notes);
 
-  function toggle_notes(){
+  function toggle_notes() {
     SubPub.publish({
-      event: "toggle::notes"
-    })
+      event: "toggle::notes",
+    });
   }
   // EVENT: DELETE
   dom.querySelector(".button_delete").addEventListener("click", delete_course);
   function delete_course() {
-
     if (!confirm("DELETE COURSE? No undos!")) return;
 
     SubPub.publish({
       event: "db::delete::course::request",
-      detail: { params: { course } }
+      detail: { params: { course } },
     });
   }
 
@@ -113,59 +109,69 @@ function render({ response, params }) {
   function open_editor() {
     SubPub.publish({
       event: "render::editor",
-      detail: { element: course }
+      detail: { element: course },
     });
   }
 
   // EVENT: FILTER
-  let chapBTN = Array.from(dom.querySelectorAll(".chapBTN"))
-  chapBTN.forEach(e => e.addEventListener("click", toggle_filter));
-  
-  function toggle_filter(event){
-    if(event.target.classList.contains("active")){
-      event.target.classList.remove("active")
+  let chapBTN = Array.from(dom.querySelectorAll(".chapBTN"));
+  chapBTN.forEach((e) => e.addEventListener("click", toggle_filter));
+
+  function toggle_filter(event) {
+    if (event.target.classList.contains("active")) {
+      event.target.classList.remove("active");
     } else {
-      let chapBTN = Array.from(document.querySelectorAll(".chapBTN"))
-    
-      chapBTN.forEach(e => e.classList.remove("active"))
-      event.target.classList.add("active")
+      let chapBTN = Array.from(document.querySelectorAll(".chapBTN"));
+
+      chapBTN.forEach((e) => e.classList.remove("active"));
+      event.target.classList.add("active");
+    }
+    renderFilter(event.target);
+  }
+
+  function renderFilter(element){
+    let chapters = state_io.state.chapters;
+    let units = state_io.state.units;
+    console.log("click");
+    if(element.classList.contains("active")){
+      switch(element.textContent){
+        case "Finished Chapters":
+          chapters.forEach(e => {if (units.filter(u => u.chapter_id == e.chapter_id).filter(u => u.check_complete).length != units.filter(u => u.chapter_id == e.chapter_id).length){
+            document.querySelector("#chapter_list_id_" + e.chapter_id).style.display = "none"
+          } else {document.querySelector("#chapter_list_id_" + e.chapter_id).style.display = "block"}})
+          break;
+          case "Unfinished Chapters":
+            chapters.forEach(e => {if (units.filter(u => u.chapter_id == e.chapter_id).filter(u => u.check_complete).length == units.filter(u => u.chapter_id == e.chapter_id).length){
+              document.querySelector("#chapter_list_id_" + e.chapter_id).style.display = "none"
+            } else {document.querySelector("#chapter_list_id_" + e.chapter_id).style.display = "block"}})
+          break;
+          case "Chapters With Questions":
+            chapters.forEach(e => {if (units.filter(u => u.chapter_id == e.chapter_id).filter(u => u.check_question).length > 0){
+              document.querySelector("#chapter_list_id_" + e.chapter_id).style.display = "block"
+            } else {document.querySelector("#chapter_list_id_" + e.chapter_id).style.display = "none"}})
+            break;
+      }
+
+    } else {
+      chapters.forEach(e => document.querySelector("#chapter_list_id_" + e.chapter_id).style.display = "block")
     }
   }
 
-  dom.querySelector(".show_finished_chapters").addEventListener("click", show_finished_chapters)
-  function show_finished_chapters(){
-    SubPub.publish({
-      event: "filter::finished_chapters",
-    });
-  }
-  
-  dom.querySelector(".show_finished_chapters").addEventListener("click", show_unfinished_chapters)
-  function show_unfinished_chapters(){
-    SubPub.publish({
-      event: "filter::unfinished_chapters",
-    });
-  }
-  
-  dom.querySelector(".show_finished_chapters").addEventListener("click", 
-  show_chapters_with_questions)
-  function show_chapters_with_questions(){
-    SubPub.publish({
-      event: "filter::chapters_with_questions",
-    });
-  }
-
-
-
   // THIS SPECIFIC ELEMENT EDITING?
-  let is_editing = utils.get_parameter("edit_kind") && utils.get_parameter("edit_kind") === "course";
-  is_editing = is_editing && utils.get_parameter("edit_id") && utils.get_parameter("edit_id") === course.course_id;
+  let is_editing =
+    utils.get_parameter("edit_kind") &&
+    utils.get_parameter("edit_kind") === "course";
+  is_editing =
+    is_editing &&
+    utils.get_parameter("edit_id") &&
+    utils.get_parameter("edit_id") === course.course_id;
   is_editing && open_editor();
-
 }
 
-
 function render_progress_units_by_chapters(chapters, units, users_units) {
-  const chaptersContainer = document.querySelector("#content_course_open .weekly_progress .units_by_chapters"); 
+  const chaptersContainer = document.querySelector(
+    "#content_course_open .weekly_progress .units_by_chapters"
+  );
   chaptersContainer.innerHTML = "";
 
   const unitsByChapters = {};
@@ -178,19 +184,18 @@ function render_progress_units_by_chapters(chapters, units, users_units) {
     }
 
     // Add user `checked` interaction values to the unit
-    const userUnit = users_units.find(uu => uu.unit_id === unit.unit_id)
-    unit.check_complete = userUnit && userUnit.check_complete
-    unit.check_question = userUnit && userUnit.check_question
+    const userUnit = users_units.find((uu) => uu.unit_id === unit.unit_id);
+    unit.check_complete = userUnit && userUnit.check_complete;
+    unit.check_question = userUnit && userUnit.check_question;
 
     unitsByChapters[id].push(unit);
   }
 
-  const sortedUnitsByChapters = Object.entries(unitsByChapters)
-    .sort((a, b) => {
-      const cA = chapters.find(c => c.chapter_id == a[0]);
-      const cB = chapters.find(c => c.chapter_id == b[0]);
-      return cA.spot - cB.spot;
-    });
+  const sortedUnitsByChapters = Object.entries(unitsByChapters).sort((a, b) => {
+    const cA = chapters.find((c) => c.chapter_id == a[0]);
+    const cB = chapters.find((c) => c.chapter_id == b[0]);
+    return cA.spot - cB.spot;
+  });
 
   let chapterCounter = 1;
 
@@ -225,42 +230,45 @@ function render_progress_units_by_chapters(chapters, units, users_units) {
 }
 
 function render_progress() {
-
   render_progress_units_by_chapters(
     state_io.state.chapters,
     state_io.state.units,
     state_io.state.users_units
   );
 
-  const progress_dom = document.querySelector("#content_course_open .weekly_progress ul.units");
+  const progress_dom = document.querySelector(
+    "#content_course_open .weekly_progress ul.units"
+  );
   progress_dom.innerHTML = "";
 
-  const units = state_io.state.units
-    .map(u => {
-      return {
-        ...u,
-        check_complete: state_io.state.users_units.find(uu => uu.unit_id === u.unit_id)?.check_complete
-      }
-    });
-    // .sort((a, b) => a.check_complete ? -1 : 1);
+  const units = state_io.state.units.map((u) => {
+    return {
+      ...u,
+      check_complete: state_io.state.users_units.find(
+        (uu) => uu.unit_id === u.unit_id
+      )?.check_complete,
+    };
+  });
+  // .sort((a, b) => a.check_complete ? -1 : 1);
 
-  units.forEach(u => {
-
+  units.forEach((u) => {
     const one_line_dom = document.createElement("li");
-    one_line_dom.classList[u.check_complete ? "add" : "remove"]("status_complete");
+    one_line_dom.classList[u.check_complete ? "add" : "remove"](
+      "status_complete"
+    );
 
     progress_dom.append(one_line_dom);
-
   });
 
   const course = state_io.state.course;
   const n_weeks = course.week_count;
   const week_0 = course.week_start;
-  const weeks_dom = document.querySelector("#content_course_open .weekly_progress ul.weeks");
+  const weeks_dom = document.querySelector(
+    "#content_course_open .weekly_progress ul.weeks"
+  );
   weeks_dom.innerHTML = "";
   for (let i = 0; i < n_weeks; i++) {
-
-    const week_nr = week_0 + i
+    const week_nr = week_0 + i;
     const one_week_dom = document.createElement("li");
     one_week_dom.innerHTML = `V${week_nr}`;
 
@@ -271,21 +279,16 @@ function render_progress() {
 
     weeks_dom.append(one_week_dom);
   }
-
 }
 function render_empty() {
-
   const dom = document.querySelector("#content_course_open");
   dom.innerHTML = `
     <div class="top">
       <h2>No Course Selected</h2>
     </div>
   `;
-
 }
 function reset_window_history() {
-
   utils.push_state_window_history("");
   render_empty();
-
 }
