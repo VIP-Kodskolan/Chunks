@@ -32,6 +32,11 @@
   cursor: pointer;
 }
 
+#chapter_filters input[type="checkbox"]:not(:checked, .opt_blocked) + label:hover:before {
+  /* display: block; */
+  background-color: #f753922c;
+}
+
 #chapter_filters input[type="checkbox"] + label:last-child { margin-bottom: 0; }
 
 #chapter_filters input[type="checkbox"] + label:before {
