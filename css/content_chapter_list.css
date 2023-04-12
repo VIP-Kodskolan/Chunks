@@ -96,21 +96,18 @@
   width: 80px;
   transition-property: filter;
   transition-duration: 0.1s;
-}
-
-.no_results p {
-  opacity: 40%;
-}
-
-.no_results img:hover {
-  animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+  animation: float 6s ease-in-out infinite;
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
   -webkit-filter: drop-shadow(5px 5px 5px #22222248);
   filter: drop-shadow(5px 5px 5px #22222248);
 }
 
-@keyframes shake {
+.no_results p {
+  opacity: 40%;
+}
+
+/* @keyframes shake {
   10%, 90% {
     transform: translate3d(-1px, 0, 0);
   }
@@ -126,5 +123,20 @@
   40%, 60% {
     transform: translate3d(4px, 0, 0);
   }
+} */
+
+@keyframes float {
+	0% {
+		/* box-shadow: 0 5px 15px 0px rgba(0,0,0,0.6); */
+		transform: translatey(0px);
+	}
+	50% {
+		/* box-shadow: 0 25px 15px 0px rgba(0,0,0,0.2); */
+		transform: translatey(-20px);
+	}
+	100% {
+		/* box-shadow: 0 5px 15px 0px rgba(0,0,0,0.6); */
+		transform: translatey(0px);
+	}
 }
 

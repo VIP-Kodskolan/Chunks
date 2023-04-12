@@ -210,7 +210,7 @@ function show_selected_chapters(checkbox) {
     li_no_results.classList.add('no_results');
     li_no_results.innerHTML = `
     <img src='https://cdn-icons-png.flaticon.com/512/8731/8731782.png'>
-    <p>Move on, nothing to see here...</p>
+    <p>Här var det tomt...</p>
     `;
     document.querySelector('#content_chapter_list > ul').append(li_no_results);
   }
