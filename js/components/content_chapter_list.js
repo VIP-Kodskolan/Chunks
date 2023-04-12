@@ -205,9 +205,23 @@ function show_selected_chapters(checkbox) {
   let all_visible = document.querySelectorAll('.chapter_list_item:not(.hide)');
   document.querySelector(`#${box_id} + label`).innerText += " (" + all_visible.length + ")";
 
+  if (all_visible.length == 0) {
+    let li_no_results = document.createElement('li');
+    li_no_results.classList.add('no_results');
+    li_no_results.innerHTML = `
+    <img src='https://cdn-icons-png.flaticon.com/512/8731/8731782.png'>
+    <p>Move on, nothing to see here...</p>
+    `;
+    document.querySelector('#content_chapter_list > ul').append(li_no_results);
+  }
+
 }
 
 function show_all_chapters() {
+  if (document.querySelector('.no_results') !== null) {
+    document.querySelector('.no_results').remove();
+  };
+
   let chapters = document.querySelectorAll(".chapter_list_item");
   chapters.forEach(chapter => {
     if (chapter.classList.contains('hide')) {
