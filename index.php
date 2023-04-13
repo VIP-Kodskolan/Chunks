@@ -94,6 +94,7 @@ function links_to_css_files () {
             <div id="content_main">
                 <div id="content_course">
                     <div id="content_course_open"></div>
+                    <div id="filter_buttons"></div>
                     <div id="content_chapter_list"></div>
                 </div>
                 <div id="content_users_admin" class="hidden">

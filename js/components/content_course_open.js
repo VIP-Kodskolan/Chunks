@@ -70,14 +70,7 @@ function render({ response, params }) {
         <button class="button_edit">EDIT COURSE</button>
         <button class="button_delete">DELETE COURSE</button>
       </div>
-      </div>
-      <div class="filter_buttons">
-        <div class="flexer">
-          <button class="show_finished_chapters chapBTN">Finished Chapters</button>
-          <button class="show_unfinished_chapters chapBTN">Unfinished Chapters</button>
-          <button class="show_chapters_with_questions chapBTN">Chapters With Questions</button>
-        </div>
-      </div>
+    </div>
   `;
 
   // FILL PROGRESS
@@ -111,50 +104,6 @@ function render({ response, params }) {
       event: "render::editor",
       detail: { element: course },
     });
-  }
-
-  // EVENT: FILTER
-  let chapBTN = Array.from(dom.querySelectorAll(".chapBTN"));
-  chapBTN.forEach((e) => e.addEventListener("click", toggle_filter));
-
-  function toggle_filter(event) {
-    if (event.target.classList.contains("active")) {
-      event.target.classList.remove("active");
-    } else {
-      let chapBTN = Array.from(document.querySelectorAll(".chapBTN"));
-
-      chapBTN.forEach((e) => e.classList.remove("active"));
-      event.target.classList.add("active");
-    }
-    renderFilter(event.target);
-  }
-
-  function renderFilter(element){
-    let chapters = state_io.state.chapters;
-    let units = state_io.state.units;
-    console.log("click");
-    if(element.classList.contains("active")){
-      switch(element.textContent){
-        case "Finished Chapters":
-          chapters.forEach(e => {if (units.filter(u => u.chapter_id == e.chapter_id).filter(u => u.check_complete).length != units.filter(u => u.chapter_id == e.chapter_id).length){
-            document.querySelector("#chapter_list_id_" + e.chapter_id).style.display = "none"
-          } else {document.querySelector("#chapter_list_id_" + e.chapter_id).style.display = "block"}})
-          break;
-          case "Unfinished Chapters":
-            chapters.forEach(e => {if (units.filter(u => u.chapter_id == e.chapter_id).filter(u => u.check_complete).length == units.filter(u => u.chapter_id == e.chapter_id).length){
-              document.querySelector("#chapter_list_id_" + e.chapter_id).style.display = "none"
-            } else {document.querySelector("#chapter_list_id_" + e.chapter_id).style.display = "block"}})
-          break;
-          case "Chapters With Questions":
-            chapters.forEach(e => {if (units.filter(u => u.chapter_id == e.chapter_id).filter(u => u.check_question).length > 0){
-              document.querySelector("#chapter_list_id_" + e.chapter_id).style.display = "block"
-            } else {document.querySelector("#chapter_list_id_" + e.chapter_id).style.display = "none"}})
-            break;
-      }
-
-    } else {
-      chapters.forEach(e => document.querySelector("#chapter_list_id_" + e.chapter_id).style.display = "block")
-    }
   }
 
   // THIS SPECIFIC ELEMENT EDITING?

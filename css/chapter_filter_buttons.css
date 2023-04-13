@@ -1,0 +1,16 @@
+#filter_buttons > .flexer {
+    display: flex;
+    gap:  5px;
+}
+
+.filter_buttons{
+    width: 100%;
+  }
+  
+  .filter_button{
+    width: 100px;
+  }
+  
+  .filter_button.active{
+    background-color: var(--color_accent_incorrect);
+  }

@@ -1,5 +1,6 @@
 // Created automatically at startup by index.php
 
+import chapter_filter_buttons from './js/components/chapter_filter_buttons.js';
 import content_chapter_list from './js/components/content_chapter_list.js';
 import content_chapter_list_item from './js/components/content_chapter_list_item.js';
 import content_course_list from './js/components/content_course_list.js';

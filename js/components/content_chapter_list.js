@@ -45,6 +45,16 @@ export default {};
   });
 
   SubPub.subscribe({
+    event: "state::patch::chapter_filter::done",
+    listener: render_chapters,
+  })
+
+  SubPub.subscribe({
+    event: "db::patch::users_units::done",
+    listener: render_chapters,
+  })
+
+  SubPub.subscribe({
     event: "db::patch::section::done",
     listener: ({ response, params }) => {
       if (params.updated_fields.some((uf) => uf.field === "chapter_id")) {
@@ -70,9 +80,16 @@ function render() {
   // CHAPTERS
   render_chapters();
 }
+
 function render_chapters() {
-  const { chapters } = state_io.state;
+  let { chapters } = state_io.state;
   const list_dom = document.querySelector("#content_chapter_list > ul");
+  const filter = state_io.state.filter
+  console.log(filter);
+  if(filter !== undefined){
+    chapters = filtered_chapters(chapters, filter)
+  }
+  
 
   list_dom.innerHTML = "";
   chapters.forEach((chapter) => {
@@ -92,6 +109,74 @@ function render_chapters() {
       event: "db::post::chapter::request",
       detail: { params: { course: state_io.state.course } },
     });
+  }
+}
+
+function filtered_chapters(chapters, filter){
+  let filtered_chapters = [];
+  console.log(filter);
+  switch (filter) {
+    case "Completed":
+      chapters.forEach((c) => {
+        console.log(filter_bool(c, filter));
+        if (
+          filter_bool(c, filter)
+        ) {
+          filtered_chapters.push(c)
+        } 
+      });
+      break;
+
+    case "Unfinished":
+      chapters.forEach((c) => {
+        if (
+          filter_bool(c, filter)
+        ) {
+          filtered_chapters.push(c)
+        } 
+      });
+      break;
+
+    case "Questions":
+      chapters.forEach((c) => {
+        if (
+          filter_bool(c, filter)
+        ) {
+          filtered_chapters.push(c)
+        } 
+      });
+      break;
+    default:
+      return chapters
+  }
+  console.log(filtered_chapters);
+  return filtered_chapters
+}
+
+function filter_bool (chapter, filter){
+  const units = state_io.state.units
+  const chapter_units = units.filter(u => u.chapter_id == chapter.chapter_id)
+  console.log(chapter_units);
+  switch(filter){
+    case "Completed":
+      if(chapter_units.some(u => !u.check_complete)){
+        return false;
+      } else{
+        return true
+      }
+    case "Unfinished":
+      if(chapter_units.some(u => u.check_complete)){
+        return false;
+      } else{
+        return true
+      }
+    case "Questions":
+      if (chapter_units.some(u => u.check_question)){
+        return true
+      } else{
+        return false
+      }
+
   }
 }
 

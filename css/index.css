@@ -220,15 +220,3 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
-
-.filter_buttons{
-  width: 100%;
-}
-
-.chapBTN{
-  width: 200px;
-}
-
-.chapBTN.active{
-  background-color: var(--color_accent_0);
-}
