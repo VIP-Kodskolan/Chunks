@@ -85,7 +85,6 @@ function render_chapters() {
   let { chapters } = state_io.state;
   const list_dom = document.querySelector("#content_chapter_list > ul");
   const filter = state_io.state.filter
-  console.log(filter);
   if(filter !== undefined){
     chapters = filtered_chapters(chapters, filter)
   }
@@ -114,11 +113,9 @@ function render_chapters() {
 
 function filtered_chapters(chapters, filter){
   let filtered_chapters = [];
-  console.log(filter);
   switch (filter) {
     case "Completed":
       chapters.forEach((c) => {
-        console.log(filter_bool(c, filter));
         if (
           filter_bool(c, filter)
         ) {
@@ -149,17 +146,17 @@ function filtered_chapters(chapters, filter){
     default:
       return chapters
   }
-  console.log(filtered_chapters);
   return filtered_chapters
 }
 
 function filter_bool (chapter, filter){
-  const units = state_io.state.units
+  const units = state_io.state.users_units
   const chapter_units = units.filter(u => u.chapter_id == chapter.chapter_id)
-  console.log(chapter_units);
   switch(filter){
     case "Completed":
-      if(chapter_units.some(u => !u.check_complete)){
+      const all_units = state_io.state.units
+      const all_chapter_units = all_units.filter(u => u.chapter_id == chapter.chapter_id)
+      if(all_chapter_units.length !== chapter_units.length){
         return false;
       } else{
         return true
@@ -183,13 +180,9 @@ function filter_bool (chapter, filter){
 function fillNotes() {
   document.querySelector("#notes_div").innerHTML = ""
   const { chapters, users_units } = state_io.state;
-  console.log(chapters);
-  console.log(users_units);
   for (let note of users_units) {
     for (let chapter of chapters) {
       if (note.chapter_id === chapter.chapter_id) {
-        console.log(note);
-        console.log(chapter);
         let noteDiv = document.createElement("div");
         let chunkLink = document.createElement("a");
         let noteText = document.createElement("p");
