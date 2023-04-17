@@ -116,6 +116,7 @@ if (!empty($_COOKIE['theme'])) {
             <div id="content_main">
                 <div id="content_course">
                     <div id="content_course_open"></div>
+                    <div id="content_filter_chapters"></div>
                     <div id="content_chapter_list"></div>
                 </div>
                 <div id="content_users_admin" class="hidden">

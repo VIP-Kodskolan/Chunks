@@ -68,14 +68,6 @@ function render({ response, params }) {
       <h2>(${course.semester})</h2>
       <div class="canvas_link">${canvas_link_html}</div>
     </div>
-    <div class="filters">
-      <h3>Filter course chapters</h3>
-      <div>
-        <button class="NOTDONE">NOT DONE</button>
-        <button class="ALLDONE">ALL DONE</button>
-        <button class="QUESTIONS">QUESTIONS</button>
-      </div>
-    </div>
     <div class="control teacher">
       <div class="flexer">
         <button class="button_edit">EDIT COURSE</button>
@@ -174,50 +166,7 @@ function render_progress_units_by_chapters(chapters, units, users_units) {
     chapterCounter++;
   }
 
-  //FILTER CHAPTERS!!!
-  let allDoneBtn = document.querySelector(".ALLDONE");
-  let notDoneBtn = document.querySelector(".NOTDONE");
-  let questionBtn = document.querySelector(".QUESTIONS");
-  let defaultChapts = [];
 
-  //show all chapters that are not done
-  notDoneBtn.addEventListener("click", (e) => {
-    if(notDoneBtn.classList.contains("nolles")){
-      notDoneBtn.classList.remove("nolles");
-      renderChaps(defaultChapts);
-    } else {
-      notDoneBtn.classList.add("nolles");
-      questionBtn.classList.remove("qeuion")
-      allDoneBtn.classList.remove("alles")
-      showChaptNoDone()
-  
-    }
-  })
-  //Show ALL chapters that are done
-  allDoneBtn.addEventListener("click", (e) => {
-    if(allDoneBtn.classList.contains("alles")){
-      allDoneBtn.classList.remove("alles");
-      renderChaps(defaultChapts);
-    } else {
-      allDoneBtn.classList.add("alles");
-      questionBtn.classList.remove("qeuion")
-      notDoneBtn.classList.remove("nolles")
-      showChaptDone();
-    }
-  })
-  //show all chapters with questions in
-  questionBtn.addEventListener("click", (e) => {
-    if(questionBtn.classList.contains("qeuion")){
-      questionBtn.classList.remove("qeuion");
-      renderChaps(defaultChapts);
-    } else {
-      questionBtn.classList.add("qeuion");
-      allDoneBtn.classList.remove("alles")
-      notDoneBtn.classList.remove("nolles")
-
-      showChaptQuestion();
-    }
-  })
 }
 
 function render_progress() {
@@ -284,109 +233,4 @@ function reset_window_history() {
   utils.push_state_window_history("");
   render_empty();
 
-}
-
-function showChaptQuestion(){
-  let allChapters = document.querySelectorAll(".chapter_list_item");
-  let chaptsWithQuestion = [];
-
-  allChapters.forEach(chapter => {
-    let allProgress = chapter.querySelectorAll(".progress li");
-    
-    //only adding chapters including questions
-    allProgress.forEach(onePin => {
-      if(onePin.classList.contains("status_question")){
-        chaptsWithQuestion.push(chapter);
-      }
-    })
-    chapter.remove();
-    renderChaps(chaptsWithQuestion)
-  });
-}
-
-function showChaptDone(){
-  let allChapters = document.querySelectorAll(".chapter_list_item");
-  let chaptsDone = [];
-
-  allChapters.forEach(chapter => {
-    let allProgress = chapter.querySelectorAll(".progress li");
-    let donePins = [];
-    
-    //only adding pins that are done
-    allProgress.forEach(onePin => {
-      if(onePin.classList.contains("status_complete")){
-        donePins.push(onePin);
-      }
-    })
-
-    //comparing done progresspins with total
-    if(donePins.length == allProgress.length){
-      chaptsDone.push(chapter);
-    }
-    chapter.remove();
-    renderChaps(chaptsDone);
-  });
-}
-
-function showChaptNoDone(){
-  let allChapters = document.querySelectorAll(".chapter_list_item");
-
-  allChapters.forEach(chapter => {
-    let allProgress = chapter.querySelectorAll(".progress li");
-    let donePins = [];
-    
-    //if a pin is complete, compare it later
-    allProgress.forEach(onePin => {
-      if(onePin.classList.contains("status_complete")){
-        donePins.push(onePin);
-      }
-    })
-
-    //comparing done progresspins with total. if all done - chapter remove
-    if(donePins.length == allProgress.length){
-      chapter.remove();
-    }
-  });
-}
-
-function renderChaps(chaptersIn){
-  const list_dom = document.querySelector("#content_chapter_list > ul");
-  const { chapters } = state_io.state;
-  let idsOfChaps = [];
-  let filteredOrNotChaps = [];
-
-  //if chaptersarray sent in is empty or undefined 
-  if(chaptersIn == undefined
-  || chaptersIn.length == 0){
-
-    filteredOrNotChaps.push(...chapters);
-  } else {
-
-    //only keep id number of chapter
-    chaptersIn.forEach(element => {
-      var id = element.getAttribute( 'id' );
-      var string = id.replace(/^chapter_list_id_+/i, '');
-      idsOfChaps.push(parseInt(string));
-    });
-
-    //return chapter(s) with sent id
-    var intersection = chapters.filter(function(e) {
-      return idsOfChaps.indexOf(e.chapter_id) > -1;
-    });
-
-    filteredOrNotChaps.push(...intersection);
-    
-  }
-
-  list_dom.innerHTML = "";
-  filteredOrNotChaps.forEach(chapter => {
-
-    const container_dom = document.createElement("li");
-    list_dom.append(container_dom);
-
-      SubPub.publish({
-      event: "render::chapter_list_item",
-      detail: { element: chapter, container_dom }
-    })
-  });
 }

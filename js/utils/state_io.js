@@ -292,8 +292,19 @@ export default {
         });
       }
     },    
-    
   ];
+  
+
+  SubPub.subscribe({
+    events: ["state::patch::filter_chapters::received"],
+      listener: ({params}) => {
+        State.chapter_filter = params;
+        SubPub.publish({
+          event: "state::patch::filter_chapters::done",
+          detail: {params}
+        })
+      },
+  })
 
   subscriptions.forEach(sb => {
 

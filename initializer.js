@@ -5,6 +5,7 @@ import content_chapter_list_item from './js/components/content_chapter_list_item
 import content_course_list from './js/components/content_course_list.js';
 import content_course_list_item from './js/components/content_course_list_item.js';
 import content_course_open from './js/components/content_course_open.js';
+import content_filter_chapters from './js/components/content_filter_chapters.js';
 import content_main from './js/components/content_main.js';
 import content_section_item from './js/components/content_section_item.js';
 import content_unit_item from './js/components/content_unit_item.js';

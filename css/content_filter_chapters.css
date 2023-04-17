@@ -1,0 +1,25 @@
+#content_filter_chapters{
+    display:flex;
+    justify-content: center;
+}
+
+#content_filter_chapters > div{
+    display:flex;
+    flex-direction: column;
+    width: 500px;
+    margin-top:10px;
+    align-items: center;
+}
+
+
+.ALLDONE.active{background-color: var(--color_accent_completed_general);}
+.ALLDONE:hover{background-color:#90cd00;}
+.ALLDONE:active{background-color:#567b00;}
+
+.NOTDONE.active{background-color: var(--color_accent_incorrect);}
+.NOTDONE:hover{background-color:#f5a9c8;}
+.NOTDONE:active{background-color:#b77f95;}
+
+.QUESTIONS.active{background-color: var(--color_accent_question);}
+.QUESTIONS:hover{background-color:#dea805;}
+.QUESTIONS:active{background-color:#926f03;}

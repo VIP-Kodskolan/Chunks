@@ -11,7 +11,7 @@ export default {}
 
   SubPub.subscribe({
     events: ["db::get::course::done", "render::new_view"],
-    listener: render
+    listener: render_chapters,
   });
 
   SubPub.subscribe({
@@ -21,27 +21,32 @@ export default {}
 
   SubPub.subscribe({
     events: [ "db::delete::chapter::done" ],
-    listener: render
+    listener: render_chapters,
   });
 
   SubPub.subscribe({
     event: "db::post::chapter::done",
-    listener: render
+    listener: render_chapters,
   });
 
   SubPub.subscribe({
     event: "db::patch::chapter::done",
-    listener: render
+    listener: render_chapters,
   });
 
   SubPub.subscribe({
     event: "db::patch::section::done",
     listener: ({ response, params }) => {
       if (params.updated_fields.some(uf => uf.field === "chapter_id")) {
-        render();
+        render_chapters;
       }
     }
   });
+
+  SubPub.subscribe({
+    event: "state::patch::filter_chapters::done",
+    listener: render_chapters,
+});
 
 
 })();
@@ -53,7 +58,7 @@ function render_empty () {
 
 }
 
-function render () {
+function render_chapters () {
   
   const dom = document.querySelector("#content_chapter_list");
   dom.innerHTML = `
@@ -63,11 +68,20 @@ function render () {
     <ul></ul>
   `;
 
+  let chapter_filter = state_io.state.chapter_filter
   const { chapters } = state_io.state;
-  const list_dom = document.querySelector("#content_chapter_list > ul");
+  let filteredChapters = [];
 
+  if(chapter_filter == "all_done"){filteredChapters.push(...showChaptDone())} 
+  else if(chapter_filter == "not_done"){filteredChapters.push(...showChaptNoDone())} 
+  else if(chapter_filter == "questions"){filteredChapters.push(...showChaptQuestion())}
+  else{filteredChapters = chapters};
+
+console.log(filteredChapters);
+
+const list_dom = document.querySelector("#content_chapter_list > ul");
   list_dom.innerHTML = "";
-  chapters.forEach(chapter => {
+  filteredChapters.forEach(chapter => {
 
     const container_dom = document.createElement("li");
     list_dom.append(container_dom);
@@ -75,8 +89,10 @@ function render () {
       SubPub.publish({
       event: "render::chapter_list_item",
       detail: { element: chapter, container_dom }
-    })
 
+      //eller
+      //content_chapter_list_item.render({ element: chapter, container_dom });
+    })
   });
 
   // ADD CHAPTER
@@ -91,5 +107,109 @@ function render () {
       detail: { params: { course: state_io.state.course } }
     });
   }
+}
+
+function showChaptQuestion(){
+  let allUnits = state_io.state.users_units;
+  let allChapters = state_io.state.chapters;
+  let questionUnits = [];
+  
+  allChapters.forEach(chapter => {
+    let chapterUnits = allUnits.filter(unit => unit.chapter_id === chapter.chapter_id);
+
+    chapterUnits.forEach(unit => {
+      if(unit.check_question === true){
+        questionUnits.push(chapter);
+      }
+    });
+  });
+  return questionUnits;
+  }
+
+function showChaptDone(){
+  let allUnits = state_io.state.units;
+  let allChapters = state_io.state.chapters;
+  let chaptersCompl = [];
+
+  allChapters.forEach(chapter => {
+      let chapterUnits = allUnits.filter(unit => unit.chapter_id === chapter.chapter_id);
+      console.log(chapterUnits);
+      let completeUnits = [];
+
+      //picks out units which are all done in one chapter
+      chapterUnits.forEach(unit => {
+          if (unit.check_complete === true){completeUnits.push(unit);}
+        })
+
+    //console.log(completeUnits);
+    ////console.log(chapterUnits);
+    if (chapterUnits.length == completeUnits.length && chapterUnits.length !== 0){
+          console.log(chapterUnits);
+          console.log(completeUnits);
+          chaptersCompl.push(chapter);
+      }
+  });
+  return chaptersCompl;
+}
+
+function showChaptNoDone(){
+  let allUnits = state_io.state.units;
+  let allChapters = state_io.state.chapters;
+  let noDoneChapters = [];
+  
+  allChapters.forEach(chapter => {
+    let chapterUnits = allUnits.filter(unit => unit.chapter_id === chapter.chapter_id);
+    let doneUnits = [];
+
+
+    chapterUnits.forEach(unit => {
+      if(unit.check_complete === true){doneUnits.push(unit);}
+    });
+
+    if (doneUnits.length !== chapterUnits.length){
+            noDoneChapters.push(chapter);
+    }
+  });
+  return noDoneChapters;
+}
+
+function renderChaps(chaptersIn){
+  const list_dom = document.querySelector("#content_chapter_list > ul");
+  const { chapters } = state_io.state;
+  let idsOfChaps = [];
+  let filteredOrNotChaps = [];
+
+//if chaptersarray sent in is empty or undefined 
+  if(chaptersIn == undefined
+  || chaptersIn.length == 0){
+      filteredOrNotChaps.push(...chapters);
+  } else {
+
+  //only keep id number of chapter
+  chaptersIn.forEach(element => {
+      var id = element.getAttribute( 'id' );
+      var string = id.replace(/^chapter_list_id_+/i, '');
+      idsOfChaps.push(parseInt(string));
+  });
+
+  //return chapter(s) with sent id
+  var intersection = chapters.filter(function(e) {
+      return idsOfChaps.indexOf(e.chapter_id) > -1;
+  });
+
+  filteredOrNotChaps.push(...intersection); 
+  }
+
+  list_dom.innerHTML = "";
+  filteredOrNotChaps.forEach(chapter => {
+
+      const container_dom = document.createElement("li");
+      list_dom.append(container_dom);
+
+      SubPub.publish({
+          event: "render::chapter_list_item",
+          detail: { element: chapter, container_dom }
+      })
+  });
 }
 
