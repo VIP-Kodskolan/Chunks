@@ -1,3 +1,5 @@
+
+/*
 import { SubPub } from "../utils/subpub.js";
 
 document.querySelector("#passwordButton").style.width = '100px';
@@ -24,3 +26,5 @@ function changeWindow(){
 }
 
 export default{}
+
+*/

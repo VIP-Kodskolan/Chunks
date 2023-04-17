@@ -93,31 +93,17 @@ function links_to_css_files()
                     <div id="users_admin"></div>
                 </div>
                 <div id="content_user"></div>
-                <div class="filter-container">
-                <button class="filterUnfinishedButton">Filter Unfinished</button>
-                   <button class="filterDoneButton">Filter done</button>
-                   <button class="filterQuestionButton">Filter question</button>
-                    </label>
-                </div>
                 <div class="theme-switch-container">
                     <label class="theme-slider" for="checkbox">
                         <input type="checkbox" id="checkbox" />
                         <div class="round slider"></div>
                     </label>
                 </div>
-                <div id="passwordButton">
-                    <div id="passwordWindow">
-                        <label for="fname">First name:</label>
-                        <input type="text" id="fname" name="fname"><br><br>
-                        <label for="lname">Last name:</label>
-                        <input id="hej" type="text" id="lname" name="lname"><br><br>
-                        <input id="submitButton" type="submit" value="Submit">
-                    </div>
-                </div>
             </div>
             <div id="content_main">
                 <div id="content_course">
                     <div id="content_course_open"></div>
+                    <div id="content_filter_chapter"></div>
                     <div id="content_chapter_list"></div>
                 </div>
                 <div id="content_users_admin" class="hidden">
