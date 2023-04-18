@@ -156,7 +156,8 @@ function filter_bool (chapter, filter){
     case "Completed":
       const all_units = state_io.state.units
       const all_chapter_units = all_units.filter(u => u.chapter_id == chapter.chapter_id)
-      if(all_chapter_units.length !== chapter_units.length){
+      const completed_units = chapter_units.filter(u => u.check_complete)
+      if(all_chapter_units.length !== completed_units.length){
         return false;
       } else{
         return true
