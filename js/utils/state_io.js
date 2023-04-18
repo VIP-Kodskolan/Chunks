@@ -313,6 +313,8 @@ export default {
     
     events.forEach(event => {
 
+      console.log(event)
+
       SubPub.subscribe({
         event,
         listener: ({ response, params }) => {

@@ -22,11 +22,6 @@ export default {}
     listener: render
   });
 
-  // SubPub.subscribe({
-  //   events: ["db::get::course::done"],
-  //   listener: fillNotes,
-  // });
-
   SubPub.subscribe({
     event: "db::post::chapter::done",
     listener: render
@@ -34,6 +29,16 @@ export default {}
 
   SubPub.subscribe({
     event: "db::patch::chapter::done",
+    listener: render
+  });
+
+  SubPub.subscribe({
+    event: "db::get::course::done",
+    listener: render,
+});
+
+  SubPub.subscribe({
+    event: "filter_chapters",
     listener: render
   });
 
@@ -55,8 +60,8 @@ function render_empty () {
 
 }
 
-function render () {
-  
+function render (data) {
+
   const dom = document.querySelector("#content_chapter_list");
   dom.innerHTML = `
     <div class="top">
@@ -65,20 +70,22 @@ function render () {
     <ul></ul>
   `;
 
-  // CHAPTERS
-  const { chapters } = state_io.state;
+  let { chapters } = state_io.state;
   const list_dom = document.querySelector("#content_chapter_list > ul");
 
-  list_dom.innerHTML = "";
-  chapters.forEach(chapter => {
+  let filter = data.filtering !== undefined ? data.filtering : false ;
+  filter !== false ? chapters = filterChapters(filter, chapters): false ; 
 
+  list_dom.innerHTML = "";
+
+  chapters.forEach(chapter => {
     const container_dom = document.createElement("li");
     list_dom.append(container_dom);
 
     SubPub.publish({
       event: "render::content_chapter_list_item",
       detail: {element: chapter, container_dom}
-    })
+    });
 
   });
 
@@ -88,6 +95,7 @@ function render () {
   button_add_chapter_dom.innerHTML = "+ CHAPTER";
   list_dom.append(button_add_chapter_dom);
   button_add_chapter_dom.addEventListener("click", add_chapter);
+
   function add_chapter () {
     SubPub.publish({
       event: "db::post::chapter::request",
@@ -97,29 +105,40 @@ function render () {
 
 }
 
-// function fillNotes() {
-//   document.querySelector("#notes_div").innerHTML = ""
-//   const { chapters, users_units } = state_io.state;
-//   console.log(chapters);
-//   console.log(users_units);
-//   for (let note of users_units) {
-//     for (let chapter of chapters) {
-//       if (note.chapter_id === chapter.chapter_id) {
-//         console.log(note);
-//         console.log(chapter);
-//         let noteDiv = document.createElement("div");
-//         let chunkLink = document.createElement("a");
-//         let noteText = document.createElement("p");
+function filterChapters (filter, chapters){
 
-//         noteDiv.classList.add("note");
-//         chunkLink.href = `https://maumt.se/chunks/?course=${chapter.course_id}&unit=${note.unit_id}`;
-//         chunkLink.textContent = `${chapter.name} chunk:${note.unit_id}`;
-//         noteText.textContent = note.notes;
+  let { units } = state_io.state;
 
-//         noteDiv.append(chunkLink, noteText);
+  if (filter === "Completed") {
 
-//         document.querySelector("#notes_div").append(noteDiv);
-//       }
-//     }
-//   }
-// }
+    return chapters.filter(chapter => {
+        let unitsInChapter = units.filter(unit => unit.chapter_id === chapter.chapter_id);
+        let allUnitsComplete = unitsInChapter.every(unit => unit.check_complete);
+        return allUnitsComplete;
+    });
+
+  }
+
+  if (filter === "UnCompleted") {
+
+    return chapters.filter(chapter => {
+      let unitsInChapter = units.filter(unit => unit.chapter_id === chapter.chapter_id);
+      let unitUnCompleted = unitsInChapter.some(unit => !unit.check_complete);
+      return unitUnCompleted;
+    });
+
+  }
+
+  if ( filter === "Questions") {
+
+    return chapters.filter(chapter => {
+      let unitsInChapter = units.filter(unit => unit.chapter_id === chapter.chapter_id);
+      let unitQustion = unitsInChapter.some(unit => unit.check_question);
+      return unitQustion;
+    });
+  
+  }
+
+  return chapters
+
+}

@@ -1,6 +1,4 @@
-import state_io from "../utils/state_io.js";
 import { SubPub } from "../utils/subpub.js";
-import utils from "../utils/utils.js";
 
 export default { }
 
@@ -13,125 +11,61 @@ export default { }
 
 })();
 
-function render (data) {
-    let { response } = data;
+function render () {
 
-    let content_course_open = document.querySelector("#content_course_open");
-    content_course_open.querySelectorAll("div").forEach(div => {
-        if (div.id === "filterBtnsContainer") { 
-            div.remove();
-        }
-    });
+    let filter_chapters = document.querySelector("#filter_chapters");
+    filter_chapters.innerHTML = "";
 
     let filterBtnsContainer = document.createElement("div");
     filterBtnsContainer.id = "filterBtnsContainer";
-    content_course_open.appendChild(filterBtnsContainer);
+    filter_chapters.appendChild(filterBtnsContainer);
 
     let btnsFiltering = [
         {
             text: "Completed",
-            filter: () => {
-                filterCompletd(response);
-            }
         },
         {
             text: "UnCompleted",
-            filter: () => {
-                filterUnCompleted(response)
-            }
         },
         {
             text: "Questions",
-            filter: () => {
-                filterQuestions(response)
-            }
         },
     ];
 
+    let filtering;
+
     btnsFiltering.forEach(filter => {
+
         let btn = document.createElement("button");
-        btn.innerHTML = `${filter.text} <span class="btnCircle"> </span>`;
+        btn.innerHTML = `${filter.text} <span class="btnCircle"></span>`;
         btn.classList.add(filter.text);
+        filterBtnsContainer.appendChild(btn);
+        
+        btn.addEventListener("click", () => {
 
-        btn.addEventListener("click", (e) => {
-            filterBtnsContainer.querySelectorAll("button").forEach(btn => {
-                if (e.target != btn) {
+            if (!btn.classList.contains("Filteractive")) {
+            
+                filterBtnsContainer.querySelectorAll("button").forEach(btn => {
                     btn.classList.remove("Filteractive");
-                    showAll(response);
-                }
-            });
-
-            btn.classList.toggle("Filteractive"); 
-
-            if (btn.classList.contains("Filteractive")) {
-                filter.filter();
+                });
+                btn.classList.add("Filteractive");
+                filtering = filter.text;
+    
             } else {
-                showAll(response);
+
+                btn.classList.remove("Filteractive");
+                filtering = "";
+
             }
+
+            SubPub.publish({
+                event: "filter_chapters",
+                detail: { filtering }
+            });
 
         });
 
-        filterBtnsContainer.appendChild(btn);
-
-    });
-}
-
-function filterQuestions(response) {
-    let { chapters, users_units  } = response;
-
-    let questions = users_units.filter(unit => unit.check_question);
-
-    let chapterIdsWithQuestions = questions.map(question => question.chapter_id);
-
-    let chaptersNoQuestion = chapters.filter(chapter => !chapterIdsWithQuestions.includes(chapter.chapter_id));
-    
-    chaptersNoQuestion.forEach(element => {
-        let liElement = document.querySelector(`#chapter_list_id_${element.chapter_id}`);
-        liElement.style.display = "none";
-    });
-
-}
-
-function filterCompletd (response) {
-    let { chapters, units } = response;
-
-    let incompleteChapters = chapters.filter(chapter => {
-        let unitsInChapter = units.filter(unit => unit.chapter_id === chapter.chapter_id);
-
-        let allUnitsComplete = unitsInChapter.every(unit => unit.check_complete);
-        
-        return allUnitsComplete === false;
     });
     
-    incompleteChapters.forEach(chapter => {
-        let liElement = document.querySelector(`#chapter_list_id_${chapter.chapter_id}`);
-        liElement.style.display = "none";
-    });
-
 }
 
-function filterUnCompleted (response) {
-    let { chapters, units } = response;
-
-    let incompleteChapters = chapters.filter(chapter => {
-        let unitsInChapter = units.filter(unit => unit.chapter_id === chapter.chapter_id);
-
-        let allUnitsComplete = unitsInChapter.some(unit => !unit.check_complete);
-        
-        return allUnitsComplete === false;
-    });
-    
-    incompleteChapters.forEach(chapter => {
-        let liElement = document.querySelector(`#chapter_list_id_${chapter.chapter_id}`);
-        liElement.style.display = "none";
-    });
-}
-
-function showAll (response) {
-    const { chapters } = response;
-
-    chapters.forEach(chapter => {
-        let liElement = document.querySelector(`#chapter_list_id_${chapter.chapter_id}`);
-        liElement.style.display = "block";
-    }) 
-}

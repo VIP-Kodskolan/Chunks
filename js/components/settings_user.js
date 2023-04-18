@@ -179,7 +179,6 @@ function theme_render ( ) {
     // Check if the user has a preference for dark mode
     
     const prefersDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    console.log(prefersDarkMode)
 
     // If the user prefers dark mode and the website isn't already in dark mode, switch to dark mode
     if (prefersDarkMode && !document.body.classList.contains("dark")) {
