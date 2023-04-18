@@ -28,16 +28,6 @@ export default {}
   });
 
   SubPub.subscribe({
-    event: "db::patch::chapter::done",
-    listener: render
-  });
-
-  SubPub.subscribe({
-    event: "db::get::course::done",
-    listener: render,
-});
-
-  SubPub.subscribe({
     event: "filter_chapters",
     listener: render
   });
