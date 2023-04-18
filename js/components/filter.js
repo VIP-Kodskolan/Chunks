@@ -1,3 +1,4 @@
+import state_io from "../utils/state_io.js";
 import { SubPub } from "../utils/subpub.js";
 
 
@@ -9,13 +10,25 @@ SubPub.subscribe({
 
 
 function render_filter () {
+  state_io.state.button = "";
+  //console.log(state_io.state)
+
   const container = document.querySelector("#content_filter_chapter");
   container.innerHTML = ''
-  const button = document.createElement("button");
-  button.innerText = "Filter One"
-  container.append(button);
 
-  button.addEventListener("click", function(){
+  const buttonQuestions = document.createElement("button");
+  const buttonFinished = document.createElement("button");
+  const buttonUnfinished = document.createElement("button");
+
+  buttonQuestions.innerText = "Filter questions"
+  buttonFinished.innerText = "Filter finished"
+  buttonUnfinished.innerText = "Filter unfinished"
+
+  container.append(buttonQuestions);
+  container.append(buttonFinished);
+  container.append(buttonUnfinished);
+
+  buttonQuestions.addEventListener("click", function(){
     SubPub.publish({
       event: "state::patch::filter::received",
       detail: { params: {
