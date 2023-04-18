@@ -66,32 +66,65 @@ function render() {
 function render_chapters() {
   // console.log(state_io.state.button)
   const { chapters } = state_io.state;
+
   let arrayToPrint = chapters;
+  const allUnits = state_io.state.units;
+  const allChapters = state_io.state.chapters;
+  let finishedChapters = [];
+
+  allChapters.forEach(chapter => {
+    let chapterUnits = allUnits.filter((unit) => unit.chapter_id == chapter.chapter_id);
+    console.log(chapterUnits)
+
+ //  console.log(chapterUnits)
+//console.log(JSON.stringify(chapterUnits))
+  let completeUnits =  chapterUnits.filter(units => units.check_complete)
+
+ // console.log(completeUnits)
+
+  });
+
   // console.log(chapters)
   // console.log(state_io.state.users_units)
   let arrayWithQuestions = [];
+  let arrayWithFinished = [];
 
- 
+  if (state_io.state.button == "questions") {
+    console.log("vi är inne i knappen");
+    console.log(state_io.state.button);
 
+let allUserUnits = state_io.state.users_units;
 
+let arrayWithQuestions = chapters.filter(chapter => {
+let matchingUnits = allUserUnits.filter(unit => unit.chapter_id == chapter.chapter_id && unit.check_question)
 
-  if (state_io.state.button == "finished") {
+return matchingUnits.length > 0
+})
+
+/*
     state_io.state.users_units.forEach((unit) => {
       if (unit.check_question == true) {
         chapters.forEach((chapter) => {
           if (chapter.chapter_id == unit.chapter_id) {
-            console.log(chapter);
+           // console.log(chapter);
             arrayWithQuestions.push(chapter);
           }
         });
       }
     });
+*/
 
-arrayToPrint = arrayWithQuestions;
+    arrayToPrint = arrayWithQuestions;
+  } else {
+    console.log("knappen är återställd");
+  }
+
+  if (state_io.state.button == "finished") {
+    console.log(state_io.state.units);
   }
 
   const list_dom = document.querySelector("#content_chapter_list > ul");
-
+  // console.log(arrayToPrint);
   list_dom.innerHTML = "";
   arrayToPrint.forEach((chapter) => {
     const container_dom = document.createElement("li");

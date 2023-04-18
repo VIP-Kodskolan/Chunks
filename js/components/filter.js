@@ -11,7 +11,7 @@ SubPub.subscribe({
 
 function render_filter () {
   state_io.state.button = "";
-  //console.log(state_io.state)
+ console.log(state_io.state)
 
   const container = document.querySelector("#content_filter_chapter");
   container.innerHTML = ''
@@ -32,7 +32,16 @@ function render_filter () {
     SubPub.publish({
       event: "state::patch::filter::received",
       detail: { params: {
-        filterButton: "finished",
+        filterButton: "questions",
+      }}
+    });
+  })
+
+  buttonFinished.addEventListener("click", function(){
+    SubPub.publish({
+      event: "state::patch::filter::received",
+      detail: { params: {
+        filterButton: "questions",
       }}
     });
   })
