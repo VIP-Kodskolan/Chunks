@@ -43,6 +43,10 @@ export default {}
     }
   });
 
+  SubPub.subscribe({
+    event: "state::patch::filter::done",
+    listener: render_chapters
+  });
 
 
 })();
@@ -70,6 +74,16 @@ function render () {
 function render_chapters () {
   
   const { chapters } = state_io.state;
+  
+ let arrayWithoutQuestions = [];
+
+if(state_io.state.button == "finished"){
+  console.log("den har en knapp")
+  console.log(state_io.state)
+  state_io.state.units.forEach((item) => {
+    console.log(item)
+  })
+}
   const list_dom = document.querySelector("#content_chapter_list > ul");
 
   list_dom.innerHTML = "";

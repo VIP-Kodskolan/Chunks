@@ -6,19 +6,23 @@ SubPub.subscribe({
   listener: render_filter
 });
 
+
+
 function render_filter () {
-  
-  
   const container = document.querySelector("#content_filter_chapter");
-
+  container.innerHTML = ''
   const button = document.createElement("button");
- button.innerText = "Filter One"
+  button.innerText = "Filter One"
+  container.append(button);
 
-
-
-    container.append(button);
-
-
+  button.addEventListener("click", function(){
+    SubPub.publish({
+      event: "state::patch::filter::received",
+      detail: { params: {
+        filterButton: "finished",
+      }}
+    });
+  })
   };
 
 /*

@@ -24,7 +24,6 @@ SubPub.subscribe({
 function changeWindow(){
     document.querySelector("#passwordWindow").innerHTML = `<p>success</p>`;
 }
-
+*/
 export default{}
 
-*/

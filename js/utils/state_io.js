@@ -24,7 +24,8 @@ export default {
 
 // INIT
 (() => {
-
+ 
+  
   const subscriptions = [
 
     // GETS
@@ -294,6 +295,16 @@ export default {
     },    
     
   ];
+  
+  SubPub.subscribe({
+    events: ["state::patch::filter::received"],
+    listener: (response, params) => {
+      State.button = "finished"
+      SubPub.publish({
+        event: "state::patch::filter::done",
+      });
+    }
+  });
 
   subscriptions.forEach(sb => {
 
