@@ -23,10 +23,10 @@ function chapter_filter_buttons() {
 }
 
 function toggle_filter(event) {
-    let params = ""
+  let params = "";
   if (event.target.classList.contains("active")) {
     event.target.classList.remove("active");
-    params = "default"
+    params = "default";
   } else {
     let chapBTN = Array.from(document.querySelectorAll(".filter_button"));
 
@@ -34,10 +34,10 @@ function toggle_filter(event) {
     event.target.classList.add("active");
     console.log(event.target.textContent);
     params = event.target.textContent;
-}
-console.log(params);
-SubPub.publish({
+  }
+  console.log(params);
+  SubPub.publish({
     event: "state::patch::chapter_filter::received",
-    detail: {params}
-})
+    detail: { params },
+  });
 }

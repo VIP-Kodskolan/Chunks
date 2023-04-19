@@ -47,12 +47,12 @@ export default {};
   SubPub.subscribe({
     event: "state::patch::chapter_filter::done",
     listener: render_chapters,
-  })
+  });
 
   SubPub.subscribe({
     event: "db::patch::users_units::done",
     listener: render_chapters,
-  })
+  });
 
   SubPub.subscribe({
     event: "db::patch::section::done",
@@ -84,11 +84,10 @@ function render() {
 function render_chapters() {
   let { chapters } = state_io.state;
   const list_dom = document.querySelector("#content_chapter_list > ul");
-  const filter = state_io.state.filter
-  if(filter !== undefined){
-    chapters = filtered_chapters(chapters, filter)
+  const filter = state_io.state.filter;
+  if (filter !== undefined) {
+    chapters = filtered_chapters(chapters, filter);
   }
-  
 
   list_dom.innerHTML = "";
   chapters.forEach((chapter) => {
@@ -111,75 +110,70 @@ function render_chapters() {
   }
 }
 
-function filtered_chapters(chapters, filter){
+function filtered_chapters(chapters, filter) {
   let filtered_chapters = [];
   switch (filter) {
     case "Completed":
       chapters.forEach((c) => {
-        if (
-          filter_bool(c, filter)
-        ) {
-          filtered_chapters.push(c)
-        } 
+        if (filter_bool(c, filter)) {
+          filtered_chapters.push(c);
+        }
       });
       break;
 
     case "Unfinished":
       chapters.forEach((c) => {
-        if (
-          filter_bool(c, filter)
-        ) {
-          filtered_chapters.push(c)
-        } 
+        if (filter_bool(c, filter)) {
+          filtered_chapters.push(c);
+        }
       });
       break;
 
     case "Questions":
       chapters.forEach((c) => {
-        if (
-          filter_bool(c, filter)
-        ) {
-          filtered_chapters.push(c)
-        } 
+        if (filter_bool(c, filter)) {
+          filtered_chapters.push(c);
+        }
       });
       break;
     default:
-      return chapters
+      return chapters;
   }
-  return filtered_chapters
+  return filtered_chapters;
 }
 
-function filter_bool (chapter, filter){
-  const units = state_io.state.users_units
-  const chapter_units = units.filter(u => u.chapter_id == chapter.chapter_id)
-  switch(filter){
+function filter_bool(chapter, filter) {
+  const units = state_io.state.users_units;
+  const chapter_units = units.filter((u) => u.chapter_id == chapter.chapter_id);
+  switch (filter) {
     case "Completed":
-      const all_units = state_io.state.units
-      const all_chapter_units = all_units.filter(u => u.chapter_id == chapter.chapter_id)
-      const completed_units = chapter_units.filter(u => u.check_complete)
-      if(all_chapter_units.length !== completed_units.length){
+      const all_units = state_io.state.units;
+      const all_chapter_units = all_units.filter(
+        (u) => u.chapter_id == chapter.chapter_id
+      );
+      const completed_units = chapter_units.filter((u) => u.check_complete);
+      if (all_chapter_units.length !== completed_units.length) {
         return false;
-      } else{
-        return true
+      } else {
+        return true;
       }
     case "Unfinished":
-      if(chapter_units.some(u => u.check_complete)){
+      if (chapter_units.some((u) => u.check_complete)) {
         return false;
-      } else{
-        return true
+      } else {
+        return true;
       }
     case "Questions":
-      if (chapter_units.some(u => u.check_question)){
-        return true
-      } else{
-        return false
+      if (chapter_units.some((u) => u.check_question)) {
+        return true;
+      } else {
+        return false;
       }
-
   }
 }
 
 function fillNotes() {
-  document.querySelector("#notes_div").innerHTML = ""
+  document.querySelector("#notes_div").innerHTML = "";
   const { chapters, users_units } = state_io.state;
   for (let note of users_units) {
     for (let chapter of chapters) {
