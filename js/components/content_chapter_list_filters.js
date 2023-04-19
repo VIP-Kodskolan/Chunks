@@ -17,7 +17,7 @@ export default {};
             "db::get::course::done",
             "db::post::unit::done",
         ],
-        listener: render
+        listener: render_filters
     });
 
     SubPub.subscribe({
@@ -31,7 +31,7 @@ export default {};
 
 })();
 
-function render() {
+function render_filters() {
 
     const header = document.querySelector("#chapter_filters");
     header.innerHTML = `
@@ -104,8 +104,10 @@ function check_status() {
             let is_complete = chapter_units.filter(unit => unit.check_complete);
             let has_questions = chapter_units.filter(unit => unit.check_question);
 
+            document.querySelector(`#chapter_list_id_${chapter.chapter_id}`).classList.remove('not_complete');
+            document.querySelector(`#chapter_list_id_${chapter.chapter_id}`).classList.remove('has_question');
+
             if (is_complete.length < chapter_units.length) {
-                // TODO: fix when chapter goes from non-complete to complete
                 document.querySelector(`#chapter_list_id_${chapter.chapter_id}`).classList.add('not_complete');
             }
 
@@ -145,10 +147,10 @@ function show_selected_chapters(checkbox) {
             break;
     }
 
-    let all_visible = document.querySelectorAll('.chapter_list_item:not(.hide)');
-    document.querySelector(`#${box_id} + label`).innerText = checkbox.attributes['label'].nodeValue + " (" + all_visible.length + ")";
+    let result_number = document.querySelectorAll('.chapter_list_item:not(.hide)');
+    document.querySelector(`#${box_id} + label`).innerText = checkbox.attributes['label'].nodeValue + " (" + result_number.length + ")";
 
-    if (all_visible.length == 0) {
+    if (result_number.length == 0) {
         no_filter_results();
     }
 
@@ -159,8 +161,8 @@ function show_all_chapters() {
         document.querySelector('.no_results').remove();
     };
 
-    let chapters = document.querySelectorAll(".chapter_list_item");
-    chapters.forEach(chapter => {
+    let chapter_divs = document.querySelectorAll(".chapter_list_item");
+    chapter_divs.forEach(chapter => {
         if (chapter.classList.contains('hide')) {
             chapter.classList.remove('hide');
         }
