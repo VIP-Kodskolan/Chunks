@@ -64,7 +64,8 @@ function render() {
   render_chapters();
 }
 function render_chapters() {
-  // console.log(state_io.state.button)
+   console.log(state_io.state.button)
+   
   const { chapters } = state_io.state;
 
   let arrayToPrint = chapters;
@@ -72,17 +73,7 @@ function render_chapters() {
   const allChapters = state_io.state.chapters;
   let finishedChapters = [];
 
-  allChapters.forEach(chapter => {
-    let chapterUnits = allUnits.filter((unit) => unit.chapter_id == chapter.chapter_id);
-    console.log(chapterUnits)
 
- //  console.log(chapterUnits)
-//console.log(JSON.stringify(chapterUnits))
-  let completeUnits =  chapterUnits.filter(units => units.check_complete)
-
- // console.log(completeUnits)
-
-  });
 
   // console.log(chapters)
   // console.log(state_io.state.users_units)
@@ -90,8 +81,8 @@ function render_chapters() {
   let arrayWithFinished = [];
 
   if (state_io.state.button == "questions") {
-    console.log("vi är inne i knappen");
-    console.log(state_io.state.button);
+   console.log("vi är inne i knappen");
+  //  console.log(state_io.state.button);
 
 let allUserUnits = state_io.state.users_units;
 
@@ -115,12 +106,25 @@ return matchingUnits.length > 0
 */
 
     arrayToPrint = arrayWithQuestions;
+    state_io.state.button = "";
   } else {
     console.log("knappen är återställd");
   }
 
   if (state_io.state.button == "finished") {
-    console.log(state_io.state.units);
+ //   console.log(state_io.state.units);
+console.log(state_io.state.button)
+    allChapters.forEach(chapter => {
+      let chapterUnits = allUnits.filter((unit) => unit.chapter_id == chapter.chapter_id);
+     console.log(chapterUnits)
+  
+   //  console.log(chapterUnits)
+  //console.log(JSON.stringify(chapterUnits))
+    let completeUnits =  chapterUnits.filter(units => units.check_complete)
+  
+   // console.log(completeUnits)
+  
+    });
   }
 
   const list_dom = document.querySelector("#content_chapter_list > ul");

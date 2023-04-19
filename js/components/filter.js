@@ -41,7 +41,7 @@ function render_filter () {
     SubPub.publish({
       event: "state::patch::filter::received",
       detail: { params: {
-        filterButton: "questions",
+        filterButton: "finished",
       }}
     });
   })

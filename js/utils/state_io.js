@@ -299,7 +299,7 @@ export default {
   SubPub.subscribe({
     events: ["state::patch::filter::received"],
     listener: (response, params) => {
-      State.button = "questions"
+      State.button = response.params.filterButton;
       SubPub.publish({
         event: "state::patch::filter::done",
       });
