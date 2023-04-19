@@ -28,7 +28,12 @@ export default {}
   });
 
   SubPub.subscribe({
-    event: "filter_chapters",
+    event: "state::patch::filter_chapters::done",
+    listener: render_chapters
+  });
+
+  SubPub.subscribe({
+    event: "db::patch::users_units::done",
     listener: render
   });
 
@@ -60,14 +65,20 @@ function render (data) {
     <ul></ul>
   `;
 
+  // CHAPTERS
+  render_chapters();
+}
+
+function render_chapters () {
+
   let { chapters } = state_io.state;
   const list_dom = document.querySelector("#content_chapter_list > ul");
-
-  let filter = data.filtering !== undefined ? data.filtering : false ;
+  
+  let filter = state_io.state.filter !== undefined ? state_io.state.filter : false ;
   filter !== false ? chapters = filterChapters(filter, chapters): false ; 
-
+  
+  
   list_dom.innerHTML = "";
-
   chapters.forEach(chapter => {
     const container_dom = document.createElement("li");
     list_dom.append(container_dom);
@@ -101,34 +112,40 @@ function filterChapters (filter, chapters){
 
   if (filter === "Completed") {
 
-    return chapters.filter(chapter => {
+    let completed = chapters.filter(chapter => {
         let unitsInChapter = units.filter(unit => unit.chapter_id === chapter.chapter_id);
         let allUnitsComplete = unitsInChapter.every(unit => unit.check_complete);
         return allUnitsComplete;
     });
 
+    console.log(completed);
+    return completed;
   }
 
   if (filter === "UnCompleted") {
 
-    return chapters.filter(chapter => {
+    let uncompleted = chapters.filter(chapter => {
       let unitsInChapter = units.filter(unit => unit.chapter_id === chapter.chapter_id);
       let unitUnCompleted = unitsInChapter.some(unit => !unit.check_complete);
       return unitUnCompleted;
     });
-
+    console.log(uncompleted);
+    return uncompleted;
   }
 
   if ( filter === "Questions") {
 
-    return chapters.filter(chapter => {
+    let questions =  chapters.filter(chapter => {
       let unitsInChapter = units.filter(unit => unit.chapter_id === chapter.chapter_id);
       let unitQustion = unitsInChapter.some(unit => unit.check_question);
       return unitQustion;
     });
   
+    console.log(questions);
+    return questions;
   }
 
+  console.log(chapters);
   return chapters
 
 }

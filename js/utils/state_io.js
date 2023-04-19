@@ -1,6 +1,5 @@
 import { SubPub } from "./subpub.js";
 
-
 let State = {};
 const Consts = {
   mins_after_incorrect_answer: 7,
@@ -12,21 +11,26 @@ const Consts = {
 };
 
 export default {
-  get state() { return State },
+  get state() {
+    return State;
+  },
   bullet_number_element,
   get_section_units,
-  get_chapter_assignments, get_chapter_sections, get_chapter_units,
-  get_question_answers, get_quiz_question_status, is_answer_correct,
-  get_class_expanded_chapter, set_class_expanded_chapter,
+  get_chapter_assignments,
+  get_chapter_sections,
+  get_chapter_units,
+  get_question_answers,
+  get_quiz_question_status,
+  is_answer_correct,
+  get_class_expanded_chapter,
+  set_class_expanded_chapter,
   is_unit_empty,
   Consts,
 };
 
 // INIT
 (() => {
-
   const subscriptions = [
-
     // GETS
     {
       events: "db::get::login::received",
@@ -55,11 +59,11 @@ export default {
         State.quiz_questions = response.quiz_questions;
         State.quiz_options = response.quiz_options;
         State.quiz_answers = response.quiz_answers;
-      }
+      },
     },
     {
       events: ["db::get::date_time::received"],
-      middleware: () => {}
+      middleware: () => {},
     },
 
     // USERS
@@ -67,38 +71,45 @@ export default {
       events: ["db::delete::user::received"],
       middleware: (response, params) => {
         cascade_delete("user", response.deleted_user_id);
-      }
+      },
     },
     {
       events: ["db::post::user::received"],
       middleware: (response, params) => {
         State.users.push(response.user);
-      }
+      },
     },
     {
       events: ["db::patch::user::received"],
       middleware: (response, params) => {
-        const index = State.users.findIndex(u => u.user_id === response.element.user_id);
+        console.log(response, params);
+        const index = State.users.findIndex(
+          (u) => u.user_id === response.element.user_id
+        );
         State.users.splice(index, 1, response.element);
-      }
+      },
     },
-
-    // PASSWORD
     {
       events: ["db::patch::user_password::received"],
       middleware: (response, params) => {
-        console.log("this is respon", response)
-      }
+        console.log(response, params);
+        if (!response.password) {
+          return;
+        }
+        return response;
+      },
     },
 
     // USERS_UNITS
     {
       events: ["db::patch::users_units::received"],
       middleware: (response, params) => {
-        const index = State.users_units.findIndex(uu => uu.unit_id === response.users_unit.unit_id);
+        const index = State.users_units.findIndex(
+          (uu) => uu.unit_id === response.users_unit.unit_id
+        );
         State.users_units.splice(index, 1);
         State.users_units.push(response.users_unit);
-      }
+      },
     },
 
     // QUIZ ANSWERS AND OPTIONS
@@ -108,38 +119,42 @@ export default {
         State.quiz_answers.push(response.answer);
 
         if (response.users_unit) {
-
-          const index = State.users_units.findIndex(uu => uu.unit_id === response.users_unit.unit_id);
+          const index = State.users_units.findIndex(
+            (uu) => uu.unit_id === response.users_unit.unit_id
+          );
           if (index !== -1) {
             State.users_units.splice(index, 1);
           }
           State.users_units.push(response.users_unit);
-  
         }
-      }
+      },
     },
     {
       events: ["db::delete::quiz_option::received"],
       middleware: (response, params) => {
-        const index = State.quiz_options.findIndex(qo => qo.quiz_option_id === response.deleted_quiz_option_id);
+        const index = State.quiz_options.findIndex(
+          (qo) => qo.quiz_option_id === response.deleted_quiz_option_id
+        );
         State.quiz_options.splice(index, 1);
-      }
+      },
     },
     {
       events: ["db::post::quiz_option::received"],
       middleware: (response, params) => {
         State.quiz_options.push(response.option);
-      }
+      },
     },
     {
       events: ["db::patch::quiz_option::received"],
       middleware: (response, params) => {
-        response.options.forEach(option => {
-          const index = State.quiz_options.findIndex(qo => qo.quiz_option_id === option.quiz_option_id);
+        response.options.forEach((option) => {
+          const index = State.quiz_options.findIndex(
+            (qo) => qo.quiz_option_id === option.quiz_option_id
+          );
           State.quiz_options.splice(index, 1);
           State.quiz_options.push(option);
         });
-      }
+      },
     },
 
     // QUIZ_QUESTIONS
@@ -147,17 +162,19 @@ export default {
       events: ["db::post::quiz_question::received"],
       middleware: (response, params) => {
         State.quiz_questions.push(response.quiz_question);
-      }
+      },
     },
     {
       events: ["db::patch::quiz_question::received"],
       middleware: (response, params) => {
-        response.questions.forEach(question => {
-          const index = State.quiz_questions.findIndex(q => q.quiz_question_id === question.quiz_question_id);
+        response.questions.forEach((question) => {
+          const index = State.quiz_questions.findIndex(
+            (q) => q.quiz_question_id === question.quiz_question_id
+          );
           State.quiz_questions.splice(index, 1);
           State.quiz_questions.push(question);
         });
-      }
+      },
     },
 
     // UNITS
@@ -169,31 +186,31 @@ export default {
           State.quiz_questions.push(response.quiz_question);
         }
         State.units.push(response.element);
-      }
+      },
     },
     {
       events: ["db::patch::unit::received"],
       middleware: (response, params) => {
         // response contains units in one section
-        response.elements.forEach( unit => {
-          const index = State.units.findIndex(u => u.unit_id === unit.unit_id);
+        response.elements.forEach((unit) => {
+          const index = State.units.findIndex(
+            (u) => u.unit_id === unit.unit_id
+          );
           State.units.splice(index, 1, unit);
         });
-      }
+      },
     },
     {
       events: ["db::delete::unit::received"],
       middleware: (response, params) => {
-
         cascade_delete("unit", response.element.unit_id);
-        
+
         // spot has been updated. Update section's units
-        response.elements.forEach(unit => {
+        response.elements.forEach((unit) => {
           delete_element("units", unit.unit_id);
           State.units.push(unit);
         });
-
-      }
+      },
     },
 
     // SECTIONS
@@ -201,38 +218,39 @@ export default {
       events: ["db::post::section::received"],
       middleware: (response, params) => {
         State.sections.push(response.section);
-      }
+      },
     },
     {
       events: ["db::patch::section::received"],
       middleware: (response, params) => {
-
         // special case: move section from one chapter to another
-        if (params.updated_fields.some(uf => uf.field === "chapter_id")) {
-          const index = State.sections.findIndex(s => s.section_id === response.element.section_id);
+        if (params.updated_fields.some((uf) => uf.field === "chapter_id")) {
+          const index = State.sections.findIndex(
+            (s) => s.section_id === response.element.section_id
+          );
           State.sections.splice(index, 1, response.element);
         }
 
         // response contains sections in one chapter (old chapter if section was moved)
-        response.elements.forEach( section => {
-          const index = State.sections.findIndex(s => s.section_id === section.section_id);
+        response.elements.forEach((section) => {
+          const index = State.sections.findIndex(
+            (s) => s.section_id === section.section_id
+          );
           State.sections.splice(index, 1, section);
         });
-      }
+      },
     },
     {
       events: ["db::delete::section::received"],
       middleware: (response, params) => {
-
         cascade_delete("section", response.section_id);
-        
+
         // spot has been updated. Update chapter's sections
-        response.sections.forEach(section => {
+        response.sections.forEach((section) => {
           delete_element("sections", section.section_id);
           State.sections.push(section);
         });
-        
-      }
+      },
     },
 
     // DEPENDENCIES
@@ -240,13 +258,13 @@ export default {
       events: ["db::post::dependencies::received"],
       middleware: (response, params) => {
         State.dependencies = response.dependencies;
-      }
+      },
     },
     {
       events: ["db::delete::dependencies::received"],
       middleware: (response, params) => {
         State.dependencies = response.dependencies;
-      }
+      },
     },
 
     // CHAPTERS
@@ -254,22 +272,22 @@ export default {
       events: ["db::post::chapter::received"],
       middleware: (response, params) => {
         State.chapters.push(response.chapter);
-      }
+      },
     },
     {
       events: ["db::patch::chapter::received"],
-      middleware: (response, params) => {        
+      middleware: (response, params) => {
         State.chapters = response.elements;
-      }
+      },
     },
     {
       events: ["db::delete::chapter::received"],
-      middleware: (response, params) => {        
+      middleware: (response, params) => {
         cascade_delete("chapter", response.chapter_id);
 
         // spots have been updated
         State.chapters = response.chapters;
-      }
+      },
     },
 
     // COURSE
@@ -277,13 +295,13 @@ export default {
       events: ["db::delete::course::received"],
       middleware: (response, params) => {
         cascade_delete("course", response.course_id);
-      }
+      },
     },
     {
       events: ["db::patch::course::received"],
       middleware: (response, params) => {
         State.course = response.element;
-      }
+      },
     },
     {
       events: ["db::post::course::received"],
@@ -295,13 +313,23 @@ export default {
             params: {
               course_id: response.course.course_id,
               user_id: State.user.user_id,
-            }
-          }
+            },
+          },
         });
-      }
-    },    
-    
+      },
+    },
   ];
+
+  SubPub.subscribe({
+    events: ["state::patch::filter_chapters::received"],
+      listener: ({params}) => {
+        State.filter = params;
+        SubPub.publish({
+          event: "state::patch::filter_chapters::done",
+          detail: params
+        })
+      },
+  })
 
   subscriptions.forEach(sb => {
 

@@ -32,7 +32,7 @@ function render () {
         },
     ];
 
-    let filtering;
+    let params;
 
     btnsFiltering.forEach(filter => {
 
@@ -49,18 +49,18 @@ function render () {
                     btn.classList.remove("Filteractive");
                 });
                 btn.classList.add("Filteractive");
-                filtering = filter.text;
+                params = filter.text;
     
             } else {
 
                 btn.classList.remove("Filteractive");
-                filtering = "";
+                params = "";
 
             }
 
             SubPub.publish({
-                event: "filter_chapters",
-                detail: { filtering }
+                event: "state::patch::filter_chapters::received",
+                detail: { params }
             });
 
         });
