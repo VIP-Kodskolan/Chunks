@@ -321,11 +321,11 @@ export default {
   ];
 
   SubPub.subscribe({
-    events: ["state::patch::filter_chapters::received"],
+    events: ["filter_chapters::received"],
       listener: ({params}) => {
         State.filter = params;
         SubPub.publish({
-          event: "state::patch::filter_chapters::done",
+          event: "filter_chapters::done",
           detail: params
         })
       },

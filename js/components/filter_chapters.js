@@ -1,6 +1,6 @@
 import { SubPub } from "../utils/subpub.js";
 
-export default { }
+export default {}
 
 ;(() => {
 
@@ -12,7 +12,6 @@ export default { }
 })();
 
 function render () {
-
     let filter_chapters = document.querySelector("#filter_chapters");
     filter_chapters.innerHTML = "";
 
@@ -35,37 +34,29 @@ function render () {
     let params;
 
     btnsFiltering.forEach(filter => {
-
         let btn = document.createElement("button");
         btn.innerHTML = `${filter.text} <span class="btnCircle"></span>`;
         btn.classList.add(filter.text);
         filterBtnsContainer.appendChild(btn);
         
         btn.addEventListener("click", () => {
-
             if (!btn.classList.contains("Filteractive")) {
-            
                 filterBtnsContainer.querySelectorAll("button").forEach(btn => {
                     btn.classList.remove("Filteractive");
                 });
+
                 btn.classList.add("Filteractive");
                 params = filter.text;
-    
             } else {
-
                 btn.classList.remove("Filteractive");
                 params = "";
-
             }
 
             SubPub.publish({
-                event: "state::patch::filter_chapters::received",
+                event: "filter_chapters::received",
                 detail: { params }
             });
-
         });
-
     });
-    
 }
 

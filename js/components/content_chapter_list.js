@@ -28,22 +28,22 @@ export default {}
   });
 
   SubPub.subscribe({
-    event: "state::patch::filter_chapters::done",
-    listener: render_chapters
-  });
-
-  SubPub.subscribe({
-    event: "db::patch::users_units::done",
-    listener: render
-  });
-
-  SubPub.subscribe({
     event: "db::patch::section::done",
     listener: ({ response, params }) => {
       if (params.updated_fields.some(uf => uf.field === "chapter_id")) {
         render();
       }
     }
+  });
+
+  SubPub.subscribe({
+    event: "filter_chapters::done",
+    listener: render
+  });
+
+  SubPub.subscribe({
+    event: "db::patch::users_units::done",
+    listener: render
   });
 
 })();
@@ -55,7 +55,7 @@ function render_empty () {
 
 }
 
-function render (data) {
+function render () {
 
   const dom = document.querySelector("#content_chapter_list");
   dom.innerHTML = `
@@ -65,19 +65,15 @@ function render (data) {
     <ul></ul>
   `;
 
-  // CHAPTERS
-  render_chapters();
-}
-
-function render_chapters () {
-
   let { chapters } = state_io.state;
   const list_dom = document.querySelector("#content_chapter_list > ul");
   
   let filter = state_io.state.filter !== undefined ? state_io.state.filter : false ;
+  console.log(filter  )
   filter !== false ? chapters = filterChapters(filter, chapters): false ; 
   
-  
+  console.log(filter, chapters)
+
   list_dom.innerHTML = "";
   chapters.forEach(chapter => {
     const container_dom = document.createElement("li");
@@ -110,6 +106,8 @@ function filterChapters (filter, chapters){
 
   let { units } = state_io.state;
 
+  console.log("filterChapters");
+
   if (filter === "Completed") {
 
     let completed = chapters.filter(chapter => {
@@ -129,6 +127,7 @@ function filterChapters (filter, chapters){
       let unitUnCompleted = unitsInChapter.some(unit => !unit.check_complete);
       return unitUnCompleted;
     });
+
     console.log(uncompleted);
     return uncompleted;
   }
