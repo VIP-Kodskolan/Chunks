@@ -46,7 +46,12 @@ export default {}
   SubPub.subscribe({
     event: "state::patch::filter_chapters::done",
     listener: render_chapters,
-});
+  });
+
+  SubPub.subscribe({
+    event: "db::patch::users_units::done",
+    listener: render_chapters,
+  })
 
 
 })();
@@ -77,10 +82,10 @@ function render_chapters () {
   else if(chapter_filter == "questions"){filteredChapters.push(...showChaptQuestion())}
   else{filteredChapters = chapters};
 
-console.log(filteredChapters);
-
-const list_dom = document.querySelector("#content_chapter_list > ul");
+  const list_dom = document.querySelector("#content_chapter_list > ul");
   list_dom.innerHTML = "";
+
+  //console.log(filteredChapters);
   filteredChapters.forEach(chapter => {
 
     const container_dom = document.createElement("li");
@@ -133,7 +138,6 @@ function showChaptDone(){
 
   allChapters.forEach(chapter => {
       let chapterUnits = allUnits.filter(unit => unit.chapter_id === chapter.chapter_id);
-      console.log(chapterUnits);
       let completeUnits = [];
 
       //picks out units which are all done in one chapter
@@ -141,12 +145,8 @@ function showChaptDone(){
           if (unit.check_complete === true){completeUnits.push(unit);}
         })
 
-    //console.log(completeUnits);
-    ////console.log(chapterUnits);
     if (chapterUnits.length == completeUnits.length && chapterUnits.length !== 0){
-          console.log(chapterUnits);
-          console.log(completeUnits);
-          chaptersCompl.push(chapter);
+        chaptersCompl.push(chapter);
       }
   });
   return chaptersCompl;
@@ -167,49 +167,9 @@ function showChaptNoDone(){
     });
 
     if (doneUnits.length !== chapterUnits.length){
-            noDoneChapters.push(chapter);
+      noDoneChapters.push(chapter);
     }
   });
   return noDoneChapters;
-}
-
-function renderChaps(chaptersIn){
-  const list_dom = document.querySelector("#content_chapter_list > ul");
-  const { chapters } = state_io.state;
-  let idsOfChaps = [];
-  let filteredOrNotChaps = [];
-
-//if chaptersarray sent in is empty or undefined 
-  if(chaptersIn == undefined
-  || chaptersIn.length == 0){
-      filteredOrNotChaps.push(...chapters);
-  } else {
-
-  //only keep id number of chapter
-  chaptersIn.forEach(element => {
-      var id = element.getAttribute( 'id' );
-      var string = id.replace(/^chapter_list_id_+/i, '');
-      idsOfChaps.push(parseInt(string));
-  });
-
-  //return chapter(s) with sent id
-  var intersection = chapters.filter(function(e) {
-      return idsOfChaps.indexOf(e.chapter_id) > -1;
-  });
-
-  filteredOrNotChaps.push(...intersection); 
-  }
-
-  list_dom.innerHTML = "";
-  filteredOrNotChaps.forEach(chapter => {
-
-      const container_dom = document.createElement("li");
-      list_dom.append(container_dom);
-
-      SubPub.publish({
-          event: "render::chapter_list_item",
-          detail: { element: chapter, container_dom }
-      })
-  });
 }
 

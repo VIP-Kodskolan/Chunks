@@ -76,11 +76,18 @@ function render ({ element }) {
   
   const dom = document.querySelector("#modal .content");
   dom.classList.add(element.kind);
+  console.log(element.kind);
 
   dom.innerHTML = `
-    <div class="left"></div>
-    <div class="right"></div>
+    <div class="left">
+      <button class="leftModul"> < </button>
+    </div>
+    <div class="right">
+      <button class="rightModul"> > </button>
+    </div>
   `;
+
+  let unitElement;
 
 
   // COMPONENTS
@@ -114,6 +121,8 @@ function render ({ element }) {
       const container_dom = document.createElement("div");
       doms[side].append(container_dom);
       renderers["render_" + component]({ element, container_dom });
+      //console.log(element);
+      unitElement = element;
     });
   
   }
@@ -132,6 +141,79 @@ function render ({ element }) {
     }
   });
 
+  render_left_right(unitElement);
+}
+
+function render_left_right(unit){
+
+  let allUnits = state_io.state.units;
+  let allChapters = state_io.state.chapters;
+  let unitIDs = []
+
+  //bring out all chapter units and their IDs
+  allChapters.forEach(chapter => {
+    let chapterUnits = allUnits.filter(unit => unit.chapter_id === chapter.chapter_id);
+    
+    let unitID = chapterUnits.map(unit => unit.unit_id);
+    unitIDs.push(...unitID)
+
+  })
+
+  console.log(unitIDs);
+
+
+
+    //CHANGE MODUL!!
+    document.querySelector(".rightModul").addEventListener("click", e => {
+      //transition modal
+      close_modal();
+      console.log("rightright");
+
+      //få fram vilket ID vi är på nu av unitIDs listan
+
+      let indexOfUnitID = unitIDs.findIndex(u => u === unit.unit_id);
+
+      let indexOfNextUnitID = indexOfUnitID + 1;
+
+      let nextUnit = state_io.state.units.find(u => u.unit_id === unitIDs[indexOfNextUnitID]);
+      console.log(nextUnit);
+
+      if(nextUnit === undefined){
+        //felmeddelande...
+        console.log("inget mer på detta hållet");
+      } else {
+        SubPub.publish({
+          event: "render::modal::unit",
+          detail: { element: nextUnit}
+        });
+      }
+
+
+    })
+
+    document.querySelector(".leftModul").addEventListener("click", e => {
+      //transition modal
+      close_modal();
+      console.log("lftöeft");
+      //få fram vilket ID vi är på nu av unitIDs listan
+
+      let indexOfUnitID = unitIDs.findIndex(u => u === unit.unit_id);
+
+      let indexOfNextUnitID = indexOfUnitID - 1;
+
+      let nextUnit = state_io.state.units.find(u => u.unit_id === unitIDs[indexOfNextUnitID]);
+      console.log(nextUnit);
+
+      if(nextUnit === undefined){
+        //felmeddelande...
+        console.log("inget mer på detta hållet");
+      } else {
+        SubPub.publish({
+          event: "render::modal::unit",
+          detail: { element: nextUnit}
+        });
+      }
+    })
 }
 
 const renderers = {

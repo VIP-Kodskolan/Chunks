@@ -82,6 +82,20 @@ export default {
         State.users.splice(index, 1, response.element);
       }
     },
+    {
+      events: ["db::patch::user_password::received"],
+      middleware: (response, params) => {
+        console.log(response.password, params);
+        if(response.password == false){
+          console.log("FALSE!!");
+        } else if (response.password == true){
+          console.log("TRUE!!");
+        } else {
+        const index = State.users.findIndex(u => u.user_id === response.element.user_id);
+        State.users.splice(index, 1, response.element);
+        }
+      }
+    },
 
     // USERS_UNITS
     {
@@ -291,9 +305,21 @@ export default {
           }
         });
       }
-    },    
+    },   
   ];
   
+/*
+  {
+    events: ["db::patch::filter_chapters::received"],
+    middleware: (response, params) => {
+      State.chapter_filter = params;
+      SubPub.publish({
+        event: "state::patch::filter_chapters::done",
+        detail: params
+      })
+    }
+    
+   },*/
 
   SubPub.subscribe({
     events: ["state::patch::filter_chapters::received"],

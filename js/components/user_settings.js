@@ -16,7 +16,7 @@ export default { render };
         });
 
     SubPub.subscribe({
-        event: "db::patch::user::done",
+        event: "db::patch::user_password::done",
         listener: check_change_answer
     });
 

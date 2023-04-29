@@ -555,77 +555,40 @@ function DELETE_dependencies ($params, $pdo) {
   ];
 
 }
+/*
+function PATCH_user_password($params, $pdo){
+  $oldpassword = $params["oldpassword"];
+  $newpassword = $params["newpassword"];
+  $user_id = $params["user_id"];
 
+  $user_db = array_from_query($pdo, "SELECT * from users WHERE user_id = '$user_id'")[0];
+  if($user_db["user_password"] == $oldpassword) {
+    $pdo -> query("UPDATE users SET user_password = '$newpassword' WHERE user_id = '$user_id'");
+  } else {
+    return [
+      "data" => [
+        "password" => false,
+      ]
+    ]; 
+  }
+
+  return [
+    "data" => [
+      "password" => true,
+    ]
+  ]; 
+}*/
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
 
 // USERS
 function PATCH_user ($params, $pdo) {
-
-  //tillfäfflig för test
-$response_function = function ($response) {
-  // $header = $response["header"] ? $response["header"] : "Content-Type: text/json";
-  // header($header);
-  $code = $response["code"] ? $response["code"] : 200;
-  http_response_code($code);
-  $payload = [
-      "data" => $response["data"],
-      "message" => $response["message"] ? $response["message"] : "All OK"
-  ];
-  echo json_encode(["payload" => $payload]);
-  exit();
-};
-
-  if(isset($params["oldpassword"])){
-    $oldpassword = $params["oldpassword"];
-    $newpassword = $params["newpassword"];
-    $user_id = $params["user_id"];
-  
-    $user_db = array_from_query($pdo, "SELECT * from users WHERE user_id = '$user_id'")[0];
-    //var_dump($user_db);
-    //var_dump($params);
-    //echo ();
-
-    
-  if($oldpassword !== $user_db["user_password"]){
-    //fel password
-    $response_function([
-      "code" => 450,
-      "message" => "Fel password."
-  ]);
-  //felmeddelande...
-
-  } else {
-    //uppdatera password
-    $response_function([
-      "code" => 200,
-      "message" => "Right password."
-    ]);
-
-   //$sql = "UPDATE users SET user_password = $newpassword WHERE user_id = $user_id";
-   //$pdo -> query($sql);
-
-  $pdo -> query ("UPDATE users SET user_password = $newpassword WHERE user_id = '$user_id'");
-
-    return [
-      "data" => [
-        "users" => _get_users($user_id, $pdo)
-      ]
-    ];
-
-  //inte ändra password
-  }
-  }else {
-    return PATCH($params, $pdo);
-
-  }
-
-};
-
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
+  return PATCH($params, $pdo);
+}
 
 
 function POST_user ($params, $pdo) {

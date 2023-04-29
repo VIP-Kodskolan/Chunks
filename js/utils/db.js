@@ -40,8 +40,8 @@ export default {}
     // USER
     "db::delete::user::request",
     "db::patch::user::request",
+    "db::patch::user_password::request",
     "db::post::user::request",
-
 
     // USERS_UNITS
     "db::patch::users_units::request",
