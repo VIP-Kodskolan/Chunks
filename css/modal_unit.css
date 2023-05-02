@@ -31,6 +31,7 @@
 #modal > .content .right, #modal > .content .left {
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 #modal > .content .left {
@@ -177,3 +178,22 @@
   width: 100%;
   height: 100%;
 }
+
+/* NEXT UNIT BUTTONS */
+#modal .shift{
+  position:absolute;
+  top: 400px;
+  z-index: 10;
+  width: 70px;
+  height: 70px;
+  border-radius: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.right .shift .rightModul{left: 430px;}
+.left .shift .leftModul{right:430px;}
+
+.btnError{background-color: var(--color_accent_incorrect);}
+.btnError:hover{background-color: #ac5c7c;}

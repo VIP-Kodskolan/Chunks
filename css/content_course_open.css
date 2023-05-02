@@ -100,7 +100,7 @@
 }
 
 #content_course_open > .weekly_progress .units_by_chapters .chapter-unit {
-  width: 2px;
+  width: 4px;
   height: 30px;
   background-color: var(--color_accent_1_overlay);
 }
@@ -111,4 +111,10 @@
 
 #content_course_open > .weekly_progress .units_by_chapters .chapter-unit.check_question {
   background-color: var(--color_accent_question);
+}
+
+#content_course_open > .weekly_progress .units_by_chapters .chapter-unit:hover{
+  position:relative;
+  bottom:10px;
+  margin: 0px 2px 0px 2px; 
 }

@@ -150,13 +150,23 @@ function render_progress_units_by_chapters(chapters, units, users_units) {
     for (const chapter_unit of chapter_units) {
       const unitContainer = document.createElement("div");
       unitContainer.className = `chapter-unit`;
-      //console.log(chapter_unit);
+      console.log(chapter_unit);
+      unitContainer.setAttribute("title", `${chapter_unit.name}`);
+
+      
+      unitContainer.addEventListener("click", e => {
+        SubPub.publish({
+          event: "render::modal::unit",
+          detail: { element: chapter_unit}
+        });
+      })
       //
       //
       //
       //
       //
       //
+
 
       if (chapter_unit.check_complete) {
         unitContainer.classList.add("check_complete");
@@ -197,7 +207,7 @@ function render_progress() {
     // .sort((a, b) => a.check_complete ? -1 : 1);
 
   units.forEach(u => {
-
+    
     const one_line_dom = document.createElement("li");
     one_line_dom.classList[u.check_complete ? "add" : "remove"]("status_complete");
 
