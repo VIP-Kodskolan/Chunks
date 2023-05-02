@@ -82,6 +82,7 @@ const prefix_navigation_id = "question_navigation_id_";
       const unit_id = params.question?.unit_id || params.option.unit_id;
       const element = state_io.state.units.find(u => u.unit_id == unit_id);
       render_quiz({ element });
+      console.log(unit_id);
     }
   })
 
