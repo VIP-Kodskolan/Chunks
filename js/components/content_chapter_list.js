@@ -11,6 +11,11 @@ export default {};
     events: ["db::get::course::done", "render::new_view"],
     listener: render,
   });
+  //Search
+  SubPub.subscribe({
+    events: ["state::patch::search::done"],
+    listener: print_search,
+  });
 
   SubPub.subscribe({
     events: ["db::delete::course::done"],
@@ -47,6 +52,10 @@ export default {};
   });
 })();
 
+function print_search() {
+  console.log(state_io.state)
+}
+
 function render_empty() {
   const dom = document.querySelector("#content_chapter_list");
   dom.innerHTML = "";
@@ -64,8 +73,8 @@ function render() {
   render_chapters();
 }
 function render_chapters() {
-   console.log(state_io.state.button)
-   
+  console.log(state_io.state.button);
+
   const { chapters } = state_io.state;
 
   let arrayToPrint = chapters;
@@ -73,26 +82,26 @@ function render_chapters() {
   const allChapters = state_io.state.chapters;
   let finishedChapters = [];
 
-
-
   // console.log(chapters)
   // console.log(state_io.state.users_units)
   let arrayWithQuestions = [];
   let arrayWithFinished = [];
 
   if (state_io.state.button == "questions") {
-   console.log("vi är inne i knappen");
-  //  console.log(state_io.state.button);
+    console.log("vi är inne i knappen");
+    //  console.log(state_io.state.button);
 
-let allUserUnits = state_io.state.users_units;
+    let allUserUnits = state_io.state.users_units;
 
-let arrayWithQuestions = chapters.filter(chapter => {
-let matchingUnits = allUserUnits.filter(unit => unit.chapter_id == chapter.chapter_id && unit.check_question)
+    let arrayWithQuestions = chapters.filter((chapter) => {
+      let matchingUnits = allUserUnits.filter(
+        (unit) => unit.chapter_id == chapter.chapter_id && unit.check_question
+      );
 
-return matchingUnits.length > 0
-})
+      return matchingUnits.length > 0;
+    });
 
-/*
+    /*
     state_io.state.users_units.forEach((unit) => {
       if (unit.check_question == true) {
         chapters.forEach((chapter) => {
@@ -112,18 +121,19 @@ return matchingUnits.length > 0
   }
 
   if (state_io.state.button == "finished") {
- //   console.log(state_io.state.units);
-console.log(state_io.state.button)
-    allChapters.forEach(chapter => {
-      let chapterUnits = allUnits.filter((unit) => unit.chapter_id == chapter.chapter_id);
-     console.log(chapterUnits)
-  
-   //  console.log(chapterUnits)
-  //console.log(JSON.stringify(chapterUnits))
-    let completeUnits =  chapterUnits.filter(units => units.check_complete)
-  
-   // console.log(completeUnits)
-  
+    //   console.log(state_io.state.units);
+    console.log(state_io.state.button);
+    allChapters.forEach((chapter) => {
+      let chapterUnits = allUnits.filter(
+        (unit) => unit.chapter_id == chapter.chapter_id
+      );
+      console.log(chapterUnits);
+
+      //  console.log(chapterUnits)
+      //console.log(JSON.stringify(chapterUnits))
+      let completeUnits = chapterUnits.filter((units) => units.check_complete);
+
+      // console.log(completeUnits)
     });
   }
 

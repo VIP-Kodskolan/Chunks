@@ -297,12 +297,12 @@ export default {
   ];
   
   SubPub.subscribe({
-    events: ["state::patch::filter::received"],
+    events: ["state::patch::search::received"],
     listener: (response, params) => {
       console.log(response.params)
      // State.searchUnit = response.params.filterButton;
       SubPub.publish({
-        event: "state::patch::search::received",
+        event: "state::patch::search::done",
       });
     }
   });
