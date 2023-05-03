@@ -3,48 +3,41 @@ import { SubPub } from "../utils/subpub.js";
 
 SubPub.subscribe({
   events: ["db::get::course::done"],
-  listener: render_filter,
+  listener: render_search_unit,
 });
 
-function render_filter() {
+function render_search_unit() {
   state_io.state.button = "";
   console.log(state_io.state);
 
   const container = document.querySelector("#content_filter_chapter");
   container.innerHTML = "";
 
-  const buttonQuestions = document.createElement("button");
-  const buttonFinished = document.createElement("button");
-  const buttonUnfinished = document.createElement("button");
+  const searchButton = document.createElement("button");
+  const searchInput = document.createElement("input");
+  const searchEraseButton = document.createElement("button");
 
-  buttonQuestions.innerText = "Filter questions";
-  buttonFinished.innerText = "Filter finished";
-  buttonUnfinished.innerText = "Filter unfinished";
+  searchButton.innerText = "Sök";
+  searchInput.placeholder  = "Name of unit";
+  searchEraseButton.innerText = "X";
 
-  container.append(buttonQuestions);
-  container.append(buttonFinished);
-  container.append(buttonUnfinished);
+  container.append(searchButton);
+  container.append(searchInput);
+  container.append(searchEraseButton);
 
-  buttonQuestions.addEventListener("click", function () {
+  searchButton.addEventListener("click", function () {
     SubPub.publish({
-      event: "state::patch::filter::received",
+      event: "state::patch::search::received",
       detail: {
         params: {
-          filterButton: "questions",
+          filterButton: searchInput.value,
         },
       },
     });
   });
 
-  buttonFinished.addEventListener("click", function () {
-    SubPub.publish({
-      event: "state::patch::filter::received",
-      detail: {
-        params: {
-          filterButton: "finished",
-        },
-      },
-    });
+  searchEraseButton.addEventListener("click", function () {
+    searchInput.value = "";
   });
 }
 
