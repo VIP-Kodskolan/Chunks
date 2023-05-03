@@ -16,21 +16,26 @@ function render_search_unit() {
   const searchButton = document.createElement("button");
   const searchInput = document.createElement("input");
   const searchEraseButton = document.createElement("button");
+  const searchContainer =  document.createElement("div");
+
+  searchContainer.className = "searchContainer";
 
   searchButton.innerText = "Sök";
   searchInput.placeholder  = "Name of unit";
   searchEraseButton.innerText = "X";
 
-  container.append(searchButton);
-  container.append(searchInput);
-  container.append(searchEraseButton);
+
+  searchContainer.append(searchButton)
+  searchContainer.append(searchInput)
+  searchContainer.append(searchEraseButton)
+  container.append(searchContainer)
 
   searchButton.addEventListener("click", function () {
     SubPub.publish({
       event: "state::patch::search::received",
       detail: {
         params: {
-          filterButton: searchInput.value,
+          searchValue: searchInput.value,
         },
       },
     });

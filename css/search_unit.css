@@ -1,0 +1,8 @@
+.searchContainer{
+    display: inline;
+    background-color: white;
+}
+
+.notSearchedFor{
+    opacity: 0.3;
+}

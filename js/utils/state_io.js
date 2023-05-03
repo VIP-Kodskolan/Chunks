@@ -300,6 +300,7 @@ export default {
     events: ["state::patch::search::received"],
     listener: (response, params) => {
       console.log(response.params)
+      console.log("tjenare")
      // State.searchUnit = response.params.filterButton;
       SubPub.publish({
         event: "state::patch::search::done",
