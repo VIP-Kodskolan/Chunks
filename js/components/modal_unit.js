@@ -76,7 +76,6 @@ function render ({ element }) {
   
   const dom = document.querySelector("#modal .content");
   dom.classList.add(element.kind);
-  console.log(element.kind);
 
   dom.innerHTML = `
     <div class="left">
@@ -86,9 +85,6 @@ function render ({ element }) {
       <button class="rightModul shift"> > </button>
     </div>
   `;
-
-  let unitElement;
-
 
   // COMPONENTS
   const components = {
@@ -121,8 +117,6 @@ function render ({ element }) {
       const container_dom = document.createElement("div");
       doms[side].append(container_dom);
       renderers["render_" + component]({ element, container_dom });
-      //console.log(element);
-      unitElement = element;
     });
   
   }
@@ -141,51 +135,50 @@ function render ({ element }) {
     }
   });
 
-  render_left_right(unitElement);
+  render_left_right(element);
 }
 
 function render_left_right(unit){
-
   let allUnits = state_io.state.units;
   let allChapters = state_io.state.chapters;
   let allUnitIDs = []
 
-  //bring out all chapter units and their IDs
-  allChapters.forEach(chapter => {
-    let chapterUnits = allUnits.filter(unit => unit.chapter_id === chapter.chapter_id);
-    
-    let unitID = chapterUnits.map(unit => unit.unit_id);
-    allUnitIDs.push(...unitID)
-  })
+    //bring out all chapter units and their IDs
+    allChapters.forEach(chapter => {
+      let chapterUnits = allUnits.filter(unit => unit.chapter_id === chapter.chapter_id);
+      let unitID = chapterUnits.map(unit => unit.unit_id);
+      allUnitIDs.push(...unitID)
+    })
+
+  //default
+  document.querySelectorAll(".shift").forEach(btn => { btn.disabled = false;})
+  
+  let indexOfUnitID = allUnitIDs.findIndex(u => u === unit.unit_id);
+  let beforeUnit = indexOfUnitID - 1;
+  let nextUnit = indexOfUnitID + 1;
+  let switchUnit;
+
+  if (nextUnit == allUnitIDs.length) {//of no units are after
+    document.querySelector(".rightModul").disabled = true;
+    document.querySelector(".rightModul").classList.add("btnError");
+  } else if (beforeUnit < 0){ //if no units are before
+    document.querySelector(".leftModul").disabled = true;
+    document.querySelector(".leftModul").classList.add("btnError");
+  }
 
   document.querySelectorAll(".shift").forEach(btn => {
     btn.addEventListener("click", e => {
-      let indexOfUnitID = allUnitIDs.findIndex(u => u === unit.unit_id);
-      let indexOfNextUnitID;
 
-      if (btn.classList.contains("rightModul")){indexOfNextUnitID = indexOfUnitID + 1;}
-      else {indexOfNextUnitID = indexOfUnitID - 1;}
-
-      //find next unit depending on - or + button
-      let nextUnit = state_io.state.units.find(u => u.unit_id === allUnitIDs[indexOfNextUnitID]);
-
-      //if unit is not in this course or doesnt exist
-      if(nextUnit === undefined){
-        //felmeddelande...
-        console.log("inget mer på detta hållet");
-        btn.classList.add("btnError");
-        setTimeout(() => {
-          btn.classList.remove("btnError");
-        }, 2000);
-        
-      } else {
-        SubPub.publish({
-          event: "render::modal::unit",
-          detail: { element: nextUnit}
-        });
-      }
+      //+ 1 or - 1 unit depending on which button
+      if (btn.classList.contains("rightModul")){switchUnit = nextUnit;}
+      else {switchUnit = beforeUnit;}
+      
+      SubPub.publish({
+        event: "render::modal::unit",
+        detail: { element: state_io.state.units.find(u => u.unit_id === allUnitIDs[switchUnit])}
+      });
     })
-  });
+  })
 }
 
 const renderers = {

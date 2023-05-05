@@ -103,6 +103,8 @@
   width: 4px;
   height: 30px;
   background-color: var(--color_accent_1_overlay);
+  margin:0px;
+  transition: margin .2s ease-in 0s;
 }
 
 #content_course_open > .weekly_progress .units_by_chapters .chapter-unit.check_complete {

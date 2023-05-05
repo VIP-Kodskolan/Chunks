@@ -195,5 +195,9 @@
 .right .shift .rightModul{left: 430px;}
 .left .shift .leftModul{right:430px;}
 
-.btnError{background-color: var(--color_accent_incorrect);}
-.btnError:hover{background-color: #ac5c7c;}
+.btnError{opacity: 0.5;}
+.btnError:hover{
+  background-color: var(--color_accent_1);
+  border-color: var(--color_accent_2);
+  cursor: default;
+}

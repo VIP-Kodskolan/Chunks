@@ -150,23 +150,16 @@ function render_progress_units_by_chapters(chapters, units, users_units) {
     for (const chapter_unit of chapter_units) {
       const unitContainer = document.createElement("div");
       unitContainer.className = `chapter-unit`;
-      console.log(chapter_unit);
+      //console.log(chapter_unit);
       unitContainer.setAttribute("title", `${chapter_unit.name}`);
 
-      
+      //modal show on "progresspin" click
       unitContainer.addEventListener("click", e => {
         SubPub.publish({
           event: "render::modal::unit",
-          detail: { element: chapter_unit}
+          detail: { element: chapter_unit }
         });
       })
-      //
-      //
-      //
-      //
-      //
-      //
-
 
       if (chapter_unit.check_complete) {
         unitContainer.classList.add("check_complete");
