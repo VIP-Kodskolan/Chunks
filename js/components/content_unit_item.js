@@ -76,7 +76,7 @@ function render ({ element, container_dom }) {
   function render_quiz_progress () {
 
     const questions = state_io.state.quiz_questions.filter(q => q.unit_id === element.unit_id)
-                                                   .sort((a,b) => a.spot > b.spot);
+                                                    .sort((a,b) => a.spot > b.spot);
 
     questions.forEach(question => {
       const status = state_io.get_quiz_question_status(question);
@@ -87,7 +87,7 @@ function render ({ element, container_dom }) {
 
   // OPEN FROM URL?
   const is_open_url = utils.get_parameter("unit") && utils.get_parameter("unit") === element.unit_id;
-  const modal_not_displaying = document.querySelector("#modal").classList.contains("hidden");
+  const modal_not_displaying = document.querySelector("#modal_list").classList.contains("hidden");
   (is_open_url && modal_not_displaying) && open_modal_unit();
   function new_open_modal_unit () {
     SubPub.publish({
@@ -97,7 +97,7 @@ function render ({ element, container_dom }) {
   }
   function open_modal_unit () {
     SubPub.publish({
-      event: "render::modal::unit",
+      event: "render::modal::unit::list",
       detail: { element: state_io.state.units.find(u => u.unit_id === element.unit_id) } // User may have edited element and it has been updated in State
     });
   }

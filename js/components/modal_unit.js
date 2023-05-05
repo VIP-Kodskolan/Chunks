@@ -14,6 +14,11 @@ export default { render }
   });
 
   SubPub.subscribe({
+    event: "render::modal::unit::list",
+    listener: renderUnitList,
+  });
+
+  SubPub.subscribe({
     event: "render::modal::new_unit",
     listener: ({ element }) => {
       const course_id = element.course_id;
@@ -22,7 +27,7 @@ export default { render }
       utils.push_state_window_history(`?course=${course_id}&unit=${unit_id}`);
   
       SubPub.publish({
-        event: "render::modal::unit",
+        event: "render::modal::unit::list",
         detail: { element }
       });    
     }
@@ -65,16 +70,75 @@ export default { render }
 
 })();
 
+
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+//nedan ska vara i modal_units_list.js
+function renderUnitList({element}){
+
+  let modal_list = document.querySelector("#modal_list");
+  let beforeUnitID = element.unit_id - 1;
+  let nextUnitID = element.unit_id + 1;
+
+  modal_list.innerHTML = `
+      <div class="modal modalLeft"></div>
+      <div class="modal modalMiddle"></div>
+      <div class="modal modalRight"></div>
+  `;
+
+  //first - middle unit
+  SubPub.publish({
+      event: "render::modal::unit",
+      detail: { element: element, modal_dom: "Middle" }
+  });
+  //second, the unit before
+  SubPub.publish({
+      event: "render::modal::unit",
+      detail: { element: state_io.state.units.find(u => u.unit_id === beforeUnitID), modal_dom: "Left" }
+  });
+  //lastly, the unit after
+  SubPub.publish({
+      event: "render::modal::unit",
+      detail: { element: state_io.state.units.find(u => u.unit_id === nextUnitID), modal_dom: "Right" }
+  });
+
+  // SHOW MODAL
+  document.getElementById("modal_list").classList.remove("hidden");
+
+
+// CLOSE VIA CLICK ON BACKGROUND or PRESS KEY ESC
+  document.querySelector("#modal_list").addEventListener("click", e => {
+      if (e.target.id === "modal_list") close_modal();
+  });
+  document.querySelector("html").addEventListener("keyup", e => {
+      if (e.key === "Escape" && !document.getElementById("modal_list").classList.contains("hidden")) {
+      close_modal();
+      }   
+  });
+}
+
 function close_modal () {
   const get_parameters_string = utils.get_parameters_string(["course"]);
   utils.push_state_window_history(`?${get_parameters_string}`)
   
-  document.querySelector("#modal").classList.add("hidden");
+  document.querySelector("#modal_list").classList.add("hidden");
 }
 
-function render ({ element }) {
+//ovan ska vara i modal_units_list.js
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+
+
+function render ({ element, modal_dom}) {
+
+  console.log(element);
+  console.log(modal_dom);
   
-  const dom = document.querySelector("#modal .content");
+  const dom = document.querySelector(`#modal_list .modal${modal_dom}`);
   dom.classList.add(element.kind);
 
   dom.innerHTML = `
@@ -112,28 +176,13 @@ function render ({ element }) {
   };
 
   for (const side in doms) {
-
-    components[element.kind][side].forEach(component => {
-      const container_dom = document.createElement("div");
-      doms[side].append(container_dom);
-      renderers["render_" + component]({ element, container_dom });
+      components[element.kind][side].forEach(component => {
+        const container_dom = document.createElement("div");
+        doms[side].append(container_dom);
+        renderers["render_" + component]({ element, container_dom });
     });
   
   }
-
-  // SHOW MODAL
-  document.getElementById("modal").classList.remove("hidden");
-
-
-  // CLOSE VIA CLICK ON BACKGROUND or PRESS KEY ESC
-  document.querySelector("#modal").addEventListener("click", e => {
-    if (e.target.id === "modal") close_modal();
-  });
-  document.querySelector("html").addEventListener("keyup", e => {
-    if (e.key === "Escape" && !document.getElementById("modal").classList.contains("hidden")) {
-      close_modal();
-    }
-  });
 
   render_left_right(element);
 }
@@ -168,6 +217,9 @@ function render_left_right(unit){
 
   document.querySelectorAll(".shift").forEach(btn => {
     btn.addEventListener("click", e => {
+      //när man klickar så ska jag kolla efter vilken knapp som blev klickad. 
+      //beroende på vilken knapp ska före eller nästa modul tas bort, och renderas på nytt utifrån
+      //unitID listan.
 
       //+ 1 or - 1 unit depending on which button
       if (btn.classList.contains("rightModul")){switchUnit = nextUnit;}
@@ -187,7 +239,7 @@ const renderers = {
 function render_name ({ element, container_dom }) {
   
   if (!container_dom) {
-    container_dom = document.querySelector("#modal .content .name");
+    container_dom = document.querySelector(`#modal_list .modal${modal_dom} .name`);
   } else {
     container_dom.classList.add("name");
   }
@@ -239,7 +291,7 @@ function render_name ({ element, container_dom }) {
 function render_story ({ element, container_dom }) {
 
   if (!container_dom) {
-    container_dom = document.querySelector("#modal .content .story");
+    container_dom = document.querySelector(`#modal_list .modal${modal_dom} .story`);
   } else {
     container_dom.classList.add("story");
   }
@@ -254,7 +306,7 @@ function render_story ({ element, container_dom }) {
 function render_videos ({ element, container_dom }) {
   
   if (!container_dom) {
-    container_dom = document.querySelector("#modal .content .videos");
+    container_dom = document.querySelector(`#modal_list .modal${modal_dom} .videos`);
   } else {
     container_dom.classList.add("videos");
   }
@@ -276,7 +328,7 @@ function render_videos ({ element, container_dom }) {
 function render_checks ({ element, container_dom }) {
   
   if (!container_dom) {
-    container_dom = document.querySelector("#modal .content .checks");
+    container_dom = document.querySelector(`#modal_list .modal${modal_dom} .checks`);
   } else {
     container_dom.classList.add("checks");
   }
@@ -355,7 +407,7 @@ function render_notes ({ element, container_dom }) {
 
 
   if (!container_dom) {
-    container_dom = document.querySelector("#modal .content .notes");
+    container_dom = document.querySelector(`#modal_list .modal${modal_dom} .notes`);
   } else {
     container_dom.classList.add("notes");
   }
@@ -417,7 +469,7 @@ function render_notes ({ element, container_dom }) {
 function render_folder ({ element, container_dom }) {
 
   if (!container_dom) {
-    container_dom = document.querySelector("#modal .content .folder");
+    container_dom = document.querySelector(`#modal_list .modal${modal_dom} .folder`);
   } else {
     container_dom.classList.add("folder");
   }
@@ -455,13 +507,13 @@ function is_unit_ready ({ element }) {
 
 }
 function update_saver_timer (feedback) {
-  const feedback_save_dom = document.querySelector("#modal .content .notes .feedback_save");
+  const feedback_save_dom = document.querySelector(`#modal_list .modal${modal_dom} .notes .feedback_save`);
   feedback_save_dom.querySelector(".feedback").innerHTML = feedback || `Saving in ${feedback_save_dom.dataset.seconds_left} seconds`;
 }
 function patch_users_unit (event) {
 
   // Stop potential timer
-  const feedback_save_dom = document.querySelector("#modal .content .notes .feedback_save");
+  const feedback_save_dom = document.querySelector(`#modal_list .modal${modal_dom} .notes .feedback_save`);
   if (feedback_save_dom.dataset.timer_id !== -1) {
     update_saver_timer(feedback_save_dom.dataset.saved_feedback);
     clearTimeout(feedback_save_dom.dataset.timer_id);

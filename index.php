@@ -129,9 +129,7 @@ if (!empty($_COOKIE['theme'])) {
 
     </div>
 
-    <div id="modal" class="hidden">
-        <div class="content"></div>
-    </div>
+    <div id="modal_list" class="hidden"></div>
 
     <div id="editor" class="hidden">
         <div class="content"></div>
