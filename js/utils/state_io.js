@@ -299,9 +299,8 @@ export default {
   SubPub.subscribe({
     events: ["state::patch::search::received"],
     listener: (response, params) => {
-      console.log(response.params)
-      console.log("tjenare")
-     // State.searchUnit = response.params.filterButton;
+      State.searchValue = response.params.searchValue;
+      State.pressedSearch = response.params.pressedSearch;
       SubPub.publish({
         event: "state::patch::search::done",
       });

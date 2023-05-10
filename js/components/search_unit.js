@@ -8,7 +8,7 @@ SubPub.subscribe({
 
 function render_search_unit() {
   state_io.state.button = "";
-  console.log(state_io.state);
+ // console.log(state_io.state);
 
   const container = document.querySelector("#content_filter_chapter");
   container.innerHTML = "";
@@ -36,6 +36,7 @@ function render_search_unit() {
       detail: {
         params: {
           searchValue: searchInput.value,
+          pressedSearch: true
         },
       },
     });

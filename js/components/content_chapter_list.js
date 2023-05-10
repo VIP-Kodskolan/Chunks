@@ -14,7 +14,7 @@ export default {};
   //Search
   SubPub.subscribe({
     events: ["state::patch::search::done"],
-    listener: print_search,
+    listener: render_chapters,
   });
 
   SubPub.subscribe({
@@ -53,7 +53,7 @@ export default {};
 })();
 
 function print_search() {
-  console.log(state_io.state)
+  // console.log(state_io.state)
 }
 
 function render_empty() {
@@ -73,7 +73,7 @@ function render() {
   render_chapters();
 }
 function render_chapters() {
-  console.log(state_io.state.button);
+  // console.log(state_io.state.button);
 
   const { chapters } = state_io.state;
 
@@ -86,6 +86,14 @@ function render_chapters() {
   // console.log(state_io.state.users_units)
   let arrayWithQuestions = [];
   let arrayWithFinished = [];
+
+  if (state_io.state.pressedSearch) {
+    state_io.state.units.forEach((e) => {
+      if (e.name.includes(state_io.state.searchValue)) {
+        console.log("found item");
+      }
+    });
+  }
 
   if (state_io.state.button == "questions") {
     console.log("vi är inne i knappen");
