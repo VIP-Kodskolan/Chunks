@@ -21,17 +21,19 @@ export default { render }
   SubPub.subscribe({
     event: "render::modal::new_unit",
     listener: ({ element }) => {
-      const course_id = element.course_id;
-      const unit_id = element.unit_id;
-  
-      utils.push_state_window_history(`?course=${course_id}&unit=${unit_id}`);
-  
-      SubPub.publish({
-        event: "render::modal::unit::list",
-        detail: { element }
-      });    
+        const course_id = element.course_id;
+        const unit_id = element.unit_id;
+        
+        utils.push_state_window_history(`?course=${course_id}&unit=${unit_id}`);
+        
+        SubPub.publish({
+            event: "render::modal::unit::list",
+            detail: { element }
+        });
     }
-  });
+});
+
+  
 
   SubPub.subscribe({
     event: "db::patch::unit::done",
@@ -78,34 +80,55 @@ export default { render }
 //nedan ska vara i modal_units_list.js
 function renderUnitList({element}){
 
-  let modal_list = document.querySelector("#modal_list");
-  let beforeUnitID = element.unit_id - 1;
-  let nextUnitID = element.unit_id + 1;
+  let allUnits = state_io.state.units;
+  let allChapters = state_io.state.chapters;
+  let allUnitIDs = []
 
+  //bring out all chapter units and their IDs
+  allChapters.forEach(chapter => {
+    let chapterUnits = allUnits.filter(unit => unit.chapter_id === chapter.chapter_id);
+    let unitID = chapterUnits.map(unit => unit.unit_id);
+    allUnitIDs.push(...unitID);
+  })
+  let indexOfUnitID = allUnitIDs.findIndex(u => u === element.unit_id);
+
+
+  let beforeUnitID = indexOfUnitID - 1;
+  let nextUnitID = indexOfUnitID + 1;
+
+  let modal_list = document.querySelector("#modal_list");
   modal_list.innerHTML = `
-      <div class="modal modalLeft"></div>
-      <div class="modal modalMiddle"></div>
-      <div class="modal modalRight"></div>
+      <li class="modalLeft"></li>
+      <li class="modalMiddle"></li>
+      <li class="modalRight"></li>
   `;
 
   //first - middle unit
   SubPub.publish({
-      event: "render::modal::unit",
-      detail: { element: element, modal_dom: "Middle" }
-  });
-  //second, the unit before
-  SubPub.publish({
-      event: "render::modal::unit",
-      detail: { element: state_io.state.units.find(u => u.unit_id === beforeUnitID), modal_dom: "Left" }
-  });
-  //lastly, the unit after
-  SubPub.publish({
-      event: "render::modal::unit",
-      detail: { element: state_io.state.units.find(u => u.unit_id === nextUnitID), modal_dom: "Right" }
+    event: "render::modal::unit",
+    detail: { element: element, modal_dom: "Middle" }
   });
 
+  //second, the unit before
+  if(state_io.state.units.find(u => u.unit_id === allUnitIDs[beforeUnitID]) === undefined){} 
+  else {
+    SubPub.publish({
+      event: "render::modal::unit",
+      detail: { element: state_io.state.units.find(u => u.unit_id === allUnitIDs[beforeUnitID]), modal_dom: "Left" }
+    });
+  }
+
+  //lastly, the unit after
+if (state_io.state.units.find(u => u.unit_id === allUnitIDs[nextUnitID]) === undefined) {} else {
+    SubPub.publish({
+      event: "render::modal::unit",
+      detail: { element: state_io.state.units.find(u => u.unit_id === allUnitIDs[nextUnitID]), modal_dom: "Right" }
+    });
+  }
+  
+
   // SHOW MODAL
-  document.getElementById("modal_list").classList.remove("hidden");
+  document.getElementById("modal_wrapper").classList.remove("hidden");
 
 
 // CLOSE VIA CLICK ON BACKGROUND or PRESS KEY ESC
@@ -113,7 +136,7 @@ function renderUnitList({element}){
       if (e.target.id === "modal_list") close_modal();
   });
   document.querySelector("html").addEventListener("keyup", e => {
-      if (e.key === "Escape" && !document.getElementById("modal_list").classList.contains("hidden")) {
+      if (e.key === "Escape" && !document.getElementById("modal_wrapper").classList.contains("hidden")) {
       close_modal();
       }   
   });
@@ -123,7 +146,7 @@ function close_modal () {
   const get_parameters_string = utils.get_parameters_string(["course"]);
   utils.push_state_window_history(`?${get_parameters_string}`)
   
-  document.querySelector("#modal_list").classList.add("hidden");
+  document.querySelector("#modal_wrapper").classList.add("hidden");
 }
 
 //ovan ska vara i modal_units_list.js
@@ -133,15 +156,16 @@ function close_modal () {
 
 
 
-function render ({ element, modal_dom}) {
 
-  console.log(element);
+function render ({ element, modal_dom }) {
   console.log(modal_dom);
-  
+  console.log(document.querySelector(`#modal_list`));
   const dom = document.querySelector(`#modal_list .modal${modal_dom}`);
+
+  
   dom.classList.add(element.kind);
 
-  dom.innerHTML = `
+    dom.innerHTML = `
     <div class="left">
       <button class="leftModul shift"> < </button>
     </div>
@@ -181,10 +205,9 @@ function render ({ element, modal_dom}) {
         doms[side].append(container_dom);
         renderers["render_" + component]({ element, container_dom });
     });
-  
   }
 
-  render_left_right(element);
+  render_left_right(element);  
 }
 
 function render_left_right(unit){
@@ -196,18 +219,19 @@ function render_left_right(unit){
     allChapters.forEach(chapter => {
       let chapterUnits = allUnits.filter(unit => unit.chapter_id === chapter.chapter_id);
       let unitID = chapterUnits.map(unit => unit.unit_id);
-      allUnitIDs.push(...unitID)
+      allUnitIDs.push(...unitID);
     })
 
   //default
-  document.querySelectorAll(".shift").forEach(btn => { btn.disabled = false;})
+  document.querySelectorAll(".shift").forEach(btn => { btn.disabled = false; } )
   
   let indexOfUnitID = allUnitIDs.findIndex(u => u === unit.unit_id);
   let beforeUnit = indexOfUnitID - 1;
   let nextUnit = indexOfUnitID + 1;
-  let switchUnit;
+  let unitToSwitch;
 
-  if (nextUnit == allUnitIDs.length) {//of no units are after
+
+  if (nextUnit == allUnitIDs.length) {//if no units are after
     document.querySelector(".rightModul").disabled = true;
     document.querySelector(".rightModul").classList.add("btnError");
   } else if (beforeUnit < 0){ //if no units are before
@@ -217,21 +241,102 @@ function render_left_right(unit){
 
   document.querySelectorAll(".shift").forEach(btn => {
     btn.addEventListener("click", e => {
-      //när man klickar så ska jag kolla efter vilken knapp som blev klickad. 
-      //beroende på vilken knapp ska före eller nästa modul tas bort, och renderas på nytt utifrån
-      //unitID listan.
 
       //+ 1 or - 1 unit depending on which button
-      if (btn.classList.contains("rightModul")){switchUnit = nextUnit;}
-      else {switchUnit = beforeUnit;}
-      
-      SubPub.publish({
-        event: "render::modal::unit",
-        detail: { element: state_io.state.units.find(u => u.unit_id === allUnitIDs[switchUnit])}
-      });
+      if (btn.classList.contains("rightModul")){
+        unitToSwitch = nextUnit;
+        render_unit_placement( "Right", unitToSwitch, allUnitIDs);
+      }
+      else {
+        unitToSwitch = beforeUnit;
+        render_unit_placement( "Left", unitToSwitch, allUnitIDs);
+      }
     })
   })
 }
+
+function render_unit_placement(location, newUnitID, allUnitIDs){
+  let modals = document.querySelectorAll("#modal_list li");
+  console.log(modals);
+
+  //reset position of modals
+  //modals.forEach(element => {
+  //  console.log(element);
+  //  if(element.classList.contains("modalRight")){element.classList.remove("modalRight");}
+  //  else if(element.classList.contains("modalMiddle")){element.classList.remove("modalMiddle");}
+  //  else if(element.classList.contains("modalLeft")){element.classList.remove("modalLeft");}
+  //  console.log(element);
+  //});
+//
+  //console.log(modals);
+
+  //0 - vänstermodul.
+  //1 - mittenmodul.
+  //2 - högermodul.
+  //module is...
+  let frontModule = document.querySelector(".modalMiddle");
+  let newModule = "";
+  let leftRightModule = "";
+
+
+  //the button clicked 
+  if(location === "Right"){
+    //mitten flyttas till vänster.
+    //höger försvinner
+    //vänster publishas
+
+    newModule = document.querySelector(".modalLeft");
+    leftRightModule = document.querySelector(".modalRight");
+
+    //middle modal now
+    frontModule.classList.remove("modalMiddle");
+    frontModule.classList.add("modalLeft");
+
+    //left modal now
+    newModule.classList.remove("modalLeft");
+    newModule.innerHTML = "";
+    newModule.classList.add("modalRight");
+
+    //right modal now
+    leftRightModule.classList.remove("modalRight");
+    leftRightModule.classList.add("modalMiddle");
+
+
+  } else{
+    //mitten flyttas till höger
+    //vänster försvinner
+    //höger publishas
+    frontModule = modals[1];
+    newModule = modals[2];
+    leftRightModule = modals[0];
+
+    //frontModule.classList.remove("modalMiddle");
+
+    //newModule.classList.remove("modalRight");
+    
+    frontModule.classList.add("modalRight");
+
+    //leftRightModule.classList.remove("modalLeft");
+    leftRightModule.classList.add("modalMiddle");
+
+    newModule.innerHTML = "";
+    newModule.classList.add("modalLeft");
+  }
+
+
+  let newUnit = state_io.state.units.find(u => u.unit_id === allUnitIDs[newUnitID]);
+
+  SubPub.publish({
+    event: "render::modal::unit",
+    detail: { element: newUnit, modal_dom: location }
+  });
+}
+
+
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
 
 const renderers = {
   render_name, render_story, render_videos, render_checks, render_notes, render_folder, render_quiz,

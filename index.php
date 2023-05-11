@@ -129,7 +129,9 @@ if (!empty($_COOKIE['theme'])) {
 
     </div>
 
-    <div id="modal_list" class="hidden"></div>
+    <div id="modal_wrapper" class="hidden">
+        <div id="modal_list"></div>
+    </div>
 
     <div id="editor" class="hidden">
         <div class="content"></div>
@@ -142,5 +144,3 @@ if (!empty($_COOKIE['theme'])) {
     <script type="module" src="./index.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>
-
-
