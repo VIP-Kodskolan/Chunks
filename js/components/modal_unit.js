@@ -158,54 +158,12 @@ function close_modal () {
 
 
 function render ({ element, modal_dom }) {
-  console.log(modal_dom);
-  console.log(document.querySelector(`#modal_list`));
   const dom = document.querySelector(`#modal_list .modal${modal_dom}`);
 
   
   dom.classList.add(element.kind);
 
-    dom.innerHTML = `
-    <div class="left">
-      <button class="leftModul shift"> < </button>
-    </div>
-    <div class="right">
-      <button class="rightModul shift"> > </button>
-    </div>
-  `;
-
-  // COMPONENTS
-  const components = {
-    video: {
-      left: ["name", "story", "videos"],
-      right: ["checks", "notes", "folder"],
-    },
-    exercise: {
-      left: ["name", "story", "videos"],
-      right: ["checks", "notes", "folder"],
-    },
-    quiz: {
-      left: ["name", "quiz"],
-      right: ["checks", "notes"],
-    },
-    assignment: {
-      left: ["name", "story", "videos"],
-      right: ["checks", "notes", "folder"],
-    },
-  };
-
-  const doms = {
-    left: dom.querySelector(".left"),
-    right: dom.querySelector(".right"),
-  };
-
-  for (const side in doms) {
-      components[element.kind][side].forEach(component => {
-        const container_dom = document.createElement("div");
-        doms[side].append(container_dom);
-        renderers["render_" + component]({ element, container_dom });
-    });
-  }
+  render_components( element, dom );
 
   render_left_right(element);  
 }
@@ -255,9 +213,60 @@ function render_left_right(unit){
   })
 }
 
+function render_components(element, dom){
+  console.log(element);
+
+  if(dom == undefined){
+    dom = document.querySelector("#modal_list .modalMiddle");
+  }
+
+  dom.innerHTML = `
+  <div class="left">
+    <button class="leftModul shift"> < </button>
+  </div>
+  <div class="right">
+    <button class="rightModul shift"> > </button>
+  </div>
+`;
+
+
+  // COMPONENTS
+  const components = {
+    exercise: {
+      
+      left: ["name", "story", "videos"],
+      right: ["checks", "notes", "folder"],
+    },
+    quiz: {
+      left: ["name", "quiz"],
+      right: ["checks", "notes"],
+    },
+    assignment: {
+      left: ["name", "story", "videos"],
+      right: ["checks", "notes", "folder"],
+    },
+    video: {
+      left: ["name", "story", "videos"],
+      right: ["checks", "notes", "folder"],
+    }
+  };
+
+  const doms = {
+    left: dom.querySelector(".left"),
+    right: dom.querySelector(".right"),
+  };
+
+  for (const side in doms) {
+      components[element.kind][side].forEach(component => {
+        const container_dom = document.createElement("div");
+        doms[side].append(container_dom);
+        renderers["render_" + component]({ element, container_dom });
+    });
+  }
+}
+
 function render_unit_placement(location, newUnitID, allUnitIDs){
   let modals = document.querySelectorAll("#modal_list li");
-  console.log(modals);
 
   //reset position of modals
   //modals.forEach(element => {
@@ -274,9 +283,11 @@ function render_unit_placement(location, newUnitID, allUnitIDs){
   //1 - mittenmodul.
   //2 - högermodul.
   //module is...
+  let newUnit = state_io.state.units.find(u => u.unit_id === allUnitIDs[newUnitID]);
   let frontModule = document.querySelector(".modalMiddle");
   let newModule = "";
   let leftRightModule = "";
+  let leftRightUnit = "";
 
 
   //the button clicked 
@@ -284,6 +295,7 @@ function render_unit_placement(location, newUnitID, allUnitIDs){
     //mitten flyttas till vänster.
     //höger försvinner
     //vänster publishas
+    leftRightUnit = state_io.state.units.find(u => u.unit_id === allUnitIDs[newUnitID + 1]);
 
     newModule = document.querySelector(".modalLeft");
     leftRightModule = document.querySelector(".modalRight");
@@ -301,11 +313,12 @@ function render_unit_placement(location, newUnitID, allUnitIDs){
     leftRightModule.classList.remove("modalRight");
     leftRightModule.classList.add("modalMiddle");
 
-
   } else{
     //mitten flyttas till höger
     //vänster försvinner
     //höger publishas
+
+    leftRightUnit = state_io.state.units.find(u => u.unit_id === allUnitIDs[newUnitID  - 1]);
     frontModule = modals[1];
     newModule = modals[2];
     leftRightModule = modals[0];
@@ -319,12 +332,39 @@ function render_unit_placement(location, newUnitID, allUnitIDs){
     //leftRightModule.classList.remove("modalLeft");
     leftRightModule.classList.add("modalMiddle");
 
+    newModule.classList = "";
     newModule.innerHTML = "";
     newModule.classList.add("modalLeft");
   }
 
+  //only render middle video - if it has one
+  if(leftRightUnit.video_link.length > 0){
+    console.log(leftRightUnit);
 
-  let newUnit = state_io.state.units.find(u => u.unit_id === allUnitIDs[newUnitID]);
+    //console.log(document.querySelector("#modal_list .modalMiddle"));
+    const container_dom = leftRightModule;
+    //const container_dom = document.createElement("div");
+    //document.querySelector(".modalMiddle .left").append(container_dom);
+//
+    //render_videos({ leftRightUnit, container_dom });
+
+    render_components( leftRightUnit, container_dom )
+    // NNYTT TEST!!!
+  }
+
+  //const dom = document.querySelector(`#modal_list .modalMiddle`);
+  //const doms = {
+  //  left: dom.querySelector(".left"),
+  //  right: dom.querySelector(".right"),
+  //};
+//
+  //let video =  {
+  //  left: ["name", "story", "videos"],
+  //  right: ["checks", "notes", "folder"],
+  //}
+
+
+
 
   SubPub.publish({
     event: "render::modal::unit",
@@ -409,25 +449,33 @@ function render_story ({ element, container_dom }) {
 
 }
 function render_videos ({ element, container_dom }) {
-  
+  console.log(container_dom);
   if (!container_dom) {
-    container_dom = document.querySelector(`#modal_list .modal${modal_dom} .videos`);
+    container_dom = document.querySelector(`#modal_list .modalMiddle .videos`);
   } else {
     container_dom.classList.add("videos");
   }
 
-  const video_inplace = !!element.video_link;
-  const video_html = video_inplace ?
-                    `<iframe src="https://mau.app.box.com/embed/s/${element.video_link}?sortColumn=date&view=list" allowfullscreen webkitallowfullscreen msallowfullscreen></iframe>` :
-                    ``;
+  
 
-  if (video_inplace) {
-    container_dom.classList.add("large");
-  } else {
-    container_dom.classList.remove("large");
-  }
+  //check if module is middle...
+  if(container_dom.parentElement.parentElement.classList.contains("modalMiddle")
+  || container_dom == document.querySelector(".modalMiddle")){
+    console.log("mitten!: ", element);
 
-  container_dom.innerHTML = video_html;
+    const video_inplace = !!element.video_link;
+    const video_html = video_inplace ?
+                      `<iframe src="https://mau.app.box.com/embed/s/${element.video_link}?sortColumn=date&view=list" allowfullscreen webkitallowfullscreen msallowfullscreen></iframe>` :
+                      ``;
+
+    if (video_inplace) {
+      container_dom.classList.add("large");
+    } else {
+      container_dom.classList.remove("large");
+    }
+
+    container_dom.innerHTML = video_html;
+  } //else no video
 
 }
 function render_checks ({ element, container_dom }) {
