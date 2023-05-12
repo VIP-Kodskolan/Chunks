@@ -160,8 +160,16 @@ function close_modal () {
 function render ({ element, modal_dom }) {
   const dom = document.querySelector(`#modal_list .modal${modal_dom}`);
 
-  
   dom.classList.add(element.kind);
+
+  dom.innerHTML = `
+  <div class="left">
+    <button class="leftModul shift"> < </button>
+  </div>
+  <div class="right">
+    <button class="rightModul shift"> > </button>
+  </div>
+`;
 
   render_components( element, dom );
 
@@ -214,21 +222,6 @@ function render_left_right(unit){
 }
 
 function render_components(element, dom){
-  console.log(element);
-
-  if(dom == undefined){
-    dom = document.querySelector("#modal_list .modalMiddle");
-  }
-
-  dom.innerHTML = `
-  <div class="left">
-    <button class="leftModul shift"> < </button>
-  </div>
-  <div class="right">
-    <button class="rightModul shift"> > </button>
-  </div>
-`;
-
 
   // COMPONENTS
   const components = {
@@ -267,17 +260,6 @@ function render_components(element, dom){
 
 function render_unit_placement(location, newUnitID, allUnitIDs){
   let modals = document.querySelectorAll("#modal_list li");
-
-  //reset position of modals
-  //modals.forEach(element => {
-  //  console.log(element);
-  //  if(element.classList.contains("modalRight")){element.classList.remove("modalRight");}
-  //  else if(element.classList.contains("modalMiddle")){element.classList.remove("modalMiddle");}
-  //  else if(element.classList.contains("modalLeft")){element.classList.remove("modalLeft");}
-  //  console.log(element);
-  //});
-//
-  //console.log(modals);
 
   //0 - vänstermodul.
   //1 - mittenmodul.
@@ -340,15 +322,24 @@ function render_unit_placement(location, newUnitID, allUnitIDs){
   //only render middle video - if it has one
   if(leftRightUnit.video_link.length > 0){
     console.log(leftRightUnit);
+    console.log(leftRightModule.querySelector(".videos"));
 
-    //console.log(document.querySelector("#modal_list .modalMiddle"));
-    const container_dom = leftRightModule;
-    //const container_dom = document.createElement("div");
-    //document.querySelector(".modalMiddle .left").append(container_dom);
+    let container_dom = leftRightModule.querySelector(".videos")
+
+    render_video_frame(leftRightUnit, container_dom);
+
+    //const video_inplace = !!element.video_link;
+    //const video_html = video_inplace ?
+    //                  `< id="videoFrame" iframe src="https://mau.app.box.com/embed/s/${element.video_link}?sortColumn=date&view=list" allowfullscreen webkitallowfullscreen msallowfullscreen"></>` :
+    //                  ``;
 //
-    //render_videos({ leftRightUnit, container_dom });
-
-    render_components( leftRightUnit, container_dom )
+    //if (video_inplace) {
+    //  container_dom.classList.add("large");
+    //} else {
+    //  container_dom.classList.remove("large");
+    //}
+    //
+    //container_dom.innerHTML = video_html;
     // NNYTT TEST!!!
   }
 
@@ -457,15 +448,22 @@ function render_videos ({ element, container_dom }) {
   }
 
   
-
   //check if module is middle...
   if(container_dom.parentElement.parentElement.classList.contains("modalMiddle")
   || container_dom == document.querySelector(".modalMiddle")){
-    console.log("mitten!: ", element);
 
-    const video_inplace = !!element.video_link;
+
+    render_video_frame(element, container_dom);
+    
+  } //else no video
+
+}
+
+
+function render_video_frame(element, container_dom){
+  const video_inplace = !!element.video_link;
     const video_html = video_inplace ?
-                      `<iframe src="https://mau.app.box.com/embed/s/${element.video_link}?sortColumn=date&view=list" allowfullscreen webkitallowfullscreen msallowfullscreen></iframe>` :
+                      `<iframe src="https://mau.app.box.com/embed/s/${element.video_link}?sortColumn=date&view=list" allowfullscreen webkitallowfullscreen msallowfullscreen"></>`:
                       ``;
 
     if (video_inplace) {
@@ -475,9 +473,9 @@ function render_videos ({ element, container_dom }) {
     }
 
     container_dom.innerHTML = video_html;
-  } //else no video
 
 }
+
 function render_checks ({ element, container_dom }) {
   
   if (!container_dom) {

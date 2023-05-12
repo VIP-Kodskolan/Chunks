@@ -206,8 +206,8 @@
   font-size: xx-large;
 }
 
-.right .shift.rightModul {left: 430px;}
-.left .shift.leftModul {right:430px;}
+.right .shift.rightModul {left: 29vw;}
+.left .shift.leftModul {right:57vw;}
 
 .btnError{opacity: 0.5;}
 .btnError:hover{
