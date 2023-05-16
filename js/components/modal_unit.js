@@ -14,26 +14,25 @@ export default { render }
   });
 
   SubPub.subscribe({
-    event: "render::modal::unit::list",
+    event: "render::modal::unit_list",
     listener: renderUnitList,
   });
 
-  SubPub.subscribe({
-    event: "render::modal::new_unit",
-    listener: ({ element }) => {
-        const course_id = element.course_id;
-        const unit_id = element.unit_id;
-        
-        utils.push_state_window_history(`?course=${course_id}&unit=${unit_id}`);
-        
-        SubPub.publish({
-            event: "render::modal::unit::list",
-            detail: { element }
-        });
-    }
-});
 
-  
+SubPub.subscribe({
+  event: "render::modal::new_unit",
+  listener: ({ element }) => {
+      const course_id = element.course_id;
+      const unit_id = element.unit_id;
+      
+      utils.push_state_window_history(`?course=${course_id}&unit=${unit_id}`);
+      
+      SubPub.publish({
+          event: "render::modal::unit_list",
+          detail: { element }
+      });
+  }
+});
 
   SubPub.subscribe({
     event: "db::patch::unit::done",
@@ -55,9 +54,7 @@ export default { render }
           if (field === "folder_link") field = "folder";
           renderers["render_" + field]({ element: response.element });
         });
-  
       }
-
     }
   });
 
@@ -72,13 +69,12 @@ export default { render }
 
 })();
 
-
-
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 //nedan ska vara i modal_units_list.js
 function renderUnitList({element}){
+  console.log("renderUnitList modal unit list");
 
   let allUnits = state_io.state.units;
   let allChapters = state_io.state.chapters;
@@ -155,8 +151,6 @@ function close_modal () {
 ///////////////////////////////////////////////////////////////////////////////
 
 
-
-
 function render ({ element, modal_dom }) {
   const dom = document.querySelector(`#modal_list .modal${modal_dom}`);
 
@@ -171,7 +165,7 @@ function render ({ element, modal_dom }) {
   </div>
 `;
 
-  render_components( element, dom );
+  render_components( element, dom, modal_dom );
 
   render_left_right(element);  
 }
@@ -221,7 +215,7 @@ function render_left_right(unit){
   })
 }
 
-function render_components(element, dom){
+function render_components(element, dom, modal_dom){
 
   // COMPONENTS
   const components = {
@@ -253,114 +247,85 @@ function render_components(element, dom){
       components[element.kind][side].forEach(component => {
         const container_dom = document.createElement("div");
         doms[side].append(container_dom);
-        renderers["render_" + component]({ element, container_dom });
+        renderers["render_" + component]({ element, container_dom, modal_dom });
     });
   }
 }
 
 function render_unit_placement(location, newUnitID, allUnitIDs){
-  let modals = document.querySelectorAll("#modal_list li");
 
-  //0 - vänstermodul.
-  //1 - mittenmodul.
-  //2 - högermodul.
-  //module is...
   let newUnit = state_io.state.units.find(u => u.unit_id === allUnitIDs[newUnitID]);
   let frontModule = document.querySelector(".modalMiddle");
-  let newModule = "";
-  let leftRightModule = "";
-  let leftRightUnit = "";
+  let leftRightModule = document.querySelector(`.modal${location}`);
+  let leftRightUnitID = "";
 
+  //add transition classes depending on direction
+  document.querySelectorAll("#modal_list li").forEach(element => element.classList.add(`to${location}`));
 
   //the button clicked 
   if(location === "Right"){
-    //mitten flyttas till vänster.
-    //höger försvinner
-    //vänster publishas
-    leftRightUnit = state_io.state.units.find(u => u.unit_id === allUnitIDs[newUnitID + 1]);
+    leftRightUnitID = newUnitID + 1;
+    let newModule = document.querySelector(".modalLeft");
+    console.log(newModule);
 
-    newModule = document.querySelector(".modalLeft");
-    leftRightModule = document.querySelector(".modalRight");
+    leftRightModule.classList.remove("modalRight");
+    leftRightModule.classList.add("modalMiddle");
 
-    //middle modal now
     frontModule.classList.remove("modalMiddle");
     frontModule.classList.add("modalLeft");
 
-    //left modal now
     newModule.classList.remove("modalLeft");
-    newModule.innerHTML = "";
     newModule.classList.add("modalRight");
-
-    //right modal now
-    leftRightModule.classList.remove("modalRight");
-    leftRightModule.classList.add("modalMiddle");
 
   } else{
     //mitten flyttas till höger
     //vänster försvinner
     //höger publishas
+    leftRightUnitID = newUnitID - 1;
+    let newModule = document.querySelector(".modalRight");
+    console.log(newModule);
 
-    leftRightUnit = state_io.state.units.find(u => u.unit_id === allUnitIDs[newUnitID  - 1]);
-    frontModule = modals[1];
-    newModule = modals[2];
-    leftRightModule = modals[0];
-
-    //frontModule.classList.remove("modalMiddle");
-
-    //newModule.classList.remove("modalRight");
-    
-    frontModule.classList.add("modalRight");
-
-    //leftRightModule.classList.remove("modalLeft");
+    leftRightModule.classList.remove("modalLeft");
     leftRightModule.classList.add("modalMiddle");
 
-    newModule.classList = "";
-    newModule.innerHTML = "";
+    frontModule.classList.remove("modalMiddle");
+    frontModule.classList.add("modalRight");
+
+    newModule.classList.remove("modalRight");
     newModule.classList.add("modalLeft");
+
   }
 
-  //only render middle video - if it has one
-  if(leftRightUnit.video_link.length > 0){
-    console.log(leftRightUnit);
-    console.log(leftRightModule.querySelector(".videos"));
 
-    let container_dom = leftRightModule.querySelector(".videos")
+  let leftRightUnit = state_io.state.units.find(u => u.unit_id === allUnitIDs[leftRightUnitID]);
 
-    render_video_frame(leftRightUnit, container_dom);
-
-    //const video_inplace = !!element.video_link;
-    //const video_html = video_inplace ?
-    //                  `< id="videoFrame" iframe src="https://mau.app.box.com/embed/s/${element.video_link}?sortColumn=date&view=list" allowfullscreen webkitallowfullscreen msallowfullscreen"></>` :
-    //                  ``;
-//
-    //if (video_inplace) {
-    //  container_dom.classList.add("large");
-    //} else {
-    //  container_dom.classList.remove("large");
-    //}
-    //
-    //container_dom.innerHTML = video_html;
-    // NNYTT TEST!!!
-  }
-
-  //const dom = document.querySelector(`#modal_list .modalMiddle`);
-  //const doms = {
-  //  left: dom.querySelector(".left"),
-  //  right: dom.querySelector(".right"),
-  //};
-//
-  //let video =  {
-  //  left: ["name", "story", "videos"],
-  //  right: ["checks", "notes", "folder"],
-  //}
-
-
-
+  //only render middle video - if unit exists and has a video 
+  if(leftRightUnit !== undefined){
+    if(leftRightUnit.video_link.length > 0 || !leftRightUnit.video_link.value == ""){
+      let container_dom = document.querySelector(`.modal${location}`);
+      //leftRightModule.querySelector(".videos");
+        //empty video, no loading
+      if(leftRightModule.classList.contains(".videos")){
+        console.log(frontModule);
+        leftRightModule.querySelector(".videos").innerHTML = "";
+      }
+        //frontModule.querySelector(".video").innerHTML = "";
+        if(container_dom.classList.contains("videos")){
+          console.log(container_dom);
+          render_video_frame(leftRightUnit, container_dom);
+        }
+      }
+    }
+  console.log(newUnit);
 
   SubPub.publish({
     event: "render::modal::unit",
     detail: { element: newUnit, modal_dom: location }
   });
+setTimeout(() => {
+  document.querySelectorAll("#modal_list li").forEach(element => element.classList.remove(`to${location}`));
+}, 1500);
+  
 }
 
 
@@ -424,7 +389,7 @@ function render_name ({ element, container_dom }) {
   is_editing && open_editor();
 
 }
-function render_story ({ element, container_dom }) {
+function render_story ({ element, container_dom, modal_dom }) {
 
   if (!container_dom) {
     container_dom = document.querySelector(`#modal_list .modal${modal_dom} .story`);
@@ -440,27 +405,23 @@ function render_story ({ element, container_dom }) {
 
 }
 function render_videos ({ element, container_dom }) {
-  console.log(container_dom);
   if (!container_dom) {
     container_dom = document.querySelector(`#modal_list .modalMiddle .videos`);
   } else {
     container_dom.classList.add("videos");
   }
 
-  
   //check if module is middle...
   if(container_dom.parentElement.parentElement.classList.contains("modalMiddle")
   || container_dom == document.querySelector(".modalMiddle")){
 
-
     render_video_frame(element, container_dom);
-    
   } //else no video
 
 }
 
-
 function render_video_frame(element, container_dom){
+  console.log(container_dom);
   const video_inplace = !!element.video_link;
     const video_html = video_inplace ?
                       `<iframe src="https://mau.app.box.com/embed/s/${element.video_link}?sortColumn=date&view=list" allowfullscreen webkitallowfullscreen msallowfullscreen"></>`:
@@ -471,12 +432,10 @@ function render_video_frame(element, container_dom){
     } else {
       container_dom.classList.remove("large");
     }
-
-    container_dom.innerHTML = video_html;
-
+  container_dom.innerHTML = video_html;
 }
 
-function render_checks ({ element, container_dom }) {
+function render_checks ({ element, container_dom, modal_dom }) {
   
   if (!container_dom) {
     container_dom = document.querySelector(`#modal_list .modal${modal_dom} .checks`);
@@ -513,7 +472,7 @@ function render_checks ({ element, container_dom }) {
   `;
 
   // CHECK ACTIONS
-  is_ready && container_dom.querySelectorAll(".check_holder").forEach(x => x.addEventListener("change", patch_users_unit));
+  //is_ready && container_dom.querySelectorAll(".check_holder").forEach(x => x.addEventListener("change", patch_users_unit()));
 
 
   function check_box_html(which) {
@@ -550,7 +509,9 @@ function render_checks ({ element, container_dom }) {
   }
 
 }
-function render_notes ({ element, container_dom }) {
+function render_notes ({ element, container_dom, modal_dom }) {
+
+  console.log("notes");
   
   const users_unit = state_io.state.users_units.find(u => u.unit_id === element.unit_id);
   const notes = users_unit ? users_unit.notes : "";
@@ -586,7 +547,7 @@ function render_notes ({ element, container_dom }) {
   `;
 
   const text_area_dom = container_dom.querySelector(".notes textArea");
-  text_area_dom.addEventListener("change", patch_users_unit);
+  //text_area_dom.addEventListener("change", patch_users_unit());
   text_area_dom.addEventListener("keyup", start_saver_up);
 
   // SAVER
@@ -613,11 +574,10 @@ function render_notes ({ element, container_dom }) {
       feedback_save_dom.dataset.seconds_left = seconds_left - 1;
       update_saver_timer();
     }
-
   }
 
 }
-function render_folder ({ element, container_dom }) {
+function render_folder ({ element, container_dom, modal_dom }) {
 
   if (!container_dom) {
     container_dom = document.querySelector(`#modal_list .modal${modal_dom} .folder`);
@@ -658,13 +618,13 @@ function is_unit_ready ({ element }) {
 
 }
 function update_saver_timer (feedback) {
-  const feedback_save_dom = document.querySelector(`#modal_list .modal${modal_dom} .notes .feedback_save`);
+  const feedback_save_dom = document.querySelector(`#modal_list .modalMiddle .notes .feedback_save`);
   feedback_save_dom.querySelector(".feedback").innerHTML = feedback || `Saving in ${feedback_save_dom.dataset.seconds_left} seconds`;
 }
 function patch_users_unit (event) {
-
+console.log(document.querySelector(`#modal_list .modalMiddle .notes`));
   // Stop potential timer
-  const feedback_save_dom = document.querySelector(`#modal_list .modal${modal_dom} .notes .feedback_save`);
+  const feedback_save_dom = document.querySelector(`#modal_list .modalMiddle .notes .feedback_save`);
   if (feedback_save_dom.dataset.timer_id !== -1) {
     update_saver_timer(feedback_save_dom.dataset.saved_feedback);
     clearTimeout(feedback_save_dom.dataset.timer_id);

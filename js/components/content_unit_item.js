@@ -97,7 +97,7 @@ function render ({ element, container_dom }) {
   }
   function open_modal_unit () {
     SubPub.publish({
-      event: "render::modal::unit::list",
+      event: "render::modal::unit_list",
       detail: { element: state_io.state.units.find(u => u.unit_id === element.unit_id) } // User may have edited element and it has been updated in State
     });
   }

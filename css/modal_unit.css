@@ -10,35 +10,50 @@
   padding: 1vh;
 
   border-radius: var(--general_border_radius);
+}
 
-  transition: right 1.5s ease-out 0.1s;
-  transition: left 1.5s ease-out 0.1s;
-
+#modal_list li.hidden{
+  display: none;
+  opacity: 0;
 }
 
 #modal_list li.modalMiddle{
   position: relative;
   left:4vh;
+  right: 0vw;
   background-color: aqua;
   width: 95%;
-  z-index:30;
-
+  z-index: 30;
+  opacity: .5;
 }
+/*denna är höger till vänster*/
+#modal_list li.modalMiddle.toRight{transition: left .5s ease-out 0.1s;}
+#modal_list li.modalMiddle.toLeft{transition:  left .5s ease-out 0.1s;}
+
 
 #modal_list li.modalLeft{
   position: absolute;
-  left: -100vw;
+  left: 100vw;
+  right: -100vw;
   background-color: greenyellow;
   width: 95%;
 }
 
+#modal_list li.modalLeft.toRight{transition: none; display:none}
+#modal_list li.modalLeft.toLeft{transition: right .5s ease-out 0.1s;}
+
+
 #modal_list li.modalRight{
   position: absolute;
-  right: -100vw;
+  right: 100vw;
+  left: -100vw;
   background-color: purple;
   width: 95%;
 }
 
+
+#modal_list li.modalRight.toRight{transition: none; display:none}
+#modal_list li.modalRight.toLeft{transition: right .5s ease-out 0.1s;}
 
 
 #modal_list li .right, #modal_list li .left {

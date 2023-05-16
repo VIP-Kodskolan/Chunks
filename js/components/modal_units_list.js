@@ -8,10 +8,22 @@ export default { renderUnitList }
 ;(() => {
 
     SubPub.subscribe({
-        event: "render::modal::unit::list",
-        listener: renderUnitList,
+        event: "render::modal::unit_list",
+        listener: render
     });
 
+    SubPub.subscribe({
+        event: "render::modal::unit_lists",
+        listener: render
+    });
+
+    SubPub.subscribe({
+        event: "db::patch::unit::done",
+        listener: render
+    });
 
 })
 
+function render(){
+    console.log("hej");
+}

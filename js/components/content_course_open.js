@@ -156,7 +156,7 @@ function render_progress_units_by_chapters(chapters, units, users_units) {
       unitContainer.addEventListener("click", e => {
         console.log(chapter_unit);
         SubPub.publish({
-          event: "render::modal::unit::list",
+          event: "render::modal::unit_list",
           detail: { element: chapter_unit }
         });
       })

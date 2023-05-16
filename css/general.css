@@ -196,3 +196,10 @@ code, .code {
   margin-top: 10px;
   font-family: 'Inconsolata_light','Courier New', Courier, monospace;
 }
+
+.notransition {
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -o-transition: none !important;
+  transition: none !important;
+}
