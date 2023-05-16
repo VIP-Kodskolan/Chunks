@@ -266,65 +266,62 @@ function render_unit_placement(location, newUnitID, allUnitIDs){
   if(location === "Right"){
     leftRightUnitID = newUnitID + 1;
     let newModule = document.querySelector(".modalLeft");
-    console.log(newModule);
 
+    //höger flyttas till mitten
     leftRightModule.classList.remove("modalRight");
     leftRightModule.classList.add("modalMiddle");
 
+    //mitten flyttas till vänster
     frontModule.classList.remove("modalMiddle");
     frontModule.classList.add("modalLeft");
 
+    //vänster försvinner och publishas till höger
     newModule.classList.remove("modalLeft");
     newModule.classList.add("modalRight");
 
   } else{
-    //mitten flyttas till höger
-    //vänster försvinner
-    //höger publishas
+    
+    
     leftRightUnitID = newUnitID - 1;
     let newModule = document.querySelector(".modalRight");
-    console.log(newModule);
 
+    //vänster flyttas till mitten
     leftRightModule.classList.remove("modalLeft");
     leftRightModule.classList.add("modalMiddle");
 
+    //mitten flyttas till höger
     frontModule.classList.remove("modalMiddle");
     frontModule.classList.add("modalRight");
 
+    //höger försvinner och publishas till vänster
     newModule.classList.remove("modalRight");
     newModule.classList.add("modalLeft");
 
   }
 
-
+  //the unit moved to middle
   let leftRightUnit = state_io.state.units.find(u => u.unit_id === allUnitIDs[leftRightUnitID]);
 
-  //only render middle video - if unit exists and has a video 
-  if(leftRightUnit !== undefined){
-    if(leftRightUnit.video_link.length > 0 || !leftRightUnit.video_link.value == ""){
-      let container_dom = document.querySelector(`.modal${location}`);
-      //leftRightModule.querySelector(".videos");
-        //empty video, no loading
-      if(leftRightModule.classList.contains(".videos")){
-        console.log(frontModule);
-        leftRightModule.querySelector(".videos").innerHTML = "";
-      }
-        //frontModule.querySelector(".video").innerHTML = "";
-        if(container_dom.classList.contains("videos")){
-          console.log(container_dom);
-          render_video_frame(leftRightUnit, container_dom);
-        }
-      }
-    }
-  console.log(newUnit);
 
   SubPub.publish({
     event: "render::modal::unit",
     detail: { element: newUnit, modal_dom: location }
   });
-setTimeout(() => {
-  document.querySelectorAll("#modal_list li").forEach(element => element.classList.remove(`to${location}`));
-}, 1500);
+
+    //only render middle video - if unit exists and has a video 
+    if(leftRightUnit !== undefined){
+      if(leftRightUnit.video_link.length > 0 || !leftRightUnit.video_link.value == ""){
+        let container_dom = document.querySelector(`.modal${location}`);
+        
+        if(container_dom.classList.contains("video")){
+          render_video_frame(leftRightUnit, document.querySelector(`.modalMiddle .videos`));
+        }
+      }
+    }
+
+  setTimeout(() => {
+    document.querySelectorAll("#modal_list li").forEach(element => element.classList.remove(`to${location}`));
+  }, 1500);
   
 }
 
@@ -411,6 +408,7 @@ function render_videos ({ element, container_dom }) {
     container_dom.classList.add("videos");
   }
 
+  console.log(container_dom);
   //check if module is middle...
   if(container_dom.parentElement.parentElement.classList.contains("modalMiddle")
   || container_dom == document.querySelector(".modalMiddle")){
@@ -423,15 +421,15 @@ function render_videos ({ element, container_dom }) {
 function render_video_frame(element, container_dom){
   console.log(container_dom);
   const video_inplace = !!element.video_link;
-    const video_html = video_inplace ?
-                      `<iframe src="https://mau.app.box.com/embed/s/${element.video_link}?sortColumn=date&view=list" allowfullscreen webkitallowfullscreen msallowfullscreen"></>`:
-                      ``;
+  const video_html = video_inplace ?
+                    `<iframe src="https://mau.app.box.com/embed/s/${element.video_link}?sortColumn=date&view=list" allowfullscreen webkitallowfullscreen msallowfullscreen"></>`:
+                    ``;
 
-    if (video_inplace) {
-      container_dom.classList.add("large");
-    } else {
-      container_dom.classList.remove("large");
-    }
+  if (video_inplace) {
+    container_dom.classList.add("large");
+  } else {
+    container_dom.classList.remove("large");
+  }
   container_dom.innerHTML = video_html;
 }
 
