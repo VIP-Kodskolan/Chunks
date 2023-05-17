@@ -28,7 +28,13 @@ const id_prefix_item = "unit_id_";
 })();
 
 function render ({ element, container_dom }) {
+  let arrayWithMatchingUnits = state_io.state.arrayWithMatchedUnits;
+  //console.log(element)
+
   
+ 
+
+
   const text = {
     video: "VID",
     exercise: "EXE",
@@ -39,6 +45,12 @@ function render ({ element, container_dom }) {
   if (!container_dom) {
     container_dom = document.getElementById(id_prefix_item + element.unit_id);
   } else {
+    if(arrayWithMatchingUnits){
+      if(!arrayWithMatchingUnits.includes(element.unit_id)){
+        container_dom.classList.add("notSearchedFor")
+      }
+    }
+
     container_dom.id = id_prefix_item + element.unit_id;
     container_dom.classList.add("unit_item");
     container_dom.classList.add(element.kind);

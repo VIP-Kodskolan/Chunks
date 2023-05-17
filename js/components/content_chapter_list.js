@@ -81,7 +81,7 @@ function render_chapters() {
   const allUnits = state_io.state.units;
   const allChapters = state_io.state.chapters;
   let finishedChapters = [];
-
+  let arrayWithMatchedUnits = [];
   // console.log(chapters)
   // console.log(state_io.state.users_units)
   let arrayWithQuestions = [];
@@ -90,10 +90,12 @@ function render_chapters() {
   if (state_io.state.pressedSearch) {
     state_io.state.units.forEach((e) => {
       if (e.name.includes(state_io.state.searchValue)) {
-        console.log("found item");
+        arrayWithMatchedUnits.push(e.unit_id);
       }
     });
+    state_io.state.arrayWithMatchedUnits = arrayWithMatchedUnits;
   }
+  // console.log(state_io.state)
 
   if (state_io.state.button == "questions") {
     console.log("vi är inne i knappen");
