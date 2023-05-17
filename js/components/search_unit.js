@@ -44,7 +44,7 @@ function render_search_unit() {
 
   searchEraseButton.addEventListener("click", function () {
     searchEraseButton.addEventListener("click", function () {
-      console.log("hej")
+      searchInput.value = ""
       SubPub.publish({
         event: "state::patch::search::received",
         detail: {
