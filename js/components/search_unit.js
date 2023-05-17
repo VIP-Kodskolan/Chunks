@@ -43,7 +43,17 @@ function render_search_unit() {
   });
 
   searchEraseButton.addEventListener("click", function () {
-    searchInput.value = "";
+    searchEraseButton.addEventListener("click", function () {
+      console.log("hej")
+      SubPub.publish({
+        event: "state::patch::search::received",
+        detail: {
+          params: {
+            searchValue: "",
+          },
+        },
+      });
+    });
   });
 }
 

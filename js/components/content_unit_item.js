@@ -29,7 +29,7 @@ const id_prefix_item = "unit_id_";
 
 function render ({ element, container_dom }) {
   let arrayWithMatchingUnits = state_io.state.arrayWithMatchedUnits;
-  //console.log(element)
+ // console.log(state_io.state)
 
   
  
@@ -45,7 +45,7 @@ function render ({ element, container_dom }) {
   if (!container_dom) {
     container_dom = document.getElementById(id_prefix_item + element.unit_id);
   } else {
-    if(arrayWithMatchingUnits){
+    if(arrayWithMatchingUnits && arrayWithMatchingUnits.length > 0){
       if(!arrayWithMatchingUnits.includes(element.unit_id)){
         container_dom.classList.add("notSearchedFor")
       }
