@@ -224,7 +224,7 @@
 .right .shift.rightModul {left: 29vw;}
 .left .shift.leftModul {right:57vw;}
 
-.btnError{opacity: 0.5;}
+.btnError{opacity: 0.5; pointer-events: none;}
 .btnError:hover{
   background-color: var(--color_accent_1);
   border-color: var(--color_accent_2);

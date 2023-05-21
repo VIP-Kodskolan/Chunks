@@ -2,6 +2,7 @@ import state_io from "../utils/state_io.js";
 import { SubPub } from "../utils/subpub.js";
 import utils from "../utils/utils.js";
 import modal_unit_quiz from "./modal_unit_quiz.js";
+import modal_units_list from "./modal_units_list.js";
 
 export default { render }
 
@@ -11,28 +12,7 @@ export default { render }
   SubPub.subscribe({
     event: "render::modal::unit",
     listener: render
-  });
-
-  SubPub.subscribe({
-    event: "render::modal::unit_list",
-    listener: renderUnitList,
-  });
-
-
-SubPub.subscribe({
-  event: "render::modal::new_unit",
-  listener: ({ element }) => {
-      const course_id = element.course_id;
-      const unit_id = element.unit_id;
-      
-      utils.push_state_window_history(`?course=${course_id}&unit=${unit_id}`);
-      
-      SubPub.publish({
-          event: "render::modal::unit_list",
-          detail: { element }
-      });
-  }
-});
+  });  
 
   SubPub.subscribe({
     event: "db::patch::unit::done",
@@ -65,90 +45,7 @@ SubPub.subscribe({
       render_checks({ element });
     }
   });
-
-
 })();
-
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-//nedan ska vara i modal_units_list.js
-function renderUnitList({element}){
-  console.log("renderUnitList modal unit list");
-
-  let allUnits = state_io.state.units;
-  let allChapters = state_io.state.chapters;
-  let allUnitIDs = []
-
-  //bring out all chapter units and their IDs
-  allChapters.forEach(chapter => {
-    let chapterUnits = allUnits.filter(unit => unit.chapter_id === chapter.chapter_id);
-    let unitID = chapterUnits.map(unit => unit.unit_id);
-    allUnitIDs.push(...unitID);
-  })
-  let indexOfUnitID = allUnitIDs.findIndex(u => u === element.unit_id);
-
-
-  let beforeUnitID = indexOfUnitID - 1;
-  let nextUnitID = indexOfUnitID + 1;
-
-  let modal_list = document.querySelector("#modal_list");
-  modal_list.innerHTML = `
-      <li class="modalLeft"></li>
-      <li class="modalMiddle"></li>
-      <li class="modalRight"></li>
-  `;
-
-  //first - middle unit
-  SubPub.publish({
-    event: "render::modal::unit",
-    detail: { element: element, modal_dom: "Middle" }
-  });
-
-  //second, the unit before
-  if(state_io.state.units.find(u => u.unit_id === allUnitIDs[beforeUnitID]) === undefined){} 
-  else {
-    SubPub.publish({
-      event: "render::modal::unit",
-      detail: { element: state_io.state.units.find(u => u.unit_id === allUnitIDs[beforeUnitID]), modal_dom: "Left" }
-    });
-  }
-
-  //lastly, the unit after
-if (state_io.state.units.find(u => u.unit_id === allUnitIDs[nextUnitID]) === undefined) {} else {
-    SubPub.publish({
-      event: "render::modal::unit",
-      detail: { element: state_io.state.units.find(u => u.unit_id === allUnitIDs[nextUnitID]), modal_dom: "Right" }
-    });
-  }
-  
-
-  // SHOW MODAL
-  document.getElementById("modal_wrapper").classList.remove("hidden");
-
-
-// CLOSE VIA CLICK ON BACKGROUND or PRESS KEY ESC
-  document.querySelector("#modal_list").addEventListener("click", e => {
-      if (e.target.id === "modal_list") close_modal();
-  });
-  document.querySelector("html").addEventListener("keyup", e => {
-      if (e.key === "Escape" && !document.getElementById("modal_wrapper").classList.contains("hidden")) {
-      close_modal();
-      }   
-  });
-}
-
-function close_modal () {
-  const get_parameters_string = utils.get_parameters_string(["course"]);
-  utils.push_state_window_history(`?${get_parameters_string}`)
-  
-  document.querySelector("#modal_wrapper").classList.add("hidden");
-}
-
-//ovan ska vara i modal_units_list.js
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
 
 
 function render ({ element, modal_dom }) {
@@ -171,30 +68,21 @@ function render ({ element, modal_dom }) {
 }
 
 function render_left_right(unit){
-  let allUnits = state_io.state.units;
-  let allChapters = state_io.state.chapters;
-  let allUnitIDs = []
 
-    //bring out all chapter units and their IDs
-    allChapters.forEach(chapter => {
-      let chapterUnits = allUnits.filter(unit => unit.chapter_id === chapter.chapter_id);
-      let unitID = chapterUnits.map(unit => unit.unit_id);
-      allUnitIDs.push(...unitID);
-    })
+  let allUnitIDs = get_all_unitIDs();
 
   //default
   document.querySelectorAll(".shift").forEach(btn => { btn.disabled = false; } )
   
   let indexOfUnitID = allUnitIDs.findIndex(u => u === unit.unit_id);
   let beforeUnit = indexOfUnitID - 1;
-  let nextUnit = indexOfUnitID + 1;
-  let unitToSwitch;
 
+  let nextUnit = indexOfUnitID + 1;
 
   if (nextUnit == allUnitIDs.length) {//if no units are after
     document.querySelector(".rightModul").disabled = true;
     document.querySelector(".rightModul").classList.add("btnError");
-  } else if (beforeUnit < 0){ //if no units are before
+  } else if (beforeUnit === -1){ //if no units are before
     document.querySelector(".leftModul").disabled = true;
     document.querySelector(".leftModul").classList.add("btnError");
   }
@@ -204,12 +92,10 @@ function render_left_right(unit){
 
       //+ 1 or - 1 unit depending on which button
       if (btn.classList.contains("rightModul")){
-        unitToSwitch = nextUnit;
-        render_unit_placement( "Right", unitToSwitch, allUnitIDs);
+        render_unit_placement( "Right", nextUnit, allUnitIDs);
       }
       else {
-        unitToSwitch = beforeUnit;
-        render_unit_placement( "Left", unitToSwitch, allUnitIDs);
+        render_unit_placement( "Left", beforeUnit, allUnitIDs);
       }
     })
   })
@@ -280,8 +166,6 @@ function render_unit_placement(location, newUnitID, allUnitIDs){
     newModule.classList.add("modalRight");
 
   } else{
-    
-    
     leftRightUnitID = newUnitID - 1;
     let newModule = document.querySelector(".modalRight");
 
@@ -302,27 +186,31 @@ function render_unit_placement(location, newUnitID, allUnitIDs){
   //the unit moved to middle
   let leftRightUnit = state_io.state.units.find(u => u.unit_id === allUnitIDs[leftRightUnitID]);
 
-
-  SubPub.publish({
-    event: "render::modal::unit",
-    detail: { element: newUnit, modal_dom: location }
-  });
-
     //only render middle video - if unit exists and has a video 
     if(leftRightUnit !== undefined){
-      if(leftRightUnit.video_link.length > 0 || !leftRightUnit.video_link.value == ""){
+      if(leftRightUnit.kind === "video"){
         let container_dom = document.querySelector(`.modal${location}`);
+        console.log("kind: ", leftRightUnit.kind);
         
         if(container_dom.classList.contains("video")){
+          console.log("har video");
+          //container_dom.querySelector(".videos").innerHTML = "";
           render_video_frame(leftRightUnit, document.querySelector(`.modalMiddle .videos`));
         }
       }
+      SubPub.publish({
+        event: "render::modal::unit",
+        detail: { element: newUnit, modal_dom: location }
+      });
     }
-
+  //ska hinna renderas
   setTimeout(() => {
+    if (document.querySelector(`.modalLeft`).classList.contains("video")){
+      document.querySelector(`.modalLeft .videos`).innerHTML = "";
+    }
+    //reset direction
     document.querySelectorAll("#modal_list li").forEach(element => element.classList.remove(`to${location}`));
-  }, 1500);
-  
+  }, 1000);
 }
 
 
@@ -353,7 +241,7 @@ function render_name ({ element, container_dom }) {
   `;
 
   container_dom.querySelector(".button_edit").addEventListener("click", open_editor);
-  container_dom.querySelector(".button_close").addEventListener("click", close_modal);
+  container_dom.querySelector(".button_close").addEventListener("click", () => {document.querySelector("#modal_list").remove();});
   container_dom.querySelector(".button_delete").addEventListener("click", delete_unit);
 
 
@@ -415,7 +303,6 @@ function render_videos ({ element, container_dom }) {
 
     render_video_frame(element, container_dom);
   } //else no video
-
 }
 
 function render_video_frame(element, container_dom){
@@ -436,7 +323,7 @@ function render_video_frame(element, container_dom){
 function render_checks ({ element, container_dom, modal_dom }) {
   
   if (!container_dom) {
-    container_dom = document.querySelector(`#modal_list .modal${modal_dom} .checks`);
+    container_dom = document.querySelector(`#modal_list .modalMiddle .checks`);
   } else {
     container_dom.classList.add("checks");
   }
@@ -470,7 +357,7 @@ function render_checks ({ element, container_dom, modal_dom }) {
   `;
 
   // CHECK ACTIONS
-  //is_ready && container_dom.querySelectorAll(".check_holder").forEach(x => x.addEventListener("change", patch_users_unit()));
+  is_ready && container_dom.querySelectorAll(".check_holder").forEach(x => x.addEventListener("change", (event) => {patch_users_unit(event)}));
 
 
   function check_box_html(which) {
@@ -545,7 +432,7 @@ function render_notes ({ element, container_dom, modal_dom }) {
   `;
 
   const text_area_dom = container_dom.querySelector(".notes textArea");
-  //text_area_dom.addEventListener("change", patch_users_unit());
+  text_area_dom.addEventListener("change", (event) => {patch_users_unit(event)});
   text_area_dom.addEventListener("keyup", start_saver_up);
 
   // SAVER
@@ -620,26 +507,44 @@ function update_saver_timer (feedback) {
   feedback_save_dom.querySelector(".feedback").innerHTML = feedback || `Saving in ${feedback_save_dom.dataset.seconds_left} seconds`;
 }
 function patch_users_unit (event) {
-console.log(document.querySelector(`#modal_list .modalMiddle .notes`));
+console.log(document.querySelector(`#modal_list .modalMiddle`));
   // Stop potential timer
-  const feedback_save_dom = document.querySelector(`#modal_list .modalMiddle .notes .feedback_save`);
-  if (feedback_save_dom.dataset.timer_id !== -1) {
-    update_saver_timer(feedback_save_dom.dataset.saved_feedback);
-    clearTimeout(feedback_save_dom.dataset.timer_id);
-  }
+  setTimeout(() => {
+    const feedback_save_dom = document.querySelector(`#modal_list .modalMiddle .notes .feedback_save`);
 
-  const type = event.target.type;
-  const value = type === "checkbox" ? event.target.checked : event.target.value;
-  const { field_name, element } = JSON.parse(event.target.dataset.update_data);
-  
-  SubPub.publish({
-    event: "db::patch::users_units::request",
-    detail: { params: {
-      field_name,
-      value,
-      unit_id: element.unit_id,
-      user_id: state_io.state.user.user_id,
-    }}
-  });
+    if (feedback_save_dom.dataset.timer_id !== -1) {
+      update_saver_timer(feedback_save_dom.dataset.saved_feedback);
+      clearTimeout(feedback_save_dom.dataset.timer_id);
+    }
+    console.log(event);
+    const type = event.target.type;
+    const value = type === "checkbox" ? event.target.checked : event.target.value;
+    const { field_name, element } = JSON.parse(event.target.dataset.update_data);
+    
+    SubPub.publish({
+      event: "db::patch::users_units::request",
+      detail: { params: {
+        field_name,
+        value,
+        unit_id: element.unit_id,
+        user_id: state_io.state.user.user_id,
+      }}
+    });
+  }, 500);
 
+
+}
+
+function get_all_unitIDs(){
+  let allUnits = state_io.state.units;
+  let allChapters = state_io.state.chapters;
+  let allUnitIDs = []
+
+  //bring out all chapter units and their IDs
+  allChapters.forEach(chapter => {
+      let chapterUnits = allUnits.filter(unit => unit.chapter_id === chapter.chapter_id);
+      let unitID = chapterUnits.map(unit => unit.unit_id);
+      allUnitIDs.push(...unitID);
+  })
+  return allUnitIDs;
 }
