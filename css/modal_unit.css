@@ -28,7 +28,7 @@
 }
 /*denna är höger till vänster*/
 #modal_list li.modalMiddle.toRight{transition: left .5s ease-out 0.1s;}
-#modal_list li.modalMiddle.toLeft{transition:  left .5s ease-out 0.1s;}
+#modal_list li.modalMiddle.toLeft{transition: left .5s ease-out 0.1s;}
 
 
 #modal_list li.modalLeft{
@@ -39,8 +39,9 @@
   width: 95%;
 }
 
-#modal_list li.modalLeft.toRight{transition: none; display:none}
-#modal_list li.modalLeft.toLeft{transition: right .5s ease-out 0.1s;}
+
+#modal_list li.modalLeft.toRight{transition: right .5s ease-out 0.1s;}
+#modal_list li.modalLeft.toLeft{transition: left .5s ease-out 0.1s;}
 
 
 #modal_list li.modalRight{
@@ -52,7 +53,7 @@
 }
 
 
-#modal_list li.modalRight.toRight{transition: none; display:none}
+#modal_list li.modalRight.toRight{transition: left .5s ease-out 0.1s;}
 #modal_list li.modalRight.toLeft{transition: right .5s ease-out 0.1s;}
 
 

@@ -209,6 +209,7 @@ function render_unit_placement(location, newUnitID, allUnitIDs){
       document.querySelector(`.modalLeft .videos`).innerHTML = "";
     }
     //reset direction
+    console.log("reset direction");
     document.querySelectorAll("#modal_list li").forEach(element => element.classList.remove(`to${location}`));
   }, 1000);
 }
@@ -241,7 +242,7 @@ function render_name ({ element, container_dom }) {
   `;
 
   container_dom.querySelector(".button_edit").addEventListener("click", open_editor);
-  container_dom.querySelector(".button_close").addEventListener("click", () => {document.querySelector("#modal_list").remove();});
+  container_dom.querySelector(".button_close").addEventListener("click", () => {document.querySelector("#modal_wrapper").classList.add("hidden")();});
   container_dom.querySelector(".button_delete").addEventListener("click", delete_unit);
 
 

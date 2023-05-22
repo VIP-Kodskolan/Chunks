@@ -80,7 +80,6 @@ function render({element}){
             close_modal();
         }   
     });
-    document.querySelector(".button_close").addEventListener("click", close_modal);
 }
 
 function close_modal () {
