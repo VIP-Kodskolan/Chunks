@@ -68,13 +68,26 @@ const id_prefix_item = "section_id_";
 
 
 function render ({ element, container_dom }) {
-  
+  let arrayWithMatchingUnits = state_io.state.arrayWithMatchedUnits;
+
+  if(arrayWithMatchingUnits){
+    console.log(arrayWithMatchingUnits)
+
+    arrayWithMatchingUnits.forEach(e => {
+     if( e.section_id != element.section_id){
+      container_dom.classList.add("notSearchedFor")
+      console.log("hej")
+     }
+    });
+  }
+
   if (!container_dom) {
     container_dom = document.getElementById(id_prefix_item + element.section_id)
     if (!container_dom) return; // Trying to re-render a section that is not rendered
   } else {
     container_dom.id = id_prefix_item + element.section_id;
     container_dom.classList.add("section_item");
+    // console.log(element)
   }
 
   container_dom.innerHTML = `

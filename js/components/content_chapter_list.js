@@ -91,10 +91,11 @@ function render_chapters() {
   if (state_io.state.pressedSearch && state_io.state.searchValue != "") {
     state_io.state.units.forEach((e) => {
       if (e.name.includes(state_io.state.searchValue)) {
-        arrayWithMatchedUnits.push(e.unit_id);
+        arrayWithMatchedUnits.push(e);
       }
     });
     state_io.state.arrayWithMatchedUnits = arrayWithMatchedUnits;
+    console.log(state_io.state.arrayWithMatchedUnits)
   }
 
   if(state_io.state.searchValue == ""){
