@@ -79,6 +79,18 @@ const id_prefix_item = "chapter_list_id_";
 })();
 
 function render ({ element, container_dom }) {
+  let arrayWithMatchingUnits = state_io.state.arrayWithMatchedUnits;
+
+  if(arrayWithMatchingUnits){
+    console.log(arrayWithMatchingUnits)
+
+    arrayWithMatchingUnits.forEach(e => {
+     if( e.chapter_id != element.chapter_id){
+      container_dom.classList.add("notSearchedFor")
+      console.log("hej")
+     }
+    });
+  }
 
   if (!container_dom) {
     container_dom = document.getElementById(id_prefix_item + element.chapter_id);
