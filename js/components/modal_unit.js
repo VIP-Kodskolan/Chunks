@@ -48,61 +48,33 @@ export default { render }
 })();
 
 
-function render ({ element, modal_dom }) {
-  const dom = document.querySelector(`#modal_list .modal${modal_dom}`);
+function render ({ element, container_dom }) {
 
-  dom.classList.add(element.kind);
-
-  dom.innerHTML = `
-  <div class="left">
-    <button class="leftModul shift"> < </button>
-  </div>
-  <div class="right">
-    <button class="rightModul shift"> > </button>
-  </div>
-`;
-
-  render_components( element, dom, modal_dom );
-
-  render_left_right(element);  
-}
-
-function render_left_right(unit){
-
-  let allUnitIDs = get_all_unitIDs();
-
-  //default
-  document.querySelectorAll(".shift").forEach(btn => { btn.disabled = false; } )
-  
-  let indexOfUnitID = allUnitIDs.findIndex(u => u === unit.unit_id);
-  let beforeUnit = indexOfUnitID - 1;
-
-  let nextUnit = indexOfUnitID + 1;
-
-  if (nextUnit == allUnitIDs.length) {//if no units are after
-    document.querySelector(".rightModul").disabled = true;
-    document.querySelector(".rightModul").classList.add("btnError");
-  } else if (beforeUnit === -1){ //if no units are before
-    document.querySelector(".leftModul").disabled = true;
-    document.querySelector(".leftModul").classList.add("btnError");
+  if (!container_dom) {
+    container_dom = document.getElementById("unit_id_" + element.unit_id)
+    if (!container_dom) return; // Trying to re-render a unit that is not rendered
+  } else {
+    container_dom.id = "unit_id_" + element.unit_id;
+    container_dom.classList.add("unit_item");
   }
+  
+  //const dom = container_dom
 
-  document.querySelectorAll(".shift").forEach(btn => {
-    btn.addEventListener("click", e => {
+  container_dom.classList.add(element.kind);
 
-      //+ 1 or - 1 unit depending on which button
-      if (btn.classList.contains("rightModul")){
-        render_unit_placement( "Right", nextUnit, allUnitIDs);
-      }
-      else {
-        render_unit_placement( "Left", beforeUnit, allUnitIDs);
-      }
-    })
-  })
+  container_dom.innerHTML = `
+  <div class="left"></div>
+  <div class="right"></div>
+`;
+  //console.log(container_dom.id);
+  render_components( element, container_dom );
+
 }
 
-function render_components(element, dom, modal_dom){
+function render_components(element, dom){
 
+  //console.log(dom.id);
+  const dom_id = dom.id;
   // COMPONENTS
   const components = {
     exercise: {
@@ -133,87 +105,10 @@ function render_components(element, dom, modal_dom){
       components[element.kind][side].forEach(component => {
         const container_dom = document.createElement("div");
         doms[side].append(container_dom);
-        renderers["render_" + component]({ element, container_dom, modal_dom });
+        renderers["render_" + component]({ element, container_dom, dom_id });
     });
   }
 }
-
-function render_unit_placement(location, newUnitID, allUnitIDs){
-
-  let newUnit = state_io.state.units.find(u => u.unit_id === allUnitIDs[newUnitID]);
-  let frontModule = document.querySelector(".modalMiddle");
-  let leftRightModule = document.querySelector(`.modal${location}`);
-  let leftRightUnitID = "";
-
-  //add transition classes depending on direction
-  document.querySelectorAll("#modal_list li").forEach(element => element.classList.add(`to${location}`));
-
-  //the button clicked 
-  if(location === "Right"){
-    leftRightUnitID = newUnitID + 1;
-    let newModule = document.querySelector(".modalLeft");
-
-    //höger flyttas till mitten
-    leftRightModule.classList.remove("modalRight");
-    leftRightModule.classList.add("modalMiddle");
-
-    //mitten flyttas till vänster
-    frontModule.classList.remove("modalMiddle");
-    frontModule.classList.add("modalLeft");
-
-    //vänster försvinner och publishas till höger
-    newModule.classList.remove("modalLeft");
-    newModule.classList.add("modalRight");
-
-  } else{
-    leftRightUnitID = newUnitID - 1;
-    let newModule = document.querySelector(".modalRight");
-
-    //vänster flyttas till mitten
-    leftRightModule.classList.remove("modalLeft");
-    leftRightModule.classList.add("modalMiddle");
-
-    //mitten flyttas till höger
-    frontModule.classList.remove("modalMiddle");
-    frontModule.classList.add("modalRight");
-
-    //höger försvinner och publishas till vänster
-    newModule.classList.remove("modalRight");
-    newModule.classList.add("modalLeft");
-
-  }
-
-  //the unit moved to middle
-  let leftRightUnit = state_io.state.units.find(u => u.unit_id === allUnitIDs[leftRightUnitID]);
-
-    //only render middle video - if unit exists and has a video 
-    if(leftRightUnit !== undefined){
-      if(leftRightUnit.kind === "video"){
-        let container_dom = document.querySelector(`.modal${location}`);
-        console.log("kind: ", leftRightUnit.kind);
-        
-        if(container_dom.classList.contains("video")){
-          console.log("har video");
-          //container_dom.querySelector(".videos").innerHTML = "";
-          render_video_frame(leftRightUnit, document.querySelector(`.modalMiddle .videos`));
-        }
-      }
-      SubPub.publish({
-        event: "render::modal::unit",
-        detail: { element: newUnit, modal_dom: location }
-      });
-    }
-  //ska hinna renderas
-  setTimeout(() => {
-    if (document.querySelector(`.modalLeft`).classList.contains("video")){
-      document.querySelector(`.modalLeft .videos`).innerHTML = "";
-    }
-    //reset direction
-    console.log("reset direction");
-    document.querySelectorAll("#modal_list li").forEach(element => element.classList.remove(`to${location}`));
-  }, 1000);
-}
-
 
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
@@ -226,7 +121,7 @@ const renderers = {
 function render_name ({ element, container_dom }) {
   
   if (!container_dom) {
-    container_dom = document.querySelector(`#modal_list .modal${modal_dom} .name`);
+    container_dom = document.querySelector(`#modal_list ${container_dom} .name`);
   } else {
     container_dom.classList.add("name");
   }
@@ -242,7 +137,7 @@ function render_name ({ element, container_dom }) {
   `;
 
   container_dom.querySelector(".button_edit").addEventListener("click", open_editor);
-  container_dom.querySelector(".button_close").addEventListener("click", () => {document.querySelector("#modal_wrapper").classList.add("hidden")();});
+  container_dom.querySelector(".button_close").addEventListener("click", () => {document.querySelector("#modal_wrapper").classList.add("hidden");});
   container_dom.querySelector(".button_delete").addEventListener("click", delete_unit);
 
 
@@ -275,10 +170,10 @@ function render_name ({ element, container_dom }) {
   is_editing && open_editor();
 
 }
-function render_story ({ element, container_dom, modal_dom }) {
+function render_story ({ element, container_dom }) {
 
   if (!container_dom) {
-    container_dom = document.querySelector(`#modal_list .modal${modal_dom} .story`);
+    container_dom = document.querySelector(`#modal_list ${container_dom} .story`);
   } else {
     container_dom.classList.add("story");
   }
@@ -292,22 +187,16 @@ function render_story ({ element, container_dom, modal_dom }) {
 }
 function render_videos ({ element, container_dom }) {
   if (!container_dom) {
-    container_dom = document.querySelector(`#modal_list .modalMiddle .videos`);
+    container_dom = document.querySelector(`#modal_list ${container_dom} .videos`);
   } else {
     container_dom.classList.add("videos");
   }
 
-  console.log(container_dom);
-  //check if module is middle...
-  if(container_dom.parentElement.parentElement.classList.contains("modalMiddle")
-  || container_dom == document.querySelector(".modalMiddle")){
+  render_video_frame(element, container_dom);
 
-    render_video_frame(element, container_dom);
-  } //else no video
 }
 
 function render_video_frame(element, container_dom){
-  console.log(container_dom);
   const video_inplace = !!element.video_link;
   const video_html = video_inplace ?
                     `<iframe src="https://mau.app.box.com/embed/s/${element.video_link}?sortColumn=date&view=list" allowfullscreen webkitallowfullscreen msallowfullscreen"></>`:
@@ -321,10 +210,10 @@ function render_video_frame(element, container_dom){
   container_dom.innerHTML = video_html;
 }
 
-function render_checks ({ element, container_dom, modal_dom }) {
+function render_checks ({ element, container_dom, dom_id }) {
   
   if (!container_dom) {
-    container_dom = document.querySelector(`#modal_list .modalMiddle .checks`);
+    container_dom = document.querySelector(`#modal_list ${container_dom} .checks`);
   } else {
     container_dom.classList.add("checks");
   }
@@ -357,8 +246,10 @@ function render_checks ({ element, container_dom, modal_dom }) {
     </div>
   `;
 
+
+  //console.log(dom_id);
   // CHECK ACTIONS
-  is_ready && container_dom.querySelectorAll(".check_holder").forEach(x => x.addEventListener("change", (event) => {patch_users_unit(event)}));
+  is_ready && container_dom.querySelectorAll(".check_holder").forEach(x => x.addEventListener("change", (event) => {patch_users_unit(event, container_dom, dom_id)}));
 
 
   function check_box_html(which) {
@@ -395,17 +286,16 @@ function render_checks ({ element, container_dom, modal_dom }) {
   }
 
 }
-function render_notes ({ element, container_dom, modal_dom }) {
+function render_notes ({ element, container_dom, dom_id }) {
 
-  console.log("notes");
-  
   const users_unit = state_io.state.users_units.find(u => u.unit_id === element.unit_id);
   const notes = users_unit ? users_unit.notes : "";
   const is_ready = is_unit_ready({ element });
 
+  //console.log(dom_id);
 
   if (!container_dom) {
-    container_dom = document.querySelector(`#modal_list .modal${modal_dom} .notes`);
+    container_dom = document.querySelector(`#modal_list #${dom_id} .notes`);
   } else {
     container_dom.classList.add("notes");
   }
@@ -433,7 +323,8 @@ function render_notes ({ element, container_dom, modal_dom }) {
   `;
 
   const text_area_dom = container_dom.querySelector(".notes textArea");
-  text_area_dom.addEventListener("change", (event) => {patch_users_unit(event)});
+  //console.log(container_dom);
+  text_area_dom.addEventListener("change", (event) => {patch_users_unit(event, container_dom, dom_id)});
   text_area_dom.addEventListener("keyup", start_saver_up);
 
   // SAVER
@@ -441,7 +332,7 @@ function render_notes ({ element, container_dom, modal_dom }) {
   const feedback_save_dom = container_dom.querySelector(".feedback_save");
   function start_saver_up (event) {
     feedback_save_dom.dataset.seconds_left = 5;
-    update_saver_timer();
+    update_saver_timer(dom_id);
     if (feedback_save_dom.dataset.timer_id !== -1) clearTimeout(feedback_save_dom.dataset.timer_id);
     feedback_save_dom.dataset.timer_id = setTimeout(one_second_less, 1000);
   }
@@ -454,19 +345,19 @@ function render_notes ({ element, container_dom, modal_dom }) {
       const change_event = new CustomEvent("change");
       feedback_save_dom.dataset.timer_id = -1;
       text_area_dom.dispatchEvent(change_event);
-      update_saver_timer(feedback_save_dom.dataset.saved_feedback);
+      update_saver_timer(feedback_save_dom.dataset.saved_feedback, dom_id);
     } else {
       feedback_save_dom.dataset.timer_id = setTimeout(one_second_less, 1000);
       feedback_save_dom.dataset.seconds_left = seconds_left - 1;
-      update_saver_timer();
+      update_saver_timer(dom_id);
     }
   }
 
 }
-function render_folder ({ element, container_dom, modal_dom }) {
+function render_folder ({ element, container_dom }) {
 
   if (!container_dom) {
-    container_dom = document.querySelector(`#modal_list .modal${modal_dom} .folder`);
+    container_dom = document.querySelector(`#modal_list ${container_dom} .folder`);
   } else {
     container_dom.classList.add("folder");
   }
@@ -503,18 +394,26 @@ function is_unit_ready ({ element }) {
           || (is_quiz ? element.name === "Done" : element.story !== "");
 
 }
-function update_saver_timer (feedback) {
-  const feedback_save_dom = document.querySelector(`#modal_list .modalMiddle .notes .feedback_save`);
+function update_saver_timer (feedback, dom_id) {
+  const feedback_save_dom = document.querySelector(`#${dom_id} .notes .feedback_save`);
   feedback_save_dom.querySelector(".feedback").innerHTML = feedback || `Saving in ${feedback_save_dom.dataset.seconds_left} seconds`;
 }
-function patch_users_unit (event) {
-console.log(document.querySelector(`#modal_list .modalMiddle`));
+function patch_users_unit (event, container_dom, dom_id) {
+  //console.log(container_dom);
+  
+
+
   // Stop potential timer
   setTimeout(() => {
-    const feedback_save_dom = document.querySelector(`#modal_list .modalMiddle .notes .feedback_save`);
+    //console.log(dom_id);
+    //console.log(document.querySelector(`#${dom_id}`));
+    //console.log(document.querySelector(`#${dom_id} .notes .feedback_save`));
+
+
+    const feedback_save_dom = (`#${dom_id} .notes .feedback_save`);
 
     if (feedback_save_dom.dataset.timer_id !== -1) {
-      update_saver_timer(feedback_save_dom.dataset.saved_feedback);
+      update_saver_timer(feedback_save_dom.dataset.saved_feedback, dom_id);
       clearTimeout(feedback_save_dom.dataset.timer_id);
     }
     console.log(event);

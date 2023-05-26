@@ -29,43 +29,31 @@ export default { render }
 })();
 
 function render({element}){
-    let allUnitIDs = get_all_unitIDs();
 
-    let indexOfUnitID = allUnitIDs.findIndex(u => u === element.unit_id);
+    const dom = document.querySelector("#modal_list");
+    dom.innerHTML = `
+    <button class="leftModul shift"> < </button>
+    <ul></ul>
+    <button class="rightModul shift"> > </button>`;
 
-    let beforeUnitID = indexOfUnitID - 1;
-    let nextUnitID = indexOfUnitID + 1;
+    //find section of unit picked
+    let sections = state_io.state.sections;
+    let units = state_io.state.units;
+    let sectionOfUnit = sections.find(s => s.section_id === element.section_id);
 
-    let modal_list = document.querySelector("#modal_list");
-    modal_list.innerHTML = `
-        <li class="modalLeft"></li>
-        <li class="modalMiddle"></li>
-        <li class="modalRight"></li>
-    `;
+    //filter all units in section, then publish them
+    let unitsInSection = units.filter(u => u.section_id === sectionOfUnit.section_id);
 
-    //first - middle unit
-    SubPub.publish({
-        event: "render::modal::unit",
-        detail: { element: element, modal_dom: "Middle" }
+    const list_dom = document.querySelector("#modal_list > ul");
+    unitsInSection.forEach(unit => {
+        let container_dom = document.createElement("li");
+        list_dom.append(container_dom);
+
+        SubPub.publish({
+            event: "render::modal::unit",
+            detail: { element: unit, container_dom }
+        });
     });
-
-    //second, the unit before
-    if(state_io.state.units.find(u => u.unit_id === allUnitIDs[beforeUnitID]) === undefined){} 
-    else {
-        SubPub.publish({
-            event: "render::modal::unit",
-            detail: { element: state_io.state.units.find(u => u.unit_id === allUnitIDs[beforeUnitID]), modal_dom: "Left" }
-        });
-    }
-
-    //lastly, the unit after
-    if (state_io.state.units.find(u => u.unit_id === allUnitIDs[nextUnitID]) === undefined) {} else {
-        SubPub.publish({
-            event: "render::modal::unit",
-            detail: { element: state_io.state.units.find(u => u.unit_id === allUnitIDs[nextUnitID]), modal_dom: "Right" }
-        });
-    }
-    
 
     // SHOW MODAL
     document.getElementById("modal_wrapper").classList.remove("hidden");
@@ -80,6 +68,26 @@ function render({element}){
             close_modal();
         }   
     });
+
+    //set the placement of the unit in the list
+    let spotOfUnit = element.spot;
+    set_unit_spot(spotOfUnit)
+
+    if(spotOfUnit === 1){dom.querySelector(".leftModul").classList.add("btnError")};
+    if(spotOfUnit === unitsInSection.length){dom.querySelector(".rightModul").classList.add("btnError")};
+
+    dom.querySelector(".leftModul").addEventListener("click", () => {
+        spotOfUnit = spotOfUnit - 1;
+        if (spotOfUnit !== 0){
+            set_unit_spot(spotOfUnit);
+        }
+    })
+    dom.querySelector(".rightModul").addEventListener("click", () => {
+        spotOfUnit = spotOfUnit + 1;
+        if (spotOfUnit !== unitsInSection.length){
+            set_unit_spot(spotOfUnit);
+        }
+    })
 }
 
 function close_modal () {
@@ -101,4 +109,12 @@ function get_all_unitIDs(){
         allUnitIDs.push(...unitID);
     })
     return allUnitIDs;
+}
+
+function set_unit_spot(spot){
+
+    let unitSpot = spot - 1;
+    let place = unitSpot.toString() + "00";
+
+    document.querySelector("#modal_list ul").style.right = place + "vw";
 }
