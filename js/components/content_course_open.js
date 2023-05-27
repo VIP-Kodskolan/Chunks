@@ -136,15 +136,19 @@ function render_progress_units_by_chapters(chapters, units, users_units) {
     });
 
   let chapterCounter = 1;
+  console.log(sortedUnitsByChapters);
 
   for (const [chapter_id, chapter_units] of sortedUnitsByChapters) {
     const chapterContainer = document.createElement("div");
     chapterContainer.className = `chapter chapter-${chapter_id}`;
 
+    let chapter_name = chapters.find(chapter => chapter.chapter_id == chapter_id).name;
+
     // ie. which chapter: 1, 2, n...
     const chapterCounterContainer = document.createElement("div");
     chapterCounterContainer.className = "chapter-counter";
     chapterCounterContainer.textContent = chapterCounter;
+    chapterCounterContainer.setAttribute("title", `${chapter_name}`);
     chapterContainer.appendChild(chapterCounterContainer);
 
     for (const chapter_unit of chapter_units) {
@@ -152,9 +156,8 @@ function render_progress_units_by_chapters(chapters, units, users_units) {
       unitContainer.className = `chapter-unit`;
       unitContainer.setAttribute("title", `${chapter_unit.name}`);
 
-      //modal show on "progresspin" click
+      //modals show on "progresspin" click
       unitContainer.addEventListener("click", e => {
-        console.log(chapter_unit);
         SubPub.publish({
           event: "render::modal::units_list",
           detail: { element: chapter_unit }
@@ -171,6 +174,13 @@ function render_progress_units_by_chapters(chapters, units, users_units) {
 
       chapterContainer.appendChild(unitContainer);
     }
+
+    //scroll down to chapter of number in chapterprogress list
+    chapterContainer.addEventListener("click", (e) => {
+      let chapterContainerID = chapters.find(chapter => chapter.name === chapter_name).chapter_id;
+      document.getElementById(`chapter_list_id_${chapterContainerID}`).scrollIntoView();
+      document.getElementById(`chapter_list_id_${chapterContainerID}`).classList.add("expanded");
+    })
 
     chaptersContainer.appendChild(chapterContainer);
     chapterCounter++;

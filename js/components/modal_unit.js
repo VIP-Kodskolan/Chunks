@@ -121,7 +121,7 @@ const renderers = {
 function render_name ({ element, container_dom }) {
   
   if (!container_dom) {
-    container_dom = document.querySelector(`#modal_list ${container_dom} .name`);
+    container_dom = document.querySelector(`#unit_id_${unit_id} .name`);
   } else {
     container_dom.classList.add("name");
   }
@@ -173,7 +173,7 @@ function render_name ({ element, container_dom }) {
 function render_story ({ element, container_dom }) {
 
   if (!container_dom) {
-    container_dom = document.querySelector(`#modal_list ${container_dom} .story`);
+    container_dom = document.querySelector(`#unit_id_${unit_id} .story`);
   } else {
     container_dom.classList.add("story");
   }
@@ -187,7 +187,7 @@ function render_story ({ element, container_dom }) {
 }
 function render_videos ({ element, container_dom }) {
   if (!container_dom) {
-    container_dom = document.querySelector(`#modal_list ${container_dom} .videos`);
+    container_dom = document.querySelector(`#unit_id_${unit_id} .videos`);
   } else {
     container_dom.classList.add("videos");
   }
@@ -280,13 +280,11 @@ function render_checks ({ element, container_dom }) {
   }
 
 }
-function render_notes ({ element, container_dom, dom_id }) {
+function render_notes ({ element, container_dom }) {
 
   const users_unit = state_io.state.users_units.find(u => u.unit_id === element.unit_id);
   const notes = users_unit ? users_unit.notes : "";
   const is_ready = is_unit_ready({ element });
-
-  //console.log(dom_id);
 
   if (!container_dom) {
     container_dom = document.querySelector(`#unit_id_${element.unit_id} .notes`);
@@ -356,7 +354,7 @@ function render_notes ({ element, container_dom, dom_id }) {
 function render_folder ({ element, container_dom }) {
 
   if (!container_dom) {
-    container_dom = document.querySelector(`#modal_list ${container_dom} .folder`);
+    container_dom = document.querySelector(`#unit_id_${element.unit_id} .folder`);
   } else {
     container_dom.classList.add("folder");
   }
@@ -394,7 +392,6 @@ function is_unit_ready ({ element }) {
 
 }
 function update_saver_timer (feedback, unit_id) {
-  console.log(unit_id);
   const feedback_save_dom = document.querySelector(`#unit_id_${unit_id} .notes .feedback_save`);
   feedback_save_dom.querySelector(".feedback").innerHTML = feedback || `Saving in ${feedback_save_dom.dataset.seconds_left} seconds`;
 }
@@ -402,8 +399,6 @@ function update_saver_timer (feedback, unit_id) {
 function patch_users_unit (event, element) {
 
   let unit_id = element.unit_id;
-  console.log(unit_id);
-  console.log(element);
   
   // Stop potential timer
   setTimeout(() => {
