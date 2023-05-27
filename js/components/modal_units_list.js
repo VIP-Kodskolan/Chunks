@@ -55,13 +55,14 @@ function render({element}){
         });
     });
 
-    // SHOW MODAL
+    // SHOW MODALS
     document.getElementById("modal_wrapper").classList.remove("hidden");
 
-
     //CLOSE VIA CLICK ON BACKGROUND or PRESS KEY ESC
-    document.querySelector("#modal_list").addEventListener("click", e => {
-        if (e.target.id === "modal_list") close_modal();
+    document.querySelectorAll("html").forEach(html => { 
+        html.addEventListener("click", e => {
+            if (e.target.tagName === "UL") close_modal();
+        });
     });
     document.querySelector("html").addEventListener("keyup", e => {
         if (e.key === "Escape" && !document.getElementById("modal_wrapper").classList.contains("hidden")) {
@@ -71,23 +72,8 @@ function render({element}){
 
     //set the placement of the unit in the list
     let spotOfUnit = element.spot;
-    set_unit_spot(spotOfUnit)
-
-    if(spotOfUnit === 1){dom.querySelector(".leftModul").classList.add("btnError")};
-    if(spotOfUnit === unitsInSection.length){dom.querySelector(".rightModul").classList.add("btnError")};
-
-    dom.querySelector(".leftModul").addEventListener("click", () => {
-        spotOfUnit = spotOfUnit - 1;
-        if (spotOfUnit !== 0){
-            set_unit_spot(spotOfUnit);
-        }
-    })
-    dom.querySelector(".rightModul").addEventListener("click", () => {
-        spotOfUnit = spotOfUnit + 1;
-        if (spotOfUnit !== unitsInSection.length){
-            set_unit_spot(spotOfUnit);
-        }
-    })
+    set_modal_spot(spotOfUnit, unitsInSection)
+    render_modal_placement(spotOfUnit, unitsInSection);
 }
 
 function close_modal () {
@@ -97,24 +83,30 @@ function close_modal () {
     document.querySelector("#modal_wrapper").classList.add("hidden");
 }
 
-function get_all_unitIDs(){
-    let allUnits = state_io.state.units;
-    let allChapters = state_io.state.chapters;
-    let allUnitIDs = []
-
-    //bring out all chapter units and their IDs
-    allChapters.forEach(chapter => {
-        let chapterUnits = allUnits.filter(unit => unit.chapter_id === chapter.chapter_id);
-        let unitID = chapterUnits.map(unit => unit.unit_id);
-        allUnitIDs.push(...unitID);
-    })
-    return allUnitIDs;
-}
-
-function set_unit_spot(spot){
+function set_modal_spot(spot, unitsInSection){
 
     let unitSpot = spot - 1;
     let place = unitSpot.toString() + "00";
-
     document.querySelector("#modal_list ul").style.right = place + "vw";
+
+    let leftModul = document.querySelector(".leftModul");
+    let rightModul = document.querySelector(".rightModul");
+
+    //if unit is the first or last one in sectionlist
+    spot === 1 ? leftModul.classList.add("btnError") : leftModul.classList.remove("btnError");
+    spot === unitsInSection.length ? rightModul.classList.add("btnError") : rightModul.classList.remove("btnError");
+}
+
+function render_modal_placement(spot, unitsInSection){
+
+    //depending on direction, and spotnumber in section
+    document.querySelectorAll(".shift").forEach(btn => {
+        btn.addEventListener("click", () => {
+            if(btn.classList.contains("leftModul")){
+                if(spot !== 0){spot = spot - 1}}
+            else if(btn.classList.contains("rightModul")){
+                if(spot !== unitsInSection.length){spot = spot + 1}}
+            set_modal_spot(spot, unitsInSection)
+        });
+    })
 }

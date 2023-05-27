@@ -14,6 +14,7 @@
 #modal_list ul{
     display:flex;
     position:relative;
+    transition: right 0.2s ease-out 0s;
 }
 
 /* SHIFT UNIT BUTTONS */
