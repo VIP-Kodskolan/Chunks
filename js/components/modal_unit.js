@@ -192,11 +192,6 @@ function render_videos ({ element, container_dom }) {
     container_dom.classList.add("videos");
   }
 
-  render_video_frame(element, container_dom);
-
-}
-
-function render_video_frame(element, container_dom){
   const video_inplace = !!element.video_link;
   const video_html = video_inplace ?
                     `<iframe src="https://mau.app.box.com/embed/s/${element.video_link}?sortColumn=date&view=list" allowfullscreen webkitallowfullscreen msallowfullscreen"></>`:
@@ -208,12 +203,13 @@ function render_video_frame(element, container_dom){
     container_dom.classList.remove("large");
   }
   container_dom.innerHTML = video_html;
+
 }
 
-function render_checks ({ element, container_dom, dom_id }) {
+function render_checks ({ element, container_dom }) {
   
   if (!container_dom) {
-    container_dom = document.querySelector(`#modal_list ${container_dom} .checks`);
+    container_dom = document.querySelector(`#unit_id_${element.unit_id} .checks`);
   } else {
     container_dom.classList.add("checks");
   }
@@ -246,10 +242,8 @@ function render_checks ({ element, container_dom, dom_id }) {
     </div>
   `;
 
-
-  //console.log(dom_id);
   // CHECK ACTIONS
-  is_ready && container_dom.querySelectorAll(".check_holder").forEach(x => x.addEventListener("change", (event) => {patch_users_unit(event, container_dom, dom_id)}));
+  is_ready && container_dom.querySelectorAll(".check_holder").forEach(x => x.addEventListener("change", (event) => {patch_users_unit(event, element)}));
 
 
   function check_box_html(which) {
@@ -295,7 +289,7 @@ function render_notes ({ element, container_dom, dom_id }) {
   //console.log(dom_id);
 
   if (!container_dom) {
-    container_dom = document.querySelector(`#modal_list #${dom_id} .notes`);
+    container_dom = document.querySelector(`#unit_id_${element.unit_id} .notes`);
   } else {
     container_dom.classList.add("notes");
   }
@@ -324,19 +318,24 @@ function render_notes ({ element, container_dom, dom_id }) {
 
   const text_area_dom = container_dom.querySelector(".notes textArea");
   //console.log(container_dom);
-  text_area_dom.addEventListener("change", (event) => {patch_users_unit(event, container_dom, dom_id)});
-  text_area_dom.addEventListener("keyup", start_saver_up);
+  text_area_dom.addEventListener("change", (event) => {patch_users_unit(event, element)});
+  text_area_dom.addEventListener("keyup", (event) => {start_saver_up(event, element)});
 
   // SAVER
   // Change will trigger automatically if user clicks on save button, so no need for specific listener
-  const feedback_save_dom = container_dom.querySelector(".feedback_save");
-  function start_saver_up (event) {
+  
+
+  function start_saver_up (event, element) {
+    console.log(element);
+    let unit_id = element.unit_id
+    const feedback_save_dom = container_dom.querySelector(".feedback_save");
     feedback_save_dom.dataset.seconds_left = 5;
-    update_saver_timer(dom_id);
+    //update_saver_timer();
     if (feedback_save_dom.dataset.timer_id !== -1) clearTimeout(feedback_save_dom.dataset.timer_id);
-    feedback_save_dom.dataset.timer_id = setTimeout(one_second_less, 1000);
+    feedback_save_dom.dataset.timer_id = setTimeout(one_second_less(unit_id), 1000);
   }
-  function one_second_less () {
+
+  function one_second_less (unit_id) {
     
     const seconds_left = parseInt(feedback_save_dom.dataset.seconds_left);
     if (seconds_left === -1) return;
@@ -345,15 +344,15 @@ function render_notes ({ element, container_dom, dom_id }) {
       const change_event = new CustomEvent("change");
       feedback_save_dom.dataset.timer_id = -1;
       text_area_dom.dispatchEvent(change_event);
-      update_saver_timer(feedback_save_dom.dataset.saved_feedback, dom_id);
+      update_saver_timer(feedback_save_dom.dataset.saved_feedback, unit_id);
     } else {
       feedback_save_dom.dataset.timer_id = setTimeout(one_second_less, 1000);
       feedback_save_dom.dataset.seconds_left = seconds_left - 1;
-      update_saver_timer(dom_id);
+      update_saver_timer();
     }
   }
-
 }
+
 function render_folder ({ element, container_dom }) {
 
   if (!container_dom) {
@@ -394,29 +393,30 @@ function is_unit_ready ({ element }) {
           || (is_quiz ? element.name === "Done" : element.story !== "");
 
 }
-function update_saver_timer (feedback, dom_id) {
-  const feedback_save_dom = document.querySelector(`#${dom_id} .notes .feedback_save`);
+function update_saver_timer (feedback, unit_id) {
+  console.log(unit_id);
+  const feedback_save_dom = document.querySelector(`#unit_id_${unit_id} .notes .feedback_save`);
   feedback_save_dom.querySelector(".feedback").innerHTML = feedback || `Saving in ${feedback_save_dom.dataset.seconds_left} seconds`;
 }
-function patch_users_unit (event, container_dom, dom_id) {
-  //console.log(container_dom);
+
+function patch_users_unit (event, element) {
+
+  let unit_id = element.unit_id;
+  console.log(unit_id);
+  console.log(element);
   
-
-
   // Stop potential timer
   setTimeout(() => {
-    //console.log(dom_id);
-    //console.log(document.querySelector(`#${dom_id}`));
-    //console.log(document.querySelector(`#${dom_id} .notes .feedback_save`));
 
+    console.log(document.querySelector(`#unit_id_${unit_id} .notes .feedback_save`));
+    console.log(document.querySelector(`#unit_id_${unit_id}`));
 
-    const feedback_save_dom = (`#${dom_id} .notes .feedback_save`);
+    const feedback_save_dom = document.querySelector(`#unit_id_${unit_id} .notes .feedback_save`);
 
     if (feedback_save_dom.dataset.timer_id !== -1) {
-      update_saver_timer(feedback_save_dom.dataset.saved_feedback, dom_id);
+      update_saver_timer(feedback_save_dom.dataset.saved_feedback, unit_id);
       clearTimeout(feedback_save_dom.dataset.timer_id);
     }
-    console.log(event);
     const type = event.target.type;
     const value = type === "checkbox" ? event.target.checked : event.target.value;
     const { field_name, element } = JSON.parse(event.target.dataset.update_data);
@@ -433,18 +433,4 @@ function patch_users_unit (event, container_dom, dom_id) {
   }, 500);
 
 
-}
-
-function get_all_unitIDs(){
-  let allUnits = state_io.state.units;
-  let allChapters = state_io.state.chapters;
-  let allUnitIDs = []
-
-  //bring out all chapter units and their IDs
-  allChapters.forEach(chapter => {
-      let chapterUnits = allUnits.filter(unit => unit.chapter_id === chapter.chapter_id);
-      let unitID = chapterUnits.map(unit => unit.unit_id);
-      allUnitIDs.push(...unitID);
-  })
-  return allUnitIDs;
 }
