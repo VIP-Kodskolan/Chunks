@@ -69,26 +69,29 @@ const id_prefix_item = "section_id_";
 
 function render ({ element, container_dom }) {
   let arrayWithMatchingUnits = state_io.state.arrayWithMatchedUnits;
-
+  let arrayUnitSectionID = [];
   if(arrayWithMatchingUnits){
-    console.log(arrayWithMatchingUnits)
-
-    arrayWithMatchingUnits.forEach(e => {
-     if( e.section_id != element.section_id){
-      container_dom.classList.add("notSearchedFor")
-      console.log("hej")
-     }
-    });
+    arrayUnitSectionID = arrayWithMatchingUnits.map(e => e.section_id)
+    console.log(arrayUnitSectionID)
+    console.log(element.section_id)
   }
+
+
+
 
   if (!container_dom) {
     container_dom = document.getElementById(id_prefix_item + element.section_id)
     if (!container_dom) return; // Trying to re-render a section that is not rendered
   } else {
+    if(arrayWithMatchingUnits && arrayWithMatchingUnits.length > 0 || arrayWithMatchingUnits && arrayWithMatchingUnits.includes("No matches")){
+      if(!arrayUnitSectionID.includes(element.section_id)){
+        container_dom.classList.add("notSearchedFor")
+      }
+    }
     container_dom.id = id_prefix_item + element.section_id;
     container_dom.classList.add("section_item");
-    // console.log(element)
   }
+  
 
   container_dom.innerHTML = `
     <div class="content">

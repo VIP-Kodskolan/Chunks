@@ -47,7 +47,7 @@ function render ({ element, container_dom }) {
   if (!container_dom) {
     container_dom = document.getElementById(id_prefix_item + element.unit_id);
   } else {
-    if(arrayWithMatchingUnits && arrayWithMatchingUnits.length > 0){
+    if(arrayWithMatchingUnits && arrayWithMatchingUnits.length > 0 || arrayWithMatchingUnits && arrayWithMatchingUnits.includes("No matches")){
       if(!arrayUnitID.includes(element.unit_id)){
         container_dom.classList.add("notSearchedFor")
       }

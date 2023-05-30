@@ -87,24 +87,28 @@ function render_chapters() {
   let arrayWithQuestions = [];
   let arrayWithFinished = [];
 
-
   if (state_io.state.pressedSearch && state_io.state.searchValue != "") {
     state_io.state.units.forEach((e) => {
-      if (e.name.includes(state_io.state.searchValue)) {
+      if (e.name.includes(state_io.state.searchValue) || e.story.includes(state_io.state.searchValue)) {
         arrayWithMatchedUnits.push(e);
       }
     });
-    state_io.state.arrayWithMatchedUnits = arrayWithMatchedUnits;
-    console.log(state_io.state.arrayWithMatchedUnits)
+
+    if (arrayWithMatchedUnits.length > 0) {
+      state_io.state.arrayWithMatchedUnits = arrayWithMatchedUnits;
+    }else{
+      state_io.state.arrayWithMatchedUnits = ["No matches"];
+    }
+
+    
+    console.log(state_io.state.arrayWithMatchedUnits);
   }
 
-  if(state_io.state.searchValue == ""){
+  if (state_io.state.searchValue == "") {
     state_io.state.arrayWithMatchedUnits = [];
-    console.log("inne i search value")
-    console.log(arrayWithMatchedUnits)
+    console.log("inne i search value");
+    console.log(arrayWithMatchedUnits);
   }
-
-
 
   if (state_io.state.button == "questions") {
     console.log("vi är inne i knappen");
@@ -155,7 +159,7 @@ function render_chapters() {
       // console.log(completeUnits)
     });
   }
-console.log(state_io.state)
+  console.log(state_io.state);
   const list_dom = document.querySelector("#content_chapter_list > ul");
   // console.log(arrayToPrint);
   list_dom.innerHTML = "";

@@ -80,21 +80,29 @@ const id_prefix_item = "chapter_list_id_";
 
 function render ({ element, container_dom }) {
   let arrayWithMatchingUnits = state_io.state.arrayWithMatchedUnits;
-
+  let arrayUnitChapterID = [];
   if(arrayWithMatchingUnits){
-    console.log(arrayWithMatchingUnits)
-
-    arrayWithMatchingUnits.forEach(e => {
-     if( e.chapter_id != element.chapter_id){
-      container_dom.classList.add("notSearchedFor")
-      console.log("hej")
-     }
-    });
+    arrayUnitChapterID = arrayWithMatchingUnits.map(e => e.chapter_id)
+    console.log(arrayUnitChapterID)
+    console.log(element.chapter_id)
   }
 
+
+
+
+
+  
   if (!container_dom) {
     container_dom = document.getElementById(id_prefix_item + element.chapter_id);
   } else {
+    if(arrayWithMatchingUnits && arrayWithMatchingUnits.length > 0 || arrayWithMatchingUnits && arrayWithMatchingUnits.includes("No matches")){
+      if(!arrayUnitChapterID.includes(element.chapter_id)){
+       container_dom.classList.add("notSearchedFor")
+      }
+    }
+
+
+
     container_dom.id = id_prefix_item + element.chapter_id;
     container_dom.classList.add("chapter_list_item");
     container_dom.classList[element.done ? "add" : "remove"]("ready");
