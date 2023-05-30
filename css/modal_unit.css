@@ -1,6 +1,6 @@
 #modal_list ul li{
   position:relative;
-  top: 3%;
+  top: 5vh;
 
   background-color: var(--color_back_1);
   box-shadow: 0 0 5px var(--color_accent_1);
@@ -13,13 +13,8 @@
   z-index: 20;
 
   border-radius: var(--general_border_radius);
-  margin:4vh;
+  margin: 0vw 2.5vw;
 }
-/*
-#modal_list ul li.hidden{
-  display: none;
-  opacity: 0;
-}*/
 
 #modal_list ul li .right, #modal_list ul li .left {
   display: flex;
