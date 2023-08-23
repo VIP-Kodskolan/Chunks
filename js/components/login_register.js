@@ -38,6 +38,7 @@ function render_login () {
 
     login_dom.innerHTML = `
       <form id="login_form">
+        LOGIN CHUNKS v1.0
         <div class="username">
             <label>User Name:</label>
             <input type="text">
