@@ -13,7 +13,7 @@ $response_function = function ($response) {
     http_response_code($code);
     $payload = [
         "data" => $response["data"],
-        "message" => $response["message"] ? $response["message"] : "All OK"
+        "message" => isset($response["message"]) ? $response["message"] : "All OK"
     ];
     echo json_encode(["payload" => $payload]);
     exit();
@@ -48,8 +48,8 @@ if ($method === "GET") {
         $method_action = $method . "_" . $action;
 
         $params = $body["params"];
-        $credentials = $params["credentials"];
-        
+
+        if ($action !== "register") $credentials = $params["credentials"];        
     }
 
 } else {
@@ -76,7 +76,7 @@ function credentials_decode ($string) {
     }
     return $_string;
 }
-if ($method_action !== "GET_login") {
+if ($method_action !== "GET_login" && $method_action !== "POST_register") {
     
     $user_token = credentials_decode(substr($credentials, 0, $n_chars_token));
     $user_id = intval(credentials_decode(substr($credentials, $n_chars_token)));
@@ -141,7 +141,7 @@ if ($method_action !== "GET_login") {
 
 
 // BACKUPS WHOLE DB
-if ($method !== "GET") {
+if ($method !== "GET" && $method_action !== "POST_register") {
 
     $pdo -> query ("
                     CREATE TABLE IF NOT EXISTS counters (

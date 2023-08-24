@@ -93,6 +93,14 @@ function GET_users ($params, $pdo) {
 
 }
 
+// REGISTER
+function POST_register($params, $pdo) {
+  return [
+    "data" => "posting ok",
+    "code" => 200,
+  ];  
+}
+
 
 // PATCHER
 function PATCH ($params, $pdo) {

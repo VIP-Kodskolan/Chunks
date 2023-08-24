@@ -8,7 +8,7 @@ export default {}
 
   SubPub.subscribe({
     event: "start_up_login",
-    listener: render_login
+    listener: render_login_register
   });
 
   SubPub.subscribe({
@@ -20,7 +20,7 @@ export default {}
 })()
 
 
-function render_login () {
+function render_login_register () {
 
   if (localStorage.getItem("logged_in_name")) {
 
@@ -37,10 +37,11 @@ function render_login () {
     const login_dom = document.getElementById("login_register");
 
     login_dom.innerHTML = `
+
       <form id="login_form">
-        LOGIN CHUNKS v1.0
+        <h1>LOGIN CHUNKS v1.0</h1>
         <div class="username">
-            <label>User Name:</label>
+            <label>Användarnamn:</label>
             <input type="text">
         </div>
         <div class="password">
@@ -49,22 +50,61 @@ function render_login () {
         </div>
         <input type="submit" value="LOGIN">
       </form>  
+
+      <form id="register_form">
+        <h1>REGISTER CHUNKS v1.0</h1>
+        <div class="register_info">
+          <p>Ditt användarnamn ska inte kunna kopplas till dig av någon utomstående.</p>
+          <p>Du får därför inte använda något av dina namn eller efternamn, eller delar av dem.</p>
+        </div>
+        <div class="username">
+            <label>Användarnamn:</label>
+            <input type="text">
+        </div>
+        <div class="password">
+            <label>Password:</label>
+            <input type="text">
+        </div>
+        <div class="token">
+            <label>Token (ditt MaU_id):</label>
+            <input type="text">
+        </div>
+        <input type="submit" value="REGISTER">
+      </form>      
     `;
   
-    login_dom.querySelector("form").addEventListener("submit", submit_login);
+    login_dom.querySelector("#login_form").addEventListener("submit", submit_login);
     function submit_login (event) {
       event.preventDefault();
   
       SubPub.publish({
         event: "db::get::login::request",
         detail: { params: {
-          username: document.querySelector(".username input").value,
-          password: document.querySelector(".password input").value,
+          username: login_dom.querySelector(".username input").value,
+          password: login_dom.querySelector(".password input").value,
+        }}
+      });
+    }
+
+    login_dom.querySelector("#register_form").addEventListener("submit", submit_register);
+    function submit_register (event) {
+      event.preventDefault();
+  
+      SubPub.publish({
+        event: "db::post::register::request",
+        detail: { params: {
+          token: login_dom.querySelector(".token input").value,
         }}
       });
     }
 
   }
+
+}
+
+function render_register () {
+  
+  localStorage.clear();
 
 }
 

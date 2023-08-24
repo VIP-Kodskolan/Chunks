@@ -61,7 +61,7 @@ function make_students ($pdo, $programme, $n_users) {
       $existing_names[] = $proposal;
       
       // https://www.php.net/manual/en/function.rand.php
-      for ($s = '', $i = 0, $z = strlen($a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')-1; $i != 3; $x = rand(0,$z), $s .= $a{$x}, $i++); 
+      // for ($s = '', $i = 0, $z = strlen($a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')-1; $i != 3; $x = rand(0,$z), $s .= $a{$x}, $i++); 
 
       $users[] = [
         "name" => strtolower($proposal),

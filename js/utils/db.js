@@ -36,6 +36,9 @@ export default {}
     "db::get::user::request",
     "db::get::users::request",
     "db::get::course::request",
+
+    // REGISTER
+    "db::post::register::request",
     
     // USER
     "db::delete::user::request",
@@ -95,12 +98,11 @@ export default {}
 
         let { params } = detail;
 
-        if (action !== "login") {
+        if (action !== "login" && action !== "register") {
           params = {
             credentials: credentials_encode (state_io.state.user.user_token, state_io.state.user.user_id),
             ...params,
           };
-          console.log(params);
         }
       
 

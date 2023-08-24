@@ -445,10 +445,29 @@ function copy_course ($pdo, $origin_id, $copy_id) {
 function add_amanuens ($pdo) {
   // Do it through the GUI!
 }
+function reset_create_register_tokens ($pdo) {
+
+  $query = "
+  BEGIN TRANSACTION;
+
+  DROP TABLE IF EXISTS register_tokens;
+
+  CREATE TABLE register_tokens (
+    token     TEXT NOT NULL
+  );
+
+  INSERT INTO register_tokens VALUES ('ah5479');
+
+  COMMIT;
+  ";
+
+  $pdo->exec($query);
+
+}
 
 
 $pdo = get_pdo();
-
+reset_create_register_tokens($pdo);
 
 
 
