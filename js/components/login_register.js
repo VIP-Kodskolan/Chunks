@@ -44,7 +44,7 @@ function render_login_register (data = {}) {
 
     // Loginform                            
     logreg_dom.innerHTML = `
-      <h1>CHUNKS V1.0</h1>
+      <h1>CHUNKS v1.0.0</h1>
       <form id="login_form">
         <h1>LOGIN</h1>
         <p class="feedback"></p>
