@@ -24,7 +24,7 @@ CREATE TABLE users (
   name              TEXT NOT NULL,
   user_password     TEXT NOT NULL,
   user_token        TEXT,
-  user_programme    TEXT, -- TCH for teachers, WDU, PMM, MPP, etc
+  user_programme    TEXT, -- TCH for teachers, WDU, PMM, MPP, FRI, etc
   user_start_year   INT,  -- 99 for teachers, otherwise YY
   can_add_courses   BOOLEAN DEFAULT false
 );

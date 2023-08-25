@@ -34,15 +34,21 @@ function GET_date_time ($params, $pdo) {
 function GET_login ($params, $pdo) {
 
   $username = $params["username"];
-  $password_token = $params["usertoken"];
-  $password = $params["password"];
+  $password_token = isset($params["usertoken"]) ? $params["usertoken"] : null;
+  $password = isset($params["password"]) ? $params["password"] : null;
 
-  $user_db = array_from_query($pdo, "SELECT * from users WHERE name = '$username'")[0];
+  $user_db = array_from_query($pdo, "SELECT * from users WHERE name = '$username'");
+  if (count($user_db) > 0) {
+    $user_db = $user_db[0];
+    $password = $user_db !== null && ($user_db["user_password"] === $password || $user_db["user_token"] === $password_token);
+  } else {
+    $password = false;
+  }
 
-  $password = $user_db !== null && ($user_db["user_password"] === $password || $user_db["user_token"] === $password_token);
   $status = [
     "password" => $password,
   ];
+
   $user = "";
   $token = "";
   $courses = [];
@@ -91,6 +97,44 @@ function GET_users ($params, $pdo) {
     ]
   ];
 
+}
+
+// REGISTER
+function POST_register($params, $pdo) {
+
+  $token = $params["token"];
+  $temp_token = array_from_query($pdo, "SELECT * FROM register_tokens WHERE token = '$token'");
+  $token_exists = count($temp_token) == 1;
+
+  if ($token_exists)
+  {
+    $name = $params["name"];
+    $temp_user = array_from_query($pdo, "SELECT * FROM users WHERE name = '$name'");
+    $name_exists = count($temp_user) > 0;
+    if ($name_exists)
+    {
+      $data = "name_exists";
+    }
+    else
+    {
+      $params["user_start_year"] = 23;
+      $params["user_programme"] = $temp_token[0]["programme"];
+      $params["amanuens"] = "[]";
+
+      $pdo->query("DELETE FROM register_tokens WHERE token = '$token'");
+
+      return POST_user($params, $pdo); 
+    }
+  }
+  else 
+  {
+    $data = "no_token";
+  }
+  
+  return [
+    "data" => $data,
+    "code" => 200,
+  ];  
 }
 
 
@@ -575,6 +619,7 @@ function POST_user ($params, $pdo) {
 
     // ADD courses as student
     $programmes = json_decode($course["programmes"]);
+
     if (in_array( $programme_alias, $programmes )) {
       $course_id = $course["course_id"];
       $pdo->query("INSERT INTO users_courses (user_id, course_id, role) VALUES ($user_id, $course_id, 'student')");
