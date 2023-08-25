@@ -27,6 +27,13 @@ export default {
 
   const subscriptions = [
 
+    // REGISTRATION
+    {
+      events: "db::post::register::received",
+      middleware: (response, params) => {},
+    },
+
+
     // GETS
     {
       events: "db::get::login::received",

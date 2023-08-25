@@ -39,7 +39,19 @@
   color: var(--color_accent_1);
 }
 
-#login_register .register_info
-{
+#login_register .register_info {
   display: block;
+}
+
+#login_register .feedback {
+  color: red;
+}
+
+#login_register input.not_same {
+  background-color: lightpink;
+}
+
+#login_register #register_form.reg_done {
+  opacity: .4;
+  pointer-events: none;
 }

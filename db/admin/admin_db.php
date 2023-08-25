@@ -10,6 +10,8 @@ function _var_dump($v) {
 }
 
 
+
+
 require("../actions.php");
 require("./students_admin.php");
 
@@ -453,22 +455,26 @@ function reset_create_register_tokens ($pdo) {
   DROP TABLE IF EXISTS register_tokens;
 
   CREATE TABLE register_tokens (
-    token     TEXT NOT NULL
+    token     TEXT NOT NULL,
+    programme TEXT NOT NULL
   );
 
-  INSERT INTO register_tokens VALUES ('ah5479');
+  INSERT INTO register_tokens VALUES ('ah5479', 'WDU');
+  INSERT INTO register_tokens VALUES ('ah5478', 'FRI_DU1');
+  INSERT INTO register_tokens VALUES ('ah5477', 'FRI_DU1');
 
   COMMIT;
   ";
 
   $pdo->exec($query);
-
+  echo "<br>Done.";
 }
 
 
 $pdo = get_pdo();
 reset_create_register_tokens($pdo);
 
+exit("<br>Exit.");
 
 
 

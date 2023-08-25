@@ -9,7 +9,7 @@ require_once("./actions.php");
 $response_function = function ($response) {
     // $header = $response["header"] ? $response["header"] : "Content-Type: text/json";
     // header($header);
-    $code = $response["code"] ? $response["code"] : 200;
+    $code = isset($response["code"]) ? $response["code"] : 200;
     http_response_code($code);
     $payload = [
         "data" => $response["data"],
@@ -27,8 +27,10 @@ if ($method === "GET") {
     $action = $_GET["action"];
     $method_action = "GET_" . $action;
     
-
-    $credentials = $_GET["credentials"];
+    if ($action !== "login" && $action !== "register")
+    {
+        $credentials = $_GET["credentials"];
+    }
     $params = $_GET;
     
 } elseif ($method === "POST" || $method === "DELETE" || $method === "PATCH") {
