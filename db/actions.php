@@ -1,5 +1,6 @@
 <?php
 
+
 // GETS
 function GET_course ($params, $pdo) {
   
@@ -618,7 +619,7 @@ function POST_user ($params, $pdo) {
   foreach ( $courses as $course ) {
 
     // ADD courses as student
-    $programmes = json_decode($course["programmes"]);
+    $programmes = json_decode($course["programmes"], true);
 
     if (in_array( $programme_alias, $programmes )) {
       $course_id = $course["course_id"];
