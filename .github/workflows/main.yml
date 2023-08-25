@@ -18,7 +18,7 @@ jobs:
     - name: Sync files
       uses: SamKirkland/FTP-Deploy-Action@4.3.3
       with:
-        server: ftp01.binero.se
-        username: 244663_master
+        server: maumt.se
+        username: master.maumt.se
         password: ${{ secrets.ftp_password }}
         server-dir: maumt.se/public_html/chunks/
