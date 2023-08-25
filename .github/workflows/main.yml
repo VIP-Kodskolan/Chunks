@@ -20,5 +20,5 @@ jobs:
       with:
         server: maumt.se
         username: master.maumt.se
-        password: Rike2228
+        password: pass
         server-dir: maumt.se/public_html/chunks/
