@@ -119,6 +119,9 @@ function render_login_register (data = {}) {
       event.preventDefault();
 
       if (reg_dom.querySelector(".not_same")) return;
+      if (!reg_dom.querySelector(".username input").value) return;
+      if (!reg_dom.querySelector(".password input").value) return;
+      if (!reg_dom.querySelector(".token input").value) return;
   
       SubPub.publish({
         event: "db::post::register::request",
