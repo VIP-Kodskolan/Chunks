@@ -57,7 +57,7 @@
 
   --color_accent_1_overlay: rgba(174,174,174,.5);
   --color_overlay_dark: rgba(30,30,30,.8);
-  --color_overlay_light: rgba(230,230,230,.8);
+  --color_overlay_light: rgba(250,250,250,.8);
   
   --color_back_0: #a8c2c6; /*#9cacae;*/
   --color_back_1: #d4d5d9; /*#c5c7cc; */
@@ -66,12 +66,15 @@
   --color_accent_0: #838380;
   --color_accent_1: #434a4a;
   --color_accent_2: #303839;
-  --color_accent_question: #b68904;
+  --color_accent_question: hotpink; /*#b68904*/;
   --color_accent_completed_unit: #bece99; /* #97a871; */ /* #7a963b; */
   --color_accent_completed_general: #73a600; /* #97a871; /* #7a963b; */
   --color_accent_incorrect: #dd99b4; /* #901e4a; */
   --color_accent_quiz: #11aab5;
   --color_accent_correct: #334208;
+
+  --color_back_chapter: #f2f2f5;
+  --color_back_unit: var(--color_back_chapter);
 
   --opacity_empty: .6;
 
@@ -81,6 +84,14 @@
   --z_index_modal: 40;
   --z_index_question_modal: 41;
   --z_index_editor: 60;
+
+  --color_status_0: #BBB;
+  --color_status_1: pink; /*Study*/
+  --color_status_2: plum; /*Hold*/
+  --color_status_3: lightcoral; /*Solve*/
+  --color_status_4: var(--color_accent_completed_general); /*Done*/
+  ;
+  color: powderblue
 }
 
 * {
@@ -178,3 +189,9 @@ code, .code {
   margin-top: 10px;
   font-family: 'Inconsolata_light','Courier New', Courier, monospace;
 }
+
+.unit_status_0 { --color_status: var(--color_status_0);}
+.unit_status_1 { --color_status: var(--color_status_1);}
+.unit_status_2 { --color_status: var(--color_status_2);}
+.unit_status_3 { --color_status: var(--color_status_3);}
+.unit_status_4 { --color_status: var(--color_status_4);}

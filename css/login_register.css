@@ -41,6 +41,12 @@
 
 #login_register .register_info {
   display: block;
+  position: relative;
+  top: -15px;
+}
+
+#login_register .register_info * {
+  font-size: calc(.75 * var(--fsz_login_register));
 }
 
 #login_register .feedback {

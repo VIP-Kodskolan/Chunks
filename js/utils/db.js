@@ -238,7 +238,6 @@ async function _fetch (data) {
 
   try {
 
-    console.log("Requesting", body.action );
     const _response = await fetch(request);
     middle = _response.headers.get("Content-Type").includes("text") ? "text" : "json";
     let data = await _response[middle]();

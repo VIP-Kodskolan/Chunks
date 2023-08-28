@@ -47,7 +47,7 @@ function render ({ element, container_dom }) {
   `;
 
   // THIS SPECIFIC COURSE OPEN?
-  const is_open = utils.get_parameter("course") && utils.get_parameter("course") === element.course_id;
+  const is_open = utils.get_parameter("course") && utils.get_parameter("course") == element.course_id;
   const already_showing = container_dom.classList.contains("selected");
   (is_open && !already_showing) && open_course();
   function open_course () {

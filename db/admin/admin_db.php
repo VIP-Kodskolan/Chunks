@@ -449,33 +449,59 @@ function add_amanuens ($pdo) {
 }
 function reset_create_register_tokens ($pdo) {
 
+  // INSERT INTO register_tokens VALUES ('ah5479', 'WDU');
+  // INSERT INTO register_tokens VALUES ('ah5478', 'FRI_DU1');
+  // INSERT INTO register_tokens VALUES ('ah5477', 'FRI_DU1');
+
   $query = "
   BEGIN TRANSACTION;
 
   DROP TABLE IF EXISTS register_tokens;
 
   CREATE TABLE register_tokens (
-    token     TEXT NOT NULL,
-    programme TEXT NOT NULL
+    token       TEXT NOT NULL,
+    programme   TEXT NOT NULL,
+    start_year  INT NOT NULL
   );
-
-  INSERT INTO register_tokens VALUES ('ah5479', 'WDU');
-  INSERT INTO register_tokens VALUES ('ah5478', 'FRI_DU1');
-  INSERT INTO register_tokens VALUES ('ah5477', 'FRI_DU1');
 
   COMMIT;
   ";
 
   $pdo->exec($query);
-  echo "<br>Done.";
+  _echo("<br>Done.");
+}
+function add_column_status ($pdo) {
+    $pdo -> query ("
+                  ALTER TABLE users_units
+                  ADD status INT DEFAULT 0;               
+    ");
+  _var_dump(array_from_query($pdo, "SELECT * FROM users_units LIMIT 1"));
+
+}
+function add_student_ids_23 ($pdo) {
+  
+  $fri_ids = ["ap2811", "ai7278", "ap2339", "am1369", "ao4551", "am2701", "am5914", "am7429"];
+  foreach ($fri_ids as $id) {
+    $query = "INSERT INTO register_tokens VALUES ('$id', 'FRI_DU1', 23);";
+    _echo($query);
+    $pdo->exec($query);
+  }
+
+  $program_ids = ["ao7361", "ap0806", "ao7783", "ao8032", "ap0159", "ao8982", "ao7125", "ao8899", "ap0897", "an7605", "ap2577", "ap3014", "ap0845", "ao9862", "ap0963", "am7044", "ao7787", "ao8898", "an3837", "ao8105", "am2169", "ap1700", "ap2328", "an8614", "ao8092", "ah1221", "ao7206", "aj4043", "an1706", "ao9141", "ao8330", "ap0222", "ap2289", "ap1938", "al9332", "ap0476", "ao7230", "ap0206", "ap1916", "an4748", "ao9118", "ao7022", "ao5714", "ap0642", "ap1428", "ao7978", "ao7026", "ao7610", "ao8955", "ao8556", "ap1599", "an5420", "ao7834"];
+  foreach ($program_ids as $id) {
+    $query = "INSERT INTO register_tokens VALUES ('$id', 'WDU', 23);";
+    _echo($query);
+    $pdo->exec($query);
+  }
+
 }
 
 
 $pdo = get_pdo();
 reset_create_register_tokens($pdo);
+add_student_ids_23($pdo);
 
 exit("<br>Exit.");
-
 
 
 ?>

@@ -58,7 +58,8 @@ export default { render }
     event: "db::patch::users_units::done",
     listener: ({ response, params }) => {
       const element = state_io.state.units.find(u => u.unit_id === response.users_unit["unit_id"]);
-      render_checks({ element });
+      // render_checks({ element });
+      render_status({ element });
     }
   });
 
@@ -87,19 +88,19 @@ function render ({ element }) {
   const components = {
     video: {
       left: ["name", "story", "videos"],
-      right: ["checks", "notes", "folder"],
+      right: ["status", "notes", "folder"],
     },
     exercise: {
       left: ["name", "story", "videos"],
-      right: ["checks", "notes", "folder"],
+      right: ["status", "notes", "folder"],
     },
     quiz: {
       left: ["name", "quiz"],
-      right: ["checks", "notes"],
+      right: ["status", "notes"],
     },
     assignment: {
       left: ["name", "story", "videos"],
-      right: ["checks", "notes", "folder"],
+      right: ["status", "notes", "folder"],
     },
   };
 
@@ -135,7 +136,7 @@ function render ({ element }) {
 }
 
 const renderers = {
-  render_name, render_story, render_videos, render_checks, render_notes, render_folder, render_quiz,
+  render_name, render_story, render_videos, render_status, render_notes, render_folder, render_quiz,
 }
 function render_name ({ element, container_dom }) {
   
@@ -226,37 +227,32 @@ function render_videos ({ element, container_dom }) {
   container_dom.innerHTML = video_html;
 
 }
-function render_checks ({ element, container_dom }) {
+function render_status ({ element, container_dom }) {
   
   if (!container_dom) {
-    container_dom = document.querySelector("#modal .content .checks");
+    container_dom = document.querySelector("#modal .content .status");
   } else {
-    container_dom.classList.add("checks");
+    container_dom.classList.add("status");
   }
 
   const users_unit = state_io.state.users_units.find(u => u.unit_id === element.unit_id);
   const is_quiz = element.kind === "quiz";
   const is_ready = is_unit_ready({ element });
 
-  console.log("is_ready", is_ready);
-
-
   // STATUS
   if (users_unit) {
-    users_unit.check_question ? container_dom.classList.add("status_question") : container_dom.classList.remove("status_question");
-    users_unit.check_complete ? container_dom.classList.add("status_complete") : container_dom.classList.remove("status_complete");
+    users_unit.check_question ? container_dom.classList.add("unit_with_question") : container_dom.classList.remove("unit_with_question");
+    // users_unit.check_complete ? container_dom.classList.add("status_complete") : container_dom.classList.remove("status_complete");
   }
 
-  const empty_title = !is_ready ? 'title="Unit still being worked on"' : "";
-
   container_dom.innerHTML = `
-    <div class="content" ${empty_title}>
+    <div class="content">
       <div class="question_mark"></div>
-      <h2>CHECK STATUS</h2>
-      <div class="checks_container">
+      <h2>UNIT STATUS</h2>
+      <div class="status_container">
 
         ${check_box_html("question")}
-        ${is_quiz ? "" : check_box_html("complete")}
+        ${is_quiz ? "" : status_selector_html(users_unit?.status)}
 
       </div>
     </div>
@@ -265,8 +261,27 @@ function render_checks ({ element, container_dom }) {
   // CHECK ACTIONS
   is_ready && container_dom.querySelectorAll(".check_holder").forEach(x => x.addEventListener("change", patch_users_unit));
 
+  // STATUS SELECT ACTIONS
+  const selectors_dom = container_dom.querySelectorAll(".status_selector");
+  selectors_dom && selectors_dom.forEach(sd => sd.addEventListener("click", (event) => {
+    event.stopPropagation();
 
-  function check_box_html(which) {
+    const value = parseInt(event.currentTarget.dataset.status);
+    const field_name = "status";
+    
+    SubPub.publish({
+      event: "db::patch::users_units::request",
+      detail: { params: {
+        field_name,
+        value,
+        unit_id: element.unit_id,
+        user_id: state_io.state.user.user_id,
+      }}
+    });
+
+  }));
+
+  function check_box_html (which) {
 
     const checks = {
       question: {
@@ -275,11 +290,11 @@ function render_checks ({ element, container_dom }) {
         quiz: "Jag har en specifik fråga om denna quiz",
         assignment: "Jag har en specifik fråga om denna uppgift",
       },
-      complete: {
-        exercise: "Jag har (äntlingen?) klarat övningen utan att kolla på lösningen",
-        video: "Jag förstår allt som sägs i denna video",
-        assignment: "Jag har lämnat in denna uppgift och fått G på den",
-      }
+      // complete: {
+      //   exercise: "Jag har (äntlingen?) klarat övningen utan att kolla på lösningen",
+      //   video: "Jag förstår allt som sägs i denna video",
+      //   assignment: "Jag har lämnat in denna uppgift och fått G på den",
+      // }
     };
 
     const id = `check_box_${which}_${element.unit_id}`;
@@ -296,6 +311,30 @@ function render_checks ({ element, container_dom }) {
           >
           <label for="${id}">${checks[which][element.kind]}</label>
         </div>
+    `;
+  }
+
+  function status_selector_html (unit_status = 0) {
+
+    let selectors_html = "";
+    state_io.Consts.unit_status.forEach((status, index) => {
+
+      const current_class = unit_status == index ? "current" : "";
+      selectors_html += `
+      <div class="status_selector unit_status_${index} ${current_class}" data-status="${index}">
+        <div class="status_title">${status}</div>
+        <div class="status_radio"></div>
+      </div>
+      `;
+    });
+
+    return `
+      <div class="status_selectors">
+        <h1>STATUS</h1>
+        <div class="content">
+          ${selectors_html}
+        </div>
+      </div>
     `;
   }
 
@@ -433,5 +472,80 @@ function patch_users_unit (event) {
       user_id: state_io.state.user.user_id,
     }}
   });
+
+}
+
+
+
+
+function __render_checks ({ element, container_dom }) {
+  
+  if (!container_dom) {
+    container_dom = document.querySelector("#modal .content .checks");
+  } else {
+    container_dom.classList.add("checks");
+  }
+
+  const users_unit = state_io.state.users_units.find(u => u.unit_id === element.unit_id);
+  const is_quiz = element.kind === "quiz";
+  const is_ready = is_unit_ready({ element });
+
+  // STATUS
+  if (users_unit) {
+    users_unit.check_question ? container_dom.classList.add("unit_with_question") : container_dom.classList.remove("unit_with_question");
+    users_unit.check_complete ? container_dom.classList.add("status_complete") : container_dom.classList.remove("status_complete");
+  }
+
+  const empty_title = !is_ready ? 'title="Unit still being worked on"' : "";
+
+  container_dom.innerHTML = `
+    <div class="content" ${empty_title}>
+      <div class="question_mark"></div>
+      <h2>CHECK STATUS</h2>
+      <div class="checks_container">
+
+        ${check_box_html("question")}
+        ${is_quiz ? "" : check_box_html("complete")}
+
+      </div>
+    </div>
+  `;
+
+  // CHECK ACTIONS
+  is_ready && container_dom.querySelectorAll(".check_holder").forEach(x => x.addEventListener("change", patch_users_unit));
+
+
+  function check_box_html(which) {
+
+    const checks = {
+      question: {
+        exercise: "Jag har en specifik fråga om denna övning",
+        video: "Jag har en specifik fråga om denna video",
+        quiz: "Jag har en specifik fråga om denna quiz",
+        assignment: "Jag har en specifik fråga om denna uppgift",
+      },
+      complete: {
+        exercise: "Jag har (äntlingen?) klarat övningen utan att kolla på lösningen",
+        video: "Jag förstår allt som sägs i denna video",
+        assignment: "Jag har lämnat in denna uppgift och fått G på den",
+      }
+    };
+
+    const id = `check_box_${which}_${element.unit_id}`;
+    const checked = (users_unit && users_unit[`check_${which}`]) ? "checked": "";
+    const disabled = !is_ready ? "disabled" : "";
+
+    return `
+        <div class="check_holder">
+          <input type="checkbox" ${checked} class="updatable" id="${id}" ${disabled}
+              data-update_data='${JSON.stringify({
+                field_name: 'check_' + which,
+                element
+              })}'  
+          >
+          <label for="${id}">${checks[which][element.kind]}</label>
+        </div>
+    `;
+  }
 
 }

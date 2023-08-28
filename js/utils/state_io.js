@@ -5,6 +5,7 @@ let State = {};
 const Consts = {
   mins_after_incorrect_answer: 7,
   unit_kinds: ["exercise", "video", "assignment", "quiz"],
+  unit_status: ["ToDo", "Study", "Hold", "Solve", "Done"],
   story_length_max: 60,
   name_length_max: 25,
   max_n_units_in_section: 8,

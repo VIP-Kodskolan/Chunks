@@ -114,13 +114,73 @@
   --color_back: var(--color_accent_completed_general);
   --color_text: var(--color_accent_1);
 }
-#modal .checks.status_question .question_mark {
+#modal .checks.unit_with_question .question_mark {
   opacity: 1;
   /* --color_border: var(--color_accent_question); */
 }
 
 #modal .checks * {
   color: var(--color_text);
+}
+
+
+/* STATUS SELECTOR */
+#modal .status_selectors .content {
+  display: flex;
+  gap: 5px;
+}
+
+#modal .status_selectors h1 {
+  margin-top: 20px;
+}
+
+#modal .status_selector {
+  flex-basis: 0; flex-grow: 1;
+  padding: 5px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--color_status);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--color_status);
+
+  /* opacity: .5; */
+}
+
+#modal .status_selector:hover {
+  border-color: black;
+  cursor: pointer;
+  opacity: 1;
+}
+
+#modal .status_selectors .status_title {
+  font-size: calc(1 * var(--fsz_unit_item_top));
+}
+
+#modal .status_selectors .status_radio {
+  --dims: 15px;
+  width: var(--dims); height: var(--dims);
+  border-radius: 50%;
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--color_accent_0);
+  background-color: var(--color_back_2B);
+}
+
+#modal .status_selector.current {
+  /* opacity: 1; */
+  border-color: black;
+  pointer-events: none;
+}
+#modal .status_selector.current .status_radio {
+  background-color: black;
+  border-color: transparent;
+}
+#modal .status_selector.current .status_title {
+  font-family: "BLWC_semibold";
 }
 
 
