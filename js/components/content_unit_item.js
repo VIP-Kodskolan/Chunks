@@ -86,7 +86,7 @@ function render ({ element, container_dom }) {
   }
 
   // OPEN FROM URL?
-  const is_open_url = utils.get_parameter("unit") && utils.get_parameter("unit") === element.unit_id;
+  const is_open_url = utils.get_parameter("unit") && utils.get_parameter("unit") == element.unit_id;
   const modal_not_displaying = document.querySelector("#modal").classList.contains("hidden");
   (is_open_url && modal_not_displaying) && open_modal_unit();
   function new_open_modal_unit () {
@@ -108,9 +108,20 @@ function render_status ({ element }) {
   const container_dom = document.getElementById(id_prefix_item + element.unit_id);
 
   const users_unit = state_io.state.users_units.find(u => u.unit_id === element.unit_id);
+
   if (users_unit) {
-    users_unit.check_question ? container_dom.classList.add("status_question") : container_dom.classList.remove("status_question");
-    users_unit.check_complete ? container_dom.classList.add("status_complete") : container_dom.classList.remove("status_complete");
+
+    // has question?
+    users_unit.check_question ? container_dom.classList.add("unit_with_question") : container_dom.classList.remove("unit_with_question");
+    
+    // status
+    container_dom.classList.add(`unit_status_${users_unit.status}`);
+
+    // completed quiz?
+    if (users_unit.check_complete) container_dom.classList.add(`unit_status_4`);
+  }
+  else {
+    container_dom.classList.add(`unit_status_0`);
   }
 
   state_io.is_unit_empty(element) ? container_dom.classList.add("status_empty") : container_dom.classList.remove("status_empty");

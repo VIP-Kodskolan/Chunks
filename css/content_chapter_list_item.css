@@ -2,9 +2,11 @@
   --height_button_add_section: 0;
 
   padding: 15px;
-  border: 1px dashed var(--color_accent_0);
+  /* border: 1px dashed var(--color_accent_0); */
+  border-width: 0;
   border-radius: var(--general_border_radius);
   background-color: transparent;
+  background-color:  var(--color_back_2B);
 
   font-size: var(--fsz_chapter_list);
   color: var(--color_accent_0);
@@ -17,7 +19,8 @@
   box-shadow: 0 0 3px var(--color_accent_1);
 }
 .chapter_list_item.expanded {
-  background-color: var(--color_overlay_light);
+  /* background-color: var(--color_overlay_light); */
+  background-color: var(--color_back_chapter);
 }  
 .chapter_list_item.ready {
   border-style: solid;
@@ -45,7 +48,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--gap);
-  padding: var(--gap) 0;
+  padding-top: var(--gap);
   transition: padding var(--t_fast_transition), height var(--t_fast_transition);
 }
 
@@ -69,29 +72,28 @@
 .chapter_list_item .progress > ul {
   height: 100%;
   display: flex;
-  gap: 1.5px;
+  gap: 4px;
 }
 .chapter_list_item .progress > ul > li {  
-  width: 4.5px;
+  width: 3px;
   border-color: transparent;
   border-width: 1px;
   border-style: solid;
-
-  /* border: .5px solid transparent; */
+  background-color: var(--color_status);
 }
-.chapter_list_item .progress > ul > li.status_default {
+/* .chapter_list_item .progress > ul > li.status_default {
   background-color: transparent;
   border-color: var(--color_accent_1);
-}
-.chapter_list_item .progress > ul > li.quiz {
-  /* background-color: var(--color_accent_quiz); */
+} */
+/* .chapter_list_item .progress > ul > li.quiz {
+  background-color: var(--color_accent_quiz);
   border-color: var(--color_accent_quiz);
-}
-.chapter_list_item .progress > ul > li.status_complete {
+} */
+/* .chapter_list_item .progress > ul > li.status_complete {
   background-color: var(--color_accent_completed_general);
   border-color: var(--color_accent_completed_general);
-}
-.chapter_list_item .progress > ul > li.status_question {
+} */
+.chapter_list_item .progress > ul > li.unit_with_question {
   background-color: var(--color_accent_question);
   border-color: var(--color_accent_question);
 }
@@ -149,7 +151,7 @@
   --internal_margin: 4px;
   --content_padding: calc(var(--size_question) / 5);
   --size_question_unit: var(--size_question); /* resets to value @root */
-  --size_icon: calc(.25 * var(--height_basis));
+  --size_icon: calc(.2 * var(--height_basis));
 }
 .chapter_list_item.expanded {
   --height_button_add_section: auto;

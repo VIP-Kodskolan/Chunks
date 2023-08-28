@@ -24,7 +24,7 @@ function GET_course ($params, $pdo) {
 }
 function GET_date_time ($params, $pdo) {
 
-  $date_time = 1000 * substr(date("UTC"), 0, strlen(date("UTC") - 3));
+  $date_time = 1000 * intval(substr(date("UTC"), 0, strlen(date("UTC")) - 4), 10);
   return [
     "data" => [
       "date_time" => $date_time,
@@ -60,7 +60,12 @@ function GET_login ($params, $pdo) {
 
     // SET TOKEN FOR CONTINUOUS LOGIN
     global $n_chars_token;
-    $token = substr(md5(rand()), 0, $n_chars_token);
+    $token = substr(md5(rand()), 0, $n_chars_token - 9);
+    $date = getdate();
+    $month = $date["mon"] < 10 ? "0".$date["mon"] : "".$date["mon"];
+    $day = $date["mday"] < 10 ? "0".$date["mday"] : "".$date["mday"];
+    $year = substr($date["year"], 2);
+    $token .= "_$day.$month.$year";
     $pdo -> query("UPDATE users SET user_token = '$token' WHERE user_id = $user_id");
 
     $user = _get_user($user_id, $pdo);
@@ -118,7 +123,7 @@ function POST_register($params, $pdo) {
     }
     else
     {
-      $params["user_start_year"] = 23;
+      $params["user_start_year"] = $temp_token[0]["start_year"];
       $params["user_programme"] = $temp_token[0]["programme"];
       $params["amanuens"] = "[]";
 
@@ -456,15 +461,15 @@ function POST_unit ($params, $pdo) {
   $chapter_id = $params["section"]["chapter_id"];
   $course_id = $params["section"]["course_id"];
   $kind = $params["kind"];
-  $story = $params["story"] ? $params["story"] : "";
-  $video_link = $params["video_link"] ? $params["video_link"] : "";
-  $folder_link = $params["folder_link"] ? $params["folder_link"] : "";
+  $story = isset($params["story"]) ? $params["story"] : "";
+  $video_link = isset($params["video_link"]) ? $params["video_link"] : "";
+  $folder_link = isset($params["folder_link"]) ? $params["folder_link"] : "";
   
   $existing_units = array_from_query($pdo, "SELECT * FROM units WHERE section_id = $section_id");
   $spot = count($existing_units) + 1;
   
   // PREDEFINED STUFF
-  $name = $params["name"];
+  $name = isset($params["name"]) ? $params["name"] : false;
   if (!$name) {
     switch ($kind) {
       case "video": $name = "Main"; break;
@@ -545,6 +550,7 @@ function DELETE_unit ($params, $pdo) {
   
 }
 function PATCH_unit ($params, $pdo) {
+  $params["kind"] = "unit";
   return PATCH($params, $pdo);
 }
 
@@ -663,9 +669,10 @@ function PATCH_users_units ($params, $pdo) {
   $unit_id = $params["unit_id"];
   $field_name = $params["field_name"];
   $value = $params["value"];
-  if ($field_name !== "notes") {
+  if ($field_name === "check_question") {
     $value = $params["value"] ? "true" : "false";
-  } else {
+  }
+  if ($field_name === "notes") {
     $value = "'$value'";
   }
   
@@ -686,9 +693,7 @@ function PATCH_users_units ($params, $pdo) {
     $sql = "INSERT INTO users_units (unit_id, user_id) VALUES ($unit_id, $user_id)";
     $pdo -> query($sql);
     return PATCH_users_units ($params, $pdo);
-
   }
-  
 }
 
 

@@ -237,7 +237,6 @@ function render_assignments ({ element }) {
 
 function render_progress ({ element }) {
 
-
   const container_dom = document.getElementById(id_prefix_item + element.chapter_id);
   const progress_dom = container_dom.querySelector(".chapter_top .progress ul");
   progress_dom.innerHTML = "";
@@ -255,13 +254,30 @@ function render_progress ({ element }) {
     u.is_stop_quiz && one_line_dom.classList.add("stop_quiz");
 
     const users_unit = state_io.state.users_units.find(uu => uu.unit_id === u.unit_id);
+    if (u.unit_id == 1715) console.log(users_unit, u);
+
     if (users_unit) {
-      one_line_dom.classList[users_unit.check_question ? "add" : "remove"]("status_question");
-      one_line_dom.classList[users_unit.check_complete ? "add" : "remove"]("status_complete");
-      one_line_dom.classList[(!users_unit.check_question && !users_unit.check_complete) ? "add" : "remove"]("status_default");
-    } else {
-      one_line_dom.classList.add("status_default");
+
+      // has question?
+      users_unit.check_question ? one_line_dom.classList.add("unit_with_question") : one_line_dom.classList.remove("unit_with_question");
+      
+      // status
+      one_line_dom.classList.add(`unit_status_${users_unit.status}`);
+  
+      // completed quiz?
+      if (users_unit.check_complete) one_line_dom.classList.add(`unit_status_4`);
     }
+    else {
+      one_line_dom.classList.add(`unit_status_0`);
+    }
+
+
+    // if (users_unit?.check_question) {
+    //   one_line_dom.classList.add("unit_with_question");
+    // } else {
+    //   const status = users_unit?.status || 0;
+    //   one_line_dom.classList.add(`unit_status_${status}`); 
+    // }
     
     const is_empty = state_io.is_unit_empty(u);
     one_line_dom.classList[is_empty ? "add" : "remove"]("status_empty");

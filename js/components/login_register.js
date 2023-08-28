@@ -44,7 +44,7 @@ function render_login_register (data = {}) {
 
     // Loginform                            
     logreg_dom.innerHTML = `
-      <h1>CHUNKS v1.0.0</h1>
+      <h1>CHUNKS v1.1</h1>
       <form id="login_form">
         <h1>LOGIN</h1>
         <p class="feedback"></p>
@@ -63,29 +63,29 @@ function render_login_register (data = {}) {
     // Registreringsform
     logreg_dom.innerHTML += `
       <form id="register_form">
-        <h1>REGISTER</h1>
-        <div class="register_info">
-          <p>Ditt användarnamn ska inte kunna kopplas till dig av någon utomstående.</p>
-          <p>Du får därför inte använda något av dina namn eller efternamn, eller delar av dem.</p>
-        </div>
+        <h1>REGISTRERA</h1>
         <p class="feedback"></p>
         <div class="username">
-            <label>Användarnamn:</label>
-            <input type="text">
+            <label>Användarnamn (min 4, max 10 bokstäver):</label>
+            <input type="text" minlength = "4" maxlength="10">
+        </div>
+        <div class="register_info">
+          <p>Ditt användarnamn ska inte kunna kopplas till dig.</p>
+          <p>Du får därför inte använda något av dina namn eller efternamn, eller delar av dem.</p>
         </div>
         <div class="password">
-            <label>Password:</label>
+            <label>Lösenord:</label>
             <input type="text">
         </div>
         <div class="repeat_password">
-            <label>Repeat Password:</label>
+            <label>Skriv lösenordet igen:</label>
             <input type="text">
         </div>
         <div class="token">
-            <label>Token (ditt MaU_id):</label>
-            <input type="text" value="ah5479">
+            <label>Ditt MaU_id (ska ha formen ax9420):</label>
+            <input type="text">
         </div>
-        <input type="submit" value="REGISTER">
+        <input type="submit" value="REGISTRERA">
       </form>      
     `;
 
@@ -93,7 +93,13 @@ function render_login_register (data = {}) {
     const login_dom = logreg_dom.querySelector("#login_form")
     const reg_dom = logreg_dom.querySelector("#register_form");
   
+    // NO SPACES
+    function keydown_nospace (e) { if (e.which == 32) e.preventDefault(); }
+    reg_dom.querySelectorAll("input").forEach(x => x.addEventListener("keydown", keydown_nospace));
+    function input_nospace (e) { e.target.value = e.target.value.replace(/\s/g, "") }
+    reg_dom.querySelectorAll("input").forEach(x => x.addEventListener("input", input_nospace));
 
+    // SUBMIT LOGIN
     login_dom.addEventListener("submit", submit_login);
     function submit_login (event) {
       event.preventDefault();
@@ -107,6 +113,7 @@ function render_login_register (data = {}) {
       });
     }
 
+    // SUBMIT REGISTER
     reg_dom.addEventListener("submit", submit_register);
     function submit_register (event) {
       event.preventDefault();
@@ -123,6 +130,7 @@ function render_login_register (data = {}) {
       });
     }
 
+    // REPEAT SAME PASSWORD
     reg_dom.querySelector(".repeat_password input").addEventListener("input", check_same_password);
     function check_same_password (event) {
       const pass_input = reg_dom.querySelector(".password input");

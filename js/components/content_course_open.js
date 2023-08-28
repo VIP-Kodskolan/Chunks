@@ -57,11 +57,6 @@ function render({ response, params }) {
     'No canvas link yet'
 
   dom.innerHTML = `
-    <div class="weekly_progress">
-      <ul class="weeks"></ul>
-      <ul class="units"></ul>
-      <div class="units_by_chapters"></div>
-    </div>
     <div class="course_info">
       <h2>Course: ${course.name}</h2>
       <h2>(${course.code})</h2>
@@ -73,6 +68,11 @@ function render({ response, params }) {
         <button class="button_edit">EDIT COURSE</button>
         <button class="button_delete">DELETE COURSE</button>
       </div>
+    </div>
+    <div class="weekly_progress">
+      <ul class="weeks"></ul>
+      <ul class="units"></ul>
+      <div class="units_by_chapters"></div>
     </div>
   `;
 
@@ -122,7 +122,8 @@ function render_progress_units_by_chapters(chapters, units, users_units) {
 
     // Add user `checked` interaction values to the unit
     const userUnit = users_units.find(uu => uu.unit_id === unit.unit_id)
-    unit.check_complete = userUnit && userUnit.check_complete
+    // unit.check_complete = userUnit && userUnit.check_complete
+    unit.status = userUnit?.status || 0;
     unit.check_question = userUnit && userUnit.check_question
 
     unitsByChapters[id].push(unit);
@@ -150,10 +151,11 @@ function render_progress_units_by_chapters(chapters, units, users_units) {
     for (const chapter_unit of chapter_units) {
       const unitContainer = document.createElement("div");
       unitContainer.className = `chapter-unit`;
+      unitContainer.classList.add(`unit_status_${chapter_unit.status}`);
 
-      if (chapter_unit.check_complete) {
-        unitContainer.classList.add("check_complete");
-      }
+      // if (chapter_unit.check_complete) {
+      //   unitContainer.classList.add("check_complete");
+      // }
 
       if (chapter_unit.check_question) {
         unitContainer.classList.add("check_question");
@@ -175,22 +177,27 @@ function render_progress() {
     state_io.state.users_units
   );
 
+  return;
+
   const progress_dom = document.querySelector("#content_course_open .weekly_progress ul.units");
   progress_dom.innerHTML = "";
 
   const units = state_io.state.units
-    .map(u => {
-      return {
-        ...u,
-        check_complete: state_io.state.users_units.find(uu => uu.unit_id === u.unit_id)?.check_complete
-      }
-    });
+    // .map(u => {
+    //   return {
+    //     ...u,
+    //     check_complete: state_io.state.users_units.find(uu => uu.unit_id === u.unit_id)?.check_complete
+    //   }
+    // });
     // .sort((a, b) => a.check_complete ? -1 : 1);
 
   units.forEach(u => {
 
     const one_line_dom = document.createElement("li");
-    one_line_dom.classList[u.check_complete ? "add" : "remove"]("status_complete");
+
+    const status = state_io.state.users_units.find(uu => uu.unit_id === u.unit_id)?.status || 0;
+    one_line_dom.classList.add(`unit_status_${status}`);
+    // one_line_dom.classList[u.check_complete ? "add" : "remove"]("status_complete");
 
     progress_dom.append(one_line_dom);
 

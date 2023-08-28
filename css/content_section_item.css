@@ -9,9 +9,9 @@
   --title_units_gap: 10px;
 
   opacity: var(--section_opacity);
-  padding: calc(2 * var(--padding)) var(--padding);
+  padding: calc(1 * var(--padding)) var(--padding);
   flex-basis: var(--height);
-  border: var(--border_width) solid var(--color_accent_1);
+  /* border: var(--border_width) solid var(--color_accent_1); */
   border-radius: var(--general_border_radius);
   background-color: var(--color_back_2);
 
@@ -57,7 +57,7 @@
   flex-grow: 1;
   display: grid;
   grid-template-columns: repeat(8, 1fr);
-  gap: 1vw
+  gap: 4px;
 }
 
 .section_item > .content .add_unit .flexer {

@@ -58,7 +58,6 @@ function render () {
   const dom = document.querySelector("#content_chapter_list");
   dom.innerHTML = `
     <div class="top">
-      KAPITEL I KURSEN
     </div>
     <ul></ul>
   `;
