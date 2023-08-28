@@ -498,8 +498,6 @@ function add_student_ids_23 ($pdo) {
 
 
 $pdo = get_pdo();
-reset_create_register_tokens($pdo);
-add_student_ids_23($pdo);
 
 exit("<br>Exit.");
 
