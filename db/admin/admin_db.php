@@ -495,10 +495,16 @@ function add_student_ids_23 ($pdo) {
   }
 
 }
+function add_one_id ($pdo, $id, $program, $start_year) {
+  if (!$id) return;
+  $query = "INSERT INTO register_tokens VALUES ('$id', '$program', $start_year);";
+  _echo($query);
+  $pdo->exec($query);
+}
 
 
 $pdo = get_pdo();
-
+add_one_id($pdo, "ap3359", "WDU", 23);
 exit("<br>Exit.");
 
 
