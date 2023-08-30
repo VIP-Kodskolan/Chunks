@@ -501,10 +501,31 @@ function add_one_id ($pdo, $id, $program, $start_year) {
   _echo($query);
   $pdo->exec($query);
 }
+function remove_one_user ($pdo, $name) {
 
+  $pdo->exec('PRAGMA foreign_keys = ON');
+
+  $users = array_from_query($pdo, "SELECT * FROM users WHERE name = '$name'");
+  if (count($users) == 0) {
+    _echo("User not found ($name)");    
+    return;
+  }
+  if (count($users) > 1) {
+    _echo("Too many users found ($name)");
+    _var_dump($users);
+    return;
+  }
+
+  $user = $users[0];
+  $query = "DELETE FROM users WHERE name = '$name'";
+  _echo($query);
+  $pdo -> query($query);
+
+}
 
 $pdo = get_pdo();
-add_one_id($pdo, "ap3359", "WDU", 23);
+// add_one_id($pdo, "ap3359", "WDU", 23);
+remove_one_user($pdo, "_elvis");
 exit("<br>Exit.");
 
 
